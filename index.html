@@ -13,7 +13,7 @@
         .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #555; }
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
 
-        /* --- スロットエリア（画像再現・3本線・はみ出し防止） --- */
+        /* --- スロットエリア --- */
         .puzzle-area { margin: 40px auto; max-width: 800px; }
         
         .slots-container {
@@ -64,7 +64,6 @@
 
     <!-- メインパズルエリア -->
     <div class="puzzle-area">
-        <!-- スロット -->
         <div class="slots-container" id="slotsArea">
             <div class="slot" data-index="0" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             <div class="slot" data-index="1" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -73,7 +72,6 @@
             <div class="slot" data-index="4" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
         </div>
 
-        <!-- ドラッグ用アイコンプール -->
         <div class="items" id="item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
             <div class="item" draggable="true" id="SUN" ondragstart="drag(event)">☀️</div>
             <div class="item" draggable="true" id="MON" ondragstart="drag(event)">🌙</div>
@@ -90,8 +88,9 @@
     <script>
         let port;
         let writer;
+        let segTimer; // 7セグ用のタイマー変数
+        let ledTimer; // LED用のタイマー変数
 
-        // 小謎の答え辞書 (日本語 -> 英語4文字)
         const puzzleDict = {
             "くま": "BEAR",
             "とり": "BIRD",
@@ -105,7 +104,6 @@
         const QWERTY_MID = "ASDFGHJKL";
         const QWERTY_BOT = "ZXCVBNM";
 
-        // 文字がどの段かを判定 (1=上, 2=中, 3=下)
         function getRow(char) {
             if (QWERTY_TOP.includes(char)) return 1;
             if (QWERTY_MID.includes(char)) return 2;
@@ -113,7 +111,6 @@
             return 0;
         }
 
-        // --- シリアル通信 ---
         async function connectSerial() {
             try {
                 port = await navigator.serial.requestPort();
@@ -134,20 +131,31 @@
             const input = document.getElementById("answerInput").value.trim();
             const feedback = document.getElementById("terminalFeedback");
             
+            // 既存の7セグ消灯タイマーをリセット
+            if (segTimer) clearTimeout(segTimer);
+
             if (puzzleDict[input]) {
                 const word = puzzleDict[input];
                 feedback.style.color = "#0f0";
-                feedback.innerText = `データ承認: [ ${word} ] を7セグモニターへ出力します`;
+                // ★英単語を隠し、データ出力のみを通知
+                feedback.innerText = `データ承認: 該当データを7セグモニターへ出力します`;
                 
                 let cmd = "S";
                 for(let i = 0; i < 4; i++) {
                     cmd += getRow(word[i]);
                 }
                 sendCommand(cmd);
+
+                // ★3秒後に7セグを消灯し、テキストも待機状態に戻す
+                segTimer = setTimeout(() => {
+                    sendCommand("S0000");
+                    feedback.innerText = "スタンバイ...";
+                }, 3000);
+
             } else {
                 feedback.style.color = "red";
                 feedback.innerText = "エラー: 該当するデータが見つかりません";
-                sendCommand("S0000"); // 7セグ消灯
+                sendCommand("S0000");
             }
         }
 
@@ -165,7 +173,6 @@
             e.preventDefault();
             e.target.classList.remove('drag-over');
             
-            // アイコンの上にドロップされた場合は親要素をターゲットにする
             let dropTarget = e.target;
             if (dropTarget.classList.contains('item')) {
                 dropTarget = dropTarget.parentElement;
@@ -174,28 +181,22 @@
             const data = e.dataTransfer.getData("text");
             const draggedElement = document.getElementById(data);
             
-            // スロットにドロップした場合
             if (dropTarget.classList.contains('slot')) {
-                // 既に中身があればプールに戻す
                 if (dropTarget.children.length > 0) {
                     document.getElementById("item-pool").appendChild(dropTarget.children[0]);
                 }
                 dropTarget.appendChild(draggedElement);
             } 
-            // プールにドロップして戻す場合
             else if (dropTarget.id === "item-pool" || dropTarget.classList.contains('items')) {
                 document.getElementById("item-pool").appendChild(draggedElement);
             }
         }
 
         // --- 大謎(曜日スロット)の判定処理 ---
-        let ledTimer;
-
         function executeMainPuzzle() {
             const slots = document.querySelectorAll('.slot');
             let placedWords = [];
             
-            // 5枠全て埋まっているか確認
             for (let slot of slots) {
                 if (slot.children.length === 0) {
                     alert("5つのモジュールを全てセットしてください。");
@@ -206,12 +207,10 @@
 
             let validJoints = 0;
             
-            // 4つの繋ぎ目を判定
             for (let i = 0; i < 4; i++) {
                 let word1 = placedWords[i];
                 let word2 = placedWords[i+1];
                 
-                // 1文字目、2文字目、3文字目の段が全て違うかチェック
                 if (getRow(word1[0]) !== getRow(word2[0]) &&
                     getRow(word1[1]) !== getRow(word2[1]) &&
                     getRow(word1[2]) !== getRow(word2[2])) {
@@ -219,23 +218,19 @@
                 }
             }
 
-            // 既存の消灯タイマーをリセット
             if (ledTimer) clearTimeout(ledTimer);
 
-            // 正解数に応じたハードウェア連携
             if (validJoints === 0) {
                 sendCommand("L0");
-                sendCommand("B");  // 正解ゼロならブザーを一瞬鳴らす
+                sendCommand("B");
             } else {
                 sendCommand("L" + validJoints);
-                // 3秒後にLEDを消灯するタイマー
                 ledTimer = setTimeout(() => {
                     sendCommand("L0");
                 }, 3000);
             }
             
             if (validJoints === 4) {
-                // クリア時の演出（タイマーをキャンセルして光りっぱなしにする等）
                 clearTimeout(ledTimer);
                 setTimeout(() => alert("🎉 SYSTEM UNLOCKED! 完全クリア！"), 500);
             }
