@@ -15,9 +15,10 @@
 
         /* --- スロットエリア（画像再現） --- */
         .puzzle-area { margin: 40px auto; max-width: 800px; }
-/* --- スロットエリア（3本線ver） --- */
+/* --- スロットエリア（3本線・はみ出し防止ver） --- */
         .slots-container {
-            display: flex; justify-content: center; gap: 40px; margin-bottom: 40px;
+            display: flex; gap: 40px; 
+            width: fit-content; margin: 0 auto 40px auto; /* ←枠の幅にピッタリ合わせ、中央寄せにする */
             position: relative; padding: 20px 0;
             /* 背景の横線3本を描画（3文字それぞれの干渉ラインを表現） */
             background: linear-gradient(to bottom, 
