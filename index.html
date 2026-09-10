@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>QWERTY Protocol</title>
+    <style>
+        body { font-family: sans-serif; background: #f5f5f5; text-align: center; padding: 20px; }
+        .btn { padding: 10px 20px; font-size: 16px; margin: 10px; cursor: pointer; border-radius: 5px; border: none; background: #007bff; color: white;}
+        .btn:hover { background: #0056b3; }
+        
+        /* --- 小謎入力エリア --- */
+        .terminal-box { background: #222; color: #0f0; padding: 20px; border-radius: 5px; margin: 20px auto; max-width: 600px; }
+        .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #555; }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+
+        /* --- スロットエリア（画像再現） --- */
+        .puzzle-area { margin: 40px auto; max-width: 800px; }
+        .slots-container {
+            display: flex; justify-content: center; gap: 40px; margin-bottom: 40px;
+            position: relative; padding: 20px 0;
+            /* 背景の横線2本を描画 */
+            background: linear-gradient(to bottom, 
+                transparent 30%, black 30%, black 32%, 
+                transparent 32%, transparent 68%, 
+                black 68%, black 70%, transparent 70%);
+        }
+        
+        .slot {
+            width: 60px; height: 180px; /* 1:3の長方形 */
+            border: 3px solid black; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; z-index: 1; transition: 0.2s;
+        }
+        .slot.drag-over { background: #e0f7fa; border-color: #00acc1; }
+
+        /* --- アイコンプール --- */
+        .items { display: flex; justify-content: center; gap: 30px; }
+        .item {
+            width: 60px; height: 180px; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; cursor: grab;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.2); transition: transform 0.1s;
+        }
+        .item:active { cursor: grabbing; transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <h2>QWERTY Protocol / ターミナル</h2>
+    <button class="btn" onclick="connectSerial()">🔌 デバイス接続</button>
+
+    <!-- 小謎入力エリア -->
+    <div class="terminal-box">
+        <p>小謎の答え（日本語）を入力してデータ解析を実行せよ</p>
+        <input type="text" id="answerInput" placeholder="例: くま">
+        <button class="btn" onclick="submitAnswer()">解析</button>
+        <div class="feedback" id="terminalFeedback"></div>
+    </div>
+
+    <!-- メインパズルエリア -->
+    <div class="puzzle-area">
+        <!-- スロット（1:3長方形） -->
+        <div class="slots-container" id="slotsArea">
+            <div class="slot" data-index="0" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+            <div class="slot" data-index="1" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+            <div class="slot" data-index="2" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+            <div class="slot" data-index="3" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+            <div class="slot" data-index="4" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+        </div>
+
+        <!-- ドラッグ用アイコン -->
+        <div class="items" id="item-pool">
+            <div class="item" draggable="true" id="SUN" ondragstart="drag(event)">☀️</div>
+            <div class="item" draggable="true" id="MON" ondragstart="drag(event)">🌙</div>
+            <div class="item" draggable="true" id="TUE" ondragstart="drag(event)">🔥</div>
+            <div class="item" draggable="true" id="WED" ondragstart="drag(event)">💧</div>
+            <div class="item" draggable="true" id="THU" ondragstart="drag(event)">🌳</div>
+            <div class="item" draggable="true" id="FRI" ondragstart="drag(event)">💰</div>
+            <div class="item" draggable="true" id="SAT" ondragstart="drag(event)">🪐</div>
+        </div>
+
+        <button class="btn" style="background: #28a745; margin-top: 30px;" onclick="executeMainPuzzle()">EXECUTE (実行)</button>
+    </div>
+
+    <script>
+        let port;
+        let writer;
+
+        // 小謎の答え辞書 (日本語 -> 英語4文字)
+        const puzzleDict = {
+            "くま": "BEAR",
+            "とり": "BIRD",
+            "ほし": "STAR",
+            "つき": "MOON",
+            "かぎ": "KEYS",
+            "ほん": "BOOK"
+        };
+
+        const QWERTY_TOP = "QWERTYUIOP";
+        const QWERTY_MID = "ASDFGHJKL";
+        const QWERTY_BOT = "ZXCVBNM";
+
+        // 文字がどの段かを判定 (1=上, 2=中, 3=下)
+        function getRow(char) {
+            if (QWERTY_TOP.includes(char)) return 1;
+            if (QWERTY_MID.includes(char)) return 2;
+            if (QWERTY_BOT.includes(char)) return 3;
+            return 0;
+        }
+
+        // --- シリアル通信 ---
+        async function connectSerial() {
+            try {
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 9600 });
+                const encoder = new TextEncoderStream();
+                encoder.readable.pipeTo(port.writable);
+                writer = encoder.writable.getWriter();
+                alert("接続成功！");
+            } catch (err) { alert("接続エラー: " + err); }
+        }
+
+        async function sendCommand(cmd) {
+            if (writer) await writer.write(cmd + "\n");
+        }
+
+        // --- 小謎の入力処理 ---
+        function submitAnswer() {
+            const input = document.getElementById("answerInput").value.trim();
+            const feedback = document.getElementById("terminalFeedback");
+            
+            if (puzzleDict[input]) {
+                const word = puzzleDict[input];
+                feedback.style.color = "#0f0";
+                feedback.innerText = `データ承認: [ ${word} ] を7セグモニターへ出力します`;
+                
+                // BEARなら -> 3(B), 1(E), 2(A), 1(R) -> "S3121"
+                let cmd = "S";
+                for(let i = 0; i < 4; i++) {
+                    cmd += getRow(word[i]);
+                }
+                sendCommand(cmd);
+            } else {
+                feedback.style.color = "red";
+                feedback.innerText = "エラー: 該当するデータが見つかりません";
+                sendCommand("S0000"); // 7セグ消灯
+            }
+        }
+
+        // --- ドラッグ＆ドロップ処理 ---
+        function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+        function allowDrop(e) { e.preventDefault(); e.target.classList.add('drag-over'); }
+        function dragLeave(e) { e.target.classList.remove('drag-over'); }
+        function drop(e) {
+            e.preventDefault();
+            e.target.classList.remove('drag-over');
+            const data = e.dataTransfer.getData("text");
+            const element = document.getElementById(data);
+            
+            // スロットに既に中身があればプールに戻す
+            if (e.target.children.length > 0) {
+                document.getElementById("item-pool").appendChild(e.target.children[0]);
+            }
+            e.target.appendChild(element);
+        }
+
+        // --- 大謎(曜日スロット)の判定処理 ---
+        function executeMainPuzzle() {
+            const slots = document.querySelectorAll('.slot');
+            let placedWords = [];
+            
+            // 5枠全て埋まっているか確認
+            for (let slot of slots) {
+                if (slot.children.length === 0) {
+                    alert("5つのモジュールを全てセットしてください。");
+                    return;
+                }
+                placedWords.push(slot.children[0].id); // "SUN", "THU" などを取得
+            }
+
+            let validJoints = 0;
+            
+            // 4つの繋ぎ目を判定
+            for (let i = 0; i < 4; i++) {
+                let word1 = placedWords[i];
+                let word2 = placedWords[i+1];
+                
+                // 1文字目、2文字目、3文字目の段が全て違うかチェック
+                if (getRow(word1[0]) !== getRow(word2[0]) &&
+                    getRow(word1[1]) !== getRow(word2[1]) &&
+                    getRow(word1[2]) !== getRow(word2[2])) {
+                    validJoints++;
+                }
+            }
+
+            // 正解数(0〜4)をLEDコマンドとして送信 ("L0" ~ "L4")
+            sendCommand("L" + validJoints);
+            
+            if (validJoints === 4) {
+                setTimeout(() => alert("🎉 SYSTEM UNLOCKED! 完全クリア！"), 500);
+            }
+        }
+    </script>
+</body>
+</html>
