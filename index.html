@@ -18,19 +18,19 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            gap: 60px; /* スロットとパーツ置き場の間隔 */
+            gap: 60px;
             margin: 30px auto;
             max-width: 900px;
         }
         
-        /* --- 左側：スロットエリア（縦積み・縦線3本・はみ出し防止） --- */
+        /* --- 左側：スロットエリア --- */
         .slots-container {
             display: flex; 
             flex-direction: column; 
             gap: 40px; 
             width: 180px; 
             position: relative; 
-            padding: 0; /* ★ 上下の余白を削って線のはみ出しを防止 */
+            padding: 0;
             background: linear-gradient(to right, 
                 transparent 24%, black 24%, black 26%, 
                 transparent 26%, transparent 49%, 
@@ -54,10 +54,9 @@
             gap: 20px;
         }
 
-        /* アイコンプール（2列に並べる） */
         .items { 
             display: grid; 
-            grid-template-columns: 180px 180px; /* ★ 180pxの2列配置でコンパクトに */
+            grid-template-columns: 180px 180px; 
             gap: 20px; 
             padding: 20px; 
             border: 2px dashed #ccc; 
@@ -93,9 +92,9 @@
 
     <!-- 小謎入力エリア -->
     <div class="terminal-box">
-        <p>小謎の答えを入力してデータ解析を実行せよ</p>
+        <p>小謎の答えを入力せよ</p>
         <input type="text" id="answerInput" placeholder="例: くま">
-        <button class="btn" onclick="submitAnswer()">解析</button>
+        <button class="btn" onclick="submitAnswer()">解答</button>
         <div class="feedback" id="terminalFeedback"></div>
     </div>
 
@@ -123,7 +122,7 @@
                 <div class="item" draggable="true" id="SAT" ondragstart="drag(event)">🪐</div>
             </div>
             
-            <button class="btn execute-btn" onclick="executeMainPuzzle()">EXECUTE (実行)</button>
+            <button class="btn execute-btn" onclick="executeMainPuzzle()">判定</button>
         </div>
 
     </div>
