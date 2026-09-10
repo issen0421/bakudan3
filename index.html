@@ -13,14 +13,13 @@
         .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #555; }
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
 
-        /* --- スロットエリア（画像再現） --- */
+        /* --- スロットエリア（画像再現・3本線・はみ出し防止） --- */
         .puzzle-area { margin: 40px auto; max-width: 800px; }
-/* --- スロットエリア（3本線・はみ出し防止ver） --- */
+        
         .slots-container {
             display: flex; gap: 40px; 
-            width: fit-content; margin: 0 auto 40px auto; /* ←枠の幅にピッタリ合わせ、中央寄せにする */
+            width: fit-content; margin: 0 auto 40px auto;
             position: relative; padding: 20px 0;
-            /* 背景の横線3本を描画（3文字それぞれの干渉ラインを表現） */
             background: linear-gradient(to bottom, 
                 transparent 24%, black 24%, black 26%, 
                 transparent 26%, transparent 49%, 
@@ -30,7 +29,7 @@
         }
         
         .slot {
-            width: 60px; height: 180px; /* 1:3の長方形 */
+            width: 60px; height: 180px;
             border: 3px solid black; background: white;
             display: flex; align-items: center; justify-content: center;
             font-size: 30px; z-index: 1; transition: 0.2s;
@@ -38,7 +37,9 @@
         .slot.drag-over { background: #e0f7fa; border-color: #00acc1; }
 
         /* --- アイコンプール --- */
-        .items { display: flex; justify-content: center; gap: 30px; }
+        .items { display: flex; justify-content: center; gap: 30px; min-height: 200px; padding: 20px; border: 2px dashed transparent; }
+        .items.drag-over { border-color: #888; background: #eaeaea; border-radius: 10px; }
+        
         .item {
             width: 60px; height: 180px; background: white;
             display: flex; align-items: center; justify-content: center;
@@ -63,7 +64,7 @@
 
     <!-- メインパズルエリア -->
     <div class="puzzle-area">
-        <!-- スロット（1:3長方形） -->
+        <!-- スロット -->
         <div class="slots-container" id="slotsArea">
             <div class="slot" data-index="0" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             <div class="slot" data-index="1" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -72,8 +73,8 @@
             <div class="slot" data-index="4" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
         </div>
 
-        <!-- ドラッグ用アイコン -->
-        <div class="items" id="item-pool">
+        <!-- ドラッグ用アイコンプール -->
+        <div class="items" id="item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
             <div class="item" draggable="true" id="SUN" ondragstart="drag(event)">☀️</div>
             <div class="item" draggable="true" id="MON" ondragstart="drag(event)">🌙</div>
             <div class="item" draggable="true" id="TUE" ondragstart="drag(event)">🔥</div>
@@ -138,7 +139,6 @@
                 feedback.style.color = "#0f0";
                 feedback.innerText = `データ承認: [ ${word} ] を7セグモニターへ出力します`;
                 
-                // BEARなら -> 3(B), 1(E), 2(A), 1(R) -> "S3121"
                 let cmd = "S";
                 for(let i = 0; i < 4; i++) {
                     cmd += getRow(word[i]);
@@ -153,22 +153,44 @@
 
         // --- ドラッグ＆ドロップ処理 ---
         function drag(e) { e.dataTransfer.setData("text", e.target.id); }
-        function allowDrop(e) { e.preventDefault(); e.target.classList.add('drag-over'); }
+        function allowDrop(e) { 
+            e.preventDefault(); 
+            if(e.target.classList.contains('slot') || e.target.id === 'item-pool' || e.target.classList.contains('items')) {
+                e.target.classList.add('drag-over'); 
+            }
+        }
         function dragLeave(e) { e.target.classList.remove('drag-over'); }
+        
         function drop(e) {
             e.preventDefault();
             e.target.classList.remove('drag-over');
-            const data = e.dataTransfer.getData("text");
-            const element = document.getElementById(data);
             
-            // スロットに既に中身があればプールに戻す
-            if (e.target.children.length > 0) {
-                document.getElementById("item-pool").appendChild(e.target.children[0]);
+            // アイコンの上にドロップされた場合は親要素をターゲットにする
+            let dropTarget = e.target;
+            if (dropTarget.classList.contains('item')) {
+                dropTarget = dropTarget.parentElement;
             }
-            e.target.appendChild(element);
+
+            const data = e.dataTransfer.getData("text");
+            const draggedElement = document.getElementById(data);
+            
+            // スロットにドロップした場合
+            if (dropTarget.classList.contains('slot')) {
+                // 既に中身があればプールに戻す
+                if (dropTarget.children.length > 0) {
+                    document.getElementById("item-pool").appendChild(dropTarget.children[0]);
+                }
+                dropTarget.appendChild(draggedElement);
+            } 
+            // プールにドロップして戻す場合
+            else if (dropTarget.id === "item-pool" || dropTarget.classList.contains('items')) {
+                document.getElementById("item-pool").appendChild(draggedElement);
+            }
         }
 
         // --- 大謎(曜日スロット)の判定処理 ---
+        let ledTimer;
+
         function executeMainPuzzle() {
             const slots = document.querySelectorAll('.slot');
             let placedWords = [];
@@ -179,7 +201,7 @@
                     alert("5つのモジュールを全てセットしてください。");
                     return;
                 }
-                placedWords.push(slot.children[0].id); // "SUN", "THU" などを取得
+                placedWords.push(slot.children[0].id);
             }
 
             let validJoints = 0;
@@ -197,10 +219,24 @@
                 }
             }
 
-            // 正解数(0〜4)をLEDコマンドとして送信 ("L0" ~ "L4")
-            sendCommand("L" + validJoints);
+            // 既存の消灯タイマーをリセット
+            if (ledTimer) clearTimeout(ledTimer);
+
+            // 正解数に応じたハードウェア連携
+            if (validJoints === 0) {
+                sendCommand("L0");
+                sendCommand("B");  // 正解ゼロならブザーを一瞬鳴らす
+            } else {
+                sendCommand("L" + validJoints);
+                // 3秒後にLEDを消灯するタイマー
+                ledTimer = setTimeout(() => {
+                    sendCommand("L0");
+                }, 3000);
+            }
             
             if (validJoints === 4) {
+                // クリア時の演出（タイマーをキャンセルして光りっぱなしにする等）
+                clearTimeout(ledTimer);
                 setTimeout(() => alert("🎉 SYSTEM UNLOCKED! 完全クリア！"), 500);
             }
         }
