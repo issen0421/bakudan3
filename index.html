@@ -13,7 +13,7 @@
         .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #555; }
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
 
-        /* --- 画面全体のレイアウト（左右分割） --- */
+        /* --- 画面全体のレイアウト --- */
         .puzzle-layout {
             display: flex;
             justify-content: center;
@@ -61,11 +61,16 @@
             padding: 20px; 
             border: 2px dashed #ccc; 
             border-radius: 10px;
-            min-height: 200px;
             background: #fafafa;
         }
         .items.drag-over { border-color: #888; background: #eaeaea; }
         
+        /* ★定位置をキープするための透明な枠 */
+        .item-slot {
+            width: 180px; height: 60px;
+            background: transparent;
+        }
+
         .item {
             width: 180px; height: 60px;
             background: white;
@@ -113,13 +118,14 @@
         <!-- 右側：パーツ置き場 ＆ 実行ボタン -->
         <div class="side-panel">
             <div class="items" id="item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
-                <div class="item" draggable="true" id="SUN" ondragstart="drag(event)">☀️</div>
-                <div class="item" draggable="true" id="MON" ondragstart="drag(event)">🌙</div>
-                <div class="item" draggable="true" id="TUE" ondragstart="drag(event)">🔥</div>
-                <div class="item" draggable="true" id="WED" ondragstart="drag(event)">💧</div>
-                <div class="item" draggable="true" id="THU" ondragstart="drag(event)">🌳</div>
-                <div class="item" draggable="true" id="FRI" ondragstart="drag(event)">💰</div>
-                <div class="item" draggable="true" id="SAT" ondragstart="drag(event)">🪐</div>
+                <!-- ★それぞれのパーツに専用の「定位置枠 (pool-XXX)」を用意 -->
+                <div class="item-slot" id="pool-SUN"><div class="item" draggable="true" id="SUN" ondragstart="drag(event)">☀️</div></div>
+                <div class="item-slot" id="pool-MON"><div class="item" draggable="true" id="MON" ondragstart="drag(event)">🌙</div></div>
+                <div class="item-slot" id="pool-TUE"><div class="item" draggable="true" id="TUE" ondragstart="drag(event)">🔥</div></div>
+                <div class="item-slot" id="pool-WED"><div class="item" draggable="true" id="WED" ondragstart="drag(event)">💧</div></div>
+                <div class="item-slot" id="pool-THU"><div class="item" draggable="true" id="THU" ondragstart="drag(event)">🌳</div></div>
+                <div class="item-slot" id="pool-FRI"><div class="item" draggable="true" id="FRI" ondragstart="drag(event)">💰</div></div>
+                <div class="item-slot" id="pool-SAT"><div class="item" draggable="true" id="SAT" ondragstart="drag(event)">🪐</div></div>
             </div>
             
             <button class="btn execute-btn" onclick="executeMainPuzzle()">判定</button>
@@ -168,7 +174,6 @@
             if (writer) await writer.write(cmd + "\n");
         }
 
-        // --- 小謎の入力処理 ---
         function submitAnswer() {
             const input = document.getElementById("answerInput").value.trim();
             const feedback = document.getElementById("terminalFeedback");
@@ -200,12 +205,15 @@
 
         // --- ドラッグ＆ドロップ処理 ---
         function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+        
         function allowDrop(e) { 
             e.preventDefault(); 
-            if(e.target.classList.contains('slot') || e.target.id === 'item-pool' || e.target.classList.contains('items')) {
+            // 枠、プール全体、または定位置枠の上ならドロップ許可
+            if(e.target.classList.contains('slot') || e.target.id === 'item-pool' || e.target.classList.contains('items') || e.target.classList.contains('item-slot')) {
                 e.target.classList.add('drag-over'); 
             }
         }
+        
         function dragLeave(e) { e.target.classList.remove('drag-over'); }
         
         function drop(e) {
@@ -220,14 +228,18 @@
             const data = e.dataTransfer.getData("text");
             const draggedElement = document.getElementById(data);
             
+            // スロットにドロップした場合
             if (dropTarget.classList.contains('slot')) {
+                // 既に中身があれば、そのアイテムを「本来の定位置」に戻す
                 if (dropTarget.children.length > 0) {
-                    document.getElementById("item-pool").appendChild(dropTarget.children[0]);
+                    let existingItem = dropTarget.children[0];
+                    document.getElementById("pool-" + existingItem.id).appendChild(existingItem);
                 }
                 dropTarget.appendChild(draggedElement);
             } 
-            else if (dropTarget.id === "item-pool" || dropTarget.classList.contains('items')) {
-                document.getElementById("item-pool").appendChild(draggedElement);
+            // プールにドロップして戻す場合（必ず本来の定位置へ戻す）
+            else if (dropTarget.id === "item-pool" || dropTarget.classList.contains('items') || dropTarget.classList.contains('item-slot')) {
+                document.getElementById("pool-" + draggedElement.id).appendChild(draggedElement);
             }
         }
 
