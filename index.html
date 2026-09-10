@@ -65,7 +65,6 @@
         }
         .items.drag-over { border-color: #888; background: #eaeaea; }
         
-        /* ★定位置をキープするための透明な枠 */
         .item-slot {
             width: 180px; height: 60px;
             background: transparent;
@@ -118,7 +117,6 @@
         <!-- 右側：パーツ置き場 ＆ 実行ボタン -->
         <div class="side-panel">
             <div class="items" id="item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
-                <!-- ★それぞれのパーツに専用の「定位置枠 (pool-XXX)」を用意 -->
                 <div class="item-slot" id="pool-SUN"><div class="item" draggable="true" id="SUN" ondragstart="drag(event)">☀️</div></div>
                 <div class="item-slot" id="pool-MON"><div class="item" draggable="true" id="MON" ondragstart="drag(event)">🌙</div></div>
                 <div class="item-slot" id="pool-TUE"><div class="item" draggable="true" id="TUE" ondragstart="drag(event)">🔥</div></div>
@@ -139,12 +137,13 @@
         let segTimer; 
         let ledTimer; 
 
+        // ★ 「かぎ: KEYS」を「さかな: FISH」に変更しました
         const puzzleDict = {
             "くま": "BEAR",
             "とり": "BIRD",
             "ほし": "STAR",
             "つき": "MOON",
-            "かぎ": "KEYS",
+            "さかな": "FISH",
             "ほん": "BOOK"
         };
 
@@ -208,7 +207,6 @@
         
         function allowDrop(e) { 
             e.preventDefault(); 
-            // 枠、プール全体、または定位置枠の上ならドロップ許可
             if(e.target.classList.contains('slot') || e.target.id === 'item-pool' || e.target.classList.contains('items') || e.target.classList.contains('item-slot')) {
                 e.target.classList.add('drag-over'); 
             }
@@ -228,16 +226,13 @@
             const data = e.dataTransfer.getData("text");
             const draggedElement = document.getElementById(data);
             
-            // スロットにドロップした場合
             if (dropTarget.classList.contains('slot')) {
-                // 既に中身があれば、そのアイテムを「本来の定位置」に戻す
                 if (dropTarget.children.length > 0) {
                     let existingItem = dropTarget.children[0];
                     document.getElementById("pool-" + existingItem.id).appendChild(existingItem);
                 }
                 dropTarget.appendChild(draggedElement);
             } 
-            // プールにドロップして戻す場合（必ず本来の定位置へ戻す）
             else if (dropTarget.id === "item-pool" || dropTarget.classList.contains('items') || dropTarget.classList.contains('item-slot')) {
                 document.getElementById("pool-" + draggedElement.id).appendChild(draggedElement);
             }
