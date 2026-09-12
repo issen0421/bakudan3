@@ -13,10 +13,19 @@
         .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #555; }
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; white-space: pre-line; }
 
-        /* ★追加：ヒント画像エリア */
-        .hint-area { margin-top: 15px; display: none; background: #111; padding: 10px; border-radius: 5px; border: 1px solid #444; }
+        /* --- ヒント画像エリア（スライダー形式） --- */
+        .hint-area { margin-top: 15px; display: none; background: #111; padding: 15px; border-radius: 5px; border: 1px solid #444; }
         .hint-area p { color: #aaa; margin: 0 0 10px 0; font-size: 14px; }
-        .hint-area img { max-width: 100%; border-radius: 3px; }
+        
+        .carousel-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .carousel-btn { background: none; border: none; color: #0f0; font-size: 30px; cursor: pointer; padding: 0 10px; transition: 0.2s; }
+        .carousel-btn:hover { color: #fff; }
+        .carousel-btn:disabled { color: #444; cursor: not-allowed; }
+        
+        .hint-image-wrapper { width: 300px; height: 200px; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 5px; overflow: hidden; }
+        .hint-image-wrapper img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        
+        .carousel-indicator { color: #888; font-size: 14px; margin-top: 10px; }
 
         /* --- 画面全体のレイアウト --- */
         .puzzle-layout {
@@ -106,10 +115,17 @@
         <button class="btn" onclick="submitAnswer()">解答</button>
         <div class="feedback" id="terminalFeedback"></div>
         
-        <!-- ★追加：ヒント画像表示部分 -->
+        <!-- ★ヒント画像表示部分（スライダー） -->
         <div class="hint-area" id="hintArea">
             <p>【取得した解析データ: <span id="hintCount">0</span>/6】</p>
-            <img id="hintImage" src="" alt="ヒント画像">
+            <div class="carousel-container">
+                <button class="carousel-btn" id="prevBtn" onclick="prevSlide()">◀</button>
+                <div class="hint-image-wrapper">
+                    <img id="hintImage" src="" alt="ヒント画像">
+                </div>
+                <button class="carousel-btn" id="nextBtn" onclick="nextSlide()">▶</button>
+            </div>
+            <div class="carousel-indicator" id="carouselIndicator"></div>
         </div>
     </div>
 
@@ -148,11 +164,15 @@
         let segTimer; 
         let ledTimer; 
 
-        // ★追加：解けた小謎を記録するためのリスト（重複判定用）
+        // 小謎の記録リスト
         const solvedPuzzles = new Set();
+        // 取得済みの画像URLリスト（スライダー表示用）
+        let unlockedImages = [];
+        // 現在表示しているスライドのインデックス
+        let currentSlideIndex = 0;
 
-        // ★追加：正解数に応じたヒント画像のリンク配列（1問目〜6問目）
-        const hintImages = [
+        // 全てのヒント画像マスターデータ
+        const masterHintImages = [
             "ここに1問目正解時の画像リンクを貼ってください",
             "ここに2問目正解時の画像リンクを貼ってください",
             "ここに3問目正解時の画像リンクを貼ってください",
@@ -196,6 +216,32 @@
             if (writer) await writer.write(cmd + "\n");
         }
 
+        // --- スライダーの描画更新 ---
+        function updateCarousel() {
+            if (unlockedImages.length === 0) return;
+            
+            document.getElementById("hintImage").src = unlockedImages[currentSlideIndex];
+            document.getElementById("carouselIndicator").innerText = `${currentSlideIndex + 1} / ${unlockedImages.length}`;
+            
+            // 矢印ボタンの有効/無効切り替え
+            document.getElementById("prevBtn").disabled = currentSlideIndex === 0;
+            document.getElementById("nextBtn").disabled = currentSlideIndex === unlockedImages.length - 1;
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                updateCarousel();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < unlockedImages.length - 1) {
+                currentSlideIndex++;
+                updateCarousel();
+            }
+        }
+
         function submitAnswer() {
             const input = document.getElementById("answerInput").value.trim();
             const feedback = document.getElementById("terminalFeedback");
@@ -205,23 +251,25 @@
             if (puzzleDict[input]) {
                 const word = puzzleDict[input];
                 
-                // ★追加：今まで入力してない言葉なら記録してスコアを増やす
+                // 新しい言葉が入力されたら、スライダーに画像を追加
                 if (!solvedPuzzles.has(input)) {
                     solvedPuzzles.add(input);
+                    const newScore = solvedPuzzles.size;
+                    unlockedImages.push(masterHintImages[newScore - 1]);
+                    
+                    // 新しい画像が追加されたら、その最新画像に自動でスライドを合わせる
+                    currentSlideIndex = unlockedImages.length - 1;
                 }
                 
-                // 現在の正解数（1〜6）
                 const currentScore = solvedPuzzles.size;
-
                 feedback.style.color = "#0f0";
                 feedback.innerText = `データ承認: 該当データを7セグモニターへ出力します\n（データ解析進捗: ${currentScore}/6）`;
                 
-                // ★追加：ヒント画像の表示処理
+                // スライダーエリアを表示して更新
                 document.getElementById("hintCount").innerText = currentScore;
-                document.getElementById("hintImage").src = hintImages[currentScore - 1]; // 配列は0から始まるので -1
                 document.getElementById("hintArea").style.display = "block";
+                updateCarousel();
                 
-                // Arduinoへ7セグ表示コマンド送信
                 let cmd = "S";
                 for(let i = 0; i < 4; i++) {
                     cmd += getRow(word[i]);
