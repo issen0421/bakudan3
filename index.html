@@ -11,7 +11,12 @@
         /* --- 小謎入力エリア --- */
         .terminal-box { background: #222; color: #0f0; padding: 20px; border-radius: 5px; margin: 10px auto; max-width: 600px; }
         .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #555; }
-        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; white-space: pre-line; }
+
+        /* ★追加：ヒント画像エリア */
+        .hint-area { margin-top: 15px; display: none; background: #111; padding: 10px; border-radius: 5px; border: 1px solid #444; }
+        .hint-area p { color: #aaa; margin: 0 0 10px 0; font-size: 14px; }
+        .hint-area img { max-width: 100%; border-radius: 3px; }
 
         /* --- 画面全体のレイアウト --- */
         .puzzle-layout {
@@ -100,6 +105,12 @@
         <input type="text" id="answerInput" placeholder="例: くま">
         <button class="btn" onclick="submitAnswer()">解答</button>
         <div class="feedback" id="terminalFeedback"></div>
+        
+        <!-- ★追加：ヒント画像表示部分 -->
+        <div class="hint-area" id="hintArea">
+            <p>【取得した解析データ: <span id="hintCount">0</span>/6】</p>
+            <img id="hintImage" src="" alt="ヒント画像">
+        </div>
     </div>
 
     <!-- メインパズルエリア（左右分割） -->
@@ -137,7 +148,19 @@
         let segTimer; 
         let ledTimer; 
 
-        // ★ 「かぎ: KEYS」を「さかな: FISH」に変更しました
+        // ★追加：解けた小謎を記録するためのリスト（重複判定用）
+        const solvedPuzzles = new Set();
+
+        // ★追加：正解数に応じたヒント画像のリンク配列（1問目〜6問目）
+        const hintImages = [
+            "ここに1問目正解時の画像リンクを貼ってください",
+            "ここに2問目正解時の画像リンクを貼ってください",
+            "ここに3問目正解時の画像リンクを貼ってください",
+            "ここに4問目正解時の画像リンクを貼ってください",
+            "ここに5問目正解時の画像リンクを貼ってください",
+            "ここに6問目正解時の画像リンクを貼ってください"
+        ];
+
         const puzzleDict = {
             "くま": "BEAR",
             "とり": "BIRD",
@@ -181,9 +204,24 @@
 
             if (puzzleDict[input]) {
                 const word = puzzleDict[input];
-                feedback.style.color = "#0f0";
-                feedback.innerText = `データ承認: 該当データを7セグモニターへ出力します`;
                 
+                // ★追加：今まで入力してない言葉なら記録してスコアを増やす
+                if (!solvedPuzzles.has(input)) {
+                    solvedPuzzles.add(input);
+                }
+                
+                // 現在の正解数（1〜6）
+                const currentScore = solvedPuzzles.size;
+
+                feedback.style.color = "#0f0";
+                feedback.innerText = `データ承認: 該当データを7セグモニターへ出力します\n（データ解析進捗: ${currentScore}/6）`;
+                
+                // ★追加：ヒント画像の表示処理
+                document.getElementById("hintCount").innerText = currentScore;
+                document.getElementById("hintImage").src = hintImages[currentScore - 1]; // 配列は0から始まるので -1
+                document.getElementById("hintArea").style.display = "block";
+                
+                // Arduinoへ7セグ表示コマンド送信
                 let cmd = "S";
                 for(let i = 0; i < 4; i++) {
                     cmd += getRow(word[i]);
