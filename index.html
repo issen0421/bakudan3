@@ -60,6 +60,9 @@
         .s2-node:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(230, 237, 243, 0.3); }
         .s2-node.selected { border-color: #1f6feb; box-shadow: 0 0 30px rgba(31, 111, 235, 0.8); background: #fff; }
         .s2-node.locked { cursor: not-allowed; opacity: 0.5; }
+        
+        /* 満杯時のスタイル（水色） */
+        .s2-node.full { background: #58a6ff; border-color: #1f6feb; box-shadow: 0 0 20px rgba(88, 166, 255, 0.5); }
 
         /* --- STEP 3: ターミナル --- */
         .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; margin: 0 auto; max-width: 900px; }
@@ -103,7 +106,7 @@
         
         <div class="terminal-box">
             <p>小謎の答えを入力せよ</p>
-            <input type="text" id="answerInput-s1" placeholder="例: あめりか">
+            <input type="text" id="answerInput-s1" placeholder="答えを入力">
             <button onclick="submitAnswerS1()">解答</button>
             <div class="feedback" id="terminalFeedback-s1"></div>
             <div class="hint-area" id="hintArea-s1">
@@ -162,7 +165,7 @@
         </div>
 
         <div class="s2-container">
-            <div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div>
+            <div class="s2-node full" id="node-0" onclick="handleNodeClick(0)"></div>
             <div class="s2-node" id="node-1" onclick="handleNodeClick(1)"></div>
             <div class="s2-node" id="node-2" onclick="handleNodeClick(2)"></div>
         </div>
@@ -179,7 +182,7 @@
 
         <div class="terminal-box">
             <p>小謎の答えを入力せよ</p>
-            <input type="text" id="answerInput-s3" placeholder="例: くま">
+            <input type="text" id="answerInput-s3" placeholder="答えを入力">
             <button onclick="submitAnswerS3()">解答</button>
             <div class="feedback" id="terminalFeedback-s3"></div>
             <div class="hint-area" id="hintArea-s3">
@@ -386,7 +389,6 @@
         let s2_solved = new Set();
         let s2_images = [];
         let s2_slideIndex = 0;
-        // ※2ndの小謎が4問想定の場合（数は増減可能です）
         const s2_masterImages = ["s2_hint1.jpg", "s2_hint2.jpg", "s2_hint3.jpg", "s2_hint4.jpg"]; 
         const s2_dict = { "てすと1": "1", "てすと2": "2", "てすと3": "3", "てすと4": "4" };
 
@@ -427,6 +429,18 @@
         let s2_selectedNode = null;
         let s2_isTransferring = false;
 
+        // ノードの見た目を更新（満杯なら水色にする）
+        function updateNodeColors() {
+            for (let i = 0; i < 3; i++) {
+                const node = document.getElementById(`node-${i}`);
+                if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) {
+                    node.classList.add('full');
+                } else {
+                    node.classList.remove('full');
+                }
+            }
+        }
+
         function handleNodeClick(index) {
             if (s2_isTransferring) return; 
 
@@ -449,7 +463,10 @@
                 if (transferAmount > 0) {
                     s2_volumes[from] -= transferAmount;
                     s2_volumes[to] += transferAmount;
-                    playTransferBuzzer(transferAmount, checkClearStep2);
+                    playTransferBuzzer(transferAmount, () => {
+                        updateNodeColors();
+                        checkClearStep2();
+                    });
                 }
             }
         }
@@ -484,6 +501,8 @@
             s2_volumes = [10, 0, 0];
             s2_selectedNode = null;
             document.querySelectorAll('.s2-node').forEach(n => n.classList.remove('selected'));
+            updateNodeColors();
+            
             document.getElementById("result-step2").innerText = "システムを初期化しました。";
             document.getElementById("result-step2").style.color = "#8b949e";
             setTimeout(() => { document.getElementById("result-step2").innerText = ""; }, 2000);
@@ -581,6 +600,11 @@
                 }, 500);
             }
         }
+        
+        // 初期状態の色を反映
+        window.addEventListener('DOMContentLoaded', () => {
+            updateNodeColors();
+        });
     </script>
 </body>
 </html>
