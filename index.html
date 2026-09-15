@@ -22,33 +22,10 @@
         /* --- 共通 UI --- */
         .execute-btn { background: #238636; color: white; font-size: 20px; padding: 15px; width: 100%; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .execute-btn:hover { background: #2ea043; }
-        .result-msg { margin-top: 20px; font-size: 20px; font-weight: bold; min-height: 30px; }
-
-        /* --- STEP 1: C-123 制作ソフト --- */
-        .instruction { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 8px; margin: 0 auto 30px auto; max-width: 700px; font-size: 16px; line-height: 1.5; }
+        .result-msg { margin-top: 20px; font-size: 20px; font-weight: bold; min-height: 30px; line-height: 1.5; }
         .highlight { color: #58a6ff; font-weight: bold; }
-        
-        .s1-items { display: flex; justify-content: center; gap: 20px; margin: 30px 0; padding: 20px; border: 2px dashed #444; border-radius: 10px; background: #161b22; }
-        .s1-item-slot { width: 60px; height: 60px; background: transparent; }
-        .s1-item { width: 60px; height: 60px; background: #30363d; border: 2px solid #8b949e; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: grab; transition: transform 0.1s; color: #fff; }
-        .s1-item:active { cursor: grabbing; border-color: #58a6ff; transform: scale(0.95); }
-        
-        .s1-slots { display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; }
-        .s1-slot { width: 60px; height: 60px; border: 2px dashed #555; background: #0d1117; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .s1-slot.drag-over { background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; }
 
-        /* --- STEP 2: データ転送 (抽象化水汲み) --- */
-        .s2-container { display: flex; justify-content: center; gap: 60px; margin: 60px 0; }
-        .s2-node { 
-            width: 120px; height: 120px; border-radius: 50%; background: #e6edf3; 
-            border: 4px solid #30363d; cursor: pointer; transition: 0.3s; 
-            box-shadow: 0 0 15px rgba(230, 237, 243, 0.1);
-        }
-        .s2-node:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(230, 237, 243, 0.3); }
-        .s2-node.selected { border-color: #1f6feb; box-shadow: 0 0 30px rgba(31, 111, 235, 0.8); background: #fff; }
-        .s2-node.locked { cursor: not-allowed; opacity: 0.5; }
-
-        /* --- STEP 3: ターミナル --- */
+        /* --- 共通 ターミナルボックス --- */
         .terminal-box { background: #000; color: #0f0; padding: 20px; border-radius: 5px; margin: 0 auto 30px auto; max-width: 600px; border: 1px solid #333; }
         .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #0f0; background: #111; color: #0f0; outline: none; }
         .terminal-box button { background: #0f0; color: #000; border: none; padding: 9px 20px; font-size: 16px; cursor: pointer; font-weight: bold; }
@@ -63,6 +40,28 @@
         .hint-image-wrapper img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .carousel-indicator { color: #0f0; font-size: 14px; margin-top: 10px; }
 
+        /* --- STEP 1: C-123 制作ソフト --- */
+        .s1-items { display: flex; justify-content: center; gap: 20px; margin: 30px 0; padding: 20px; border: 2px dashed #444; border-radius: 10px; background: #161b22; }
+        .s1-item-slot { width: 60px; height: 60px; background: transparent; }
+        .s1-item { width: 60px; height: 60px; background: #30363d; border: 2px solid #8b949e; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: grab; transition: transform 0.1s; color: #fff; }
+        .s1-item:active { cursor: grabbing; border-color: #58a6ff; transform: scale(0.95); }
+        
+        .s1-slots { display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; }
+        .s1-slot { width: 60px; height: 60px; border: 2px dashed #555; background: #0d1117; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .s1-slot.drag-over { background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; }
+
+        /* --- STEP 2: データ転送 (抽象化水汲み) --- */
+        .s2-container { display: flex; justify-content: center; gap: 60px; margin: 30px 0 60px 0; }
+        .s2-node { 
+            width: 120px; height: 120px; border-radius: 50%; background: #e6edf3; 
+            border: 4px solid #30363d; cursor: pointer; transition: 0.3s; 
+            box-shadow: 0 0 15px rgba(230, 237, 243, 0.1);
+        }
+        .s2-node:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(230, 237, 243, 0.3); }
+        .s2-node.selected { border-color: #1f6feb; box-shadow: 0 0 30px rgba(31, 111, 235, 0.8); background: #fff; }
+        .s2-node.locked { cursor: not-allowed; opacity: 0.5; }
+
+        /* --- STEP 3: ターミナル --- */
         .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; margin: 0 auto; max-width: 900px; }
         
         .s3-slots-container {
@@ -102,10 +101,20 @@
     <div class="app-container active" id="app-step1">
         <h2>C-123 制作ソフト</h2>
         
-        <div class="instruction" id="instruction-text">
-            【ミッション1】<br>
-            街の情報を元にA〜Fのデータを解析し、<br>
-            <span class="highlight">対象を「小さい順」に並び替えて</span>システムにセットせよ。
+        <div class="terminal-box">
+            <p>小謎の答えを入力せよ</p>
+            <input type="text" id="answerInput-s1" placeholder="例: あめりか">
+            <button onclick="submitAnswerS1()">解答</button>
+            <div class="feedback" id="terminalFeedback-s1"></div>
+            <div class="hint-area" id="hintArea-s1">
+                <p>【取得した解析データ: <span id="hintCount-s1">0</span>/6】</p>
+                <div class="carousel-container">
+                    <button class="carousel-btn" id="prevBtn-s1" onclick="prevSlideS1()">◀</button>
+                    <div class="hint-image-wrapper"><img id="hintImage-s1" src="" alt="ヒント画像"></div>
+                    <button class="carousel-btn" id="nextBtn-s1" onclick="nextSlideS1()">▶</button>
+                </div>
+                <div class="carousel-indicator" id="carouselIndicator-s1"></div>
+            </div>
         </div>
 
         <div class="s1-slots">
@@ -136,11 +145,20 @@
     <div class="app-container" id="app-step2">
         <h2>データ転送プロトコル</h2>
         
-        <div class="instruction">
-            【ミッション2】<br>
-            3つのデータノード間で情報を転送し、<br>
-            <span class="highlight">左側の2つのノードを「完全に均等な状態（5:5）」</span>に同期せよ。<br>
-            ※ノードを選択して転送先を指定する。転送されたデータ量は音でフィードバックされる。
+        <div class="terminal-box">
+            <p>小謎の答えを入力せよ</p>
+            <input type="text" id="answerInput-s2" placeholder="答えを入力">
+            <button onclick="submitAnswerS2()">解答</button>
+            <div class="feedback" id="terminalFeedback-s2"></div>
+            <div class="hint-area" id="hintArea-s2">
+                <p>【取得した解析データ: <span id="hintCount-s2">0</span>/4】</p>
+                <div class="carousel-container">
+                    <button class="carousel-btn" id="prevBtn-s2" onclick="prevSlideS2()">◀</button>
+                    <div class="hint-image-wrapper"><img id="hintImage-s2" src="" alt="ヒント画像"></div>
+                    <button class="carousel-btn" id="nextBtn-s2" onclick="nextSlideS2()">▶</button>
+                </div>
+                <div class="carousel-indicator" id="carouselIndicator-s2"></div>
+            </div>
         </div>
 
         <div class="s2-container">
@@ -157,23 +175,21 @@
     <!-- APP 3: ターミナル (STEP3) -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        
+        <h2>ターミナル</h2>
+
         <div class="terminal-box">
             <p>小謎の答えを入力せよ</p>
-            <input type="text" id="answerInput" placeholder="例: くま">
-            <button onclick="submitAnswer()">解答</button>
-            <div class="feedback" id="terminalFeedback"></div>
-            
-            <div class="hint-area" id="hintArea">
-                <p>【取得した解析データ: <span id="hintCount">0</span>/6】</p>
+            <input type="text" id="answerInput-s3" placeholder="例: くま">
+            <button onclick="submitAnswerS3()">解答</button>
+            <div class="feedback" id="terminalFeedback-s3"></div>
+            <div class="hint-area" id="hintArea-s3">
+                <p>【取得した解析データ: <span id="hintCount-s3">0</span>/6】</p>
                 <div class="carousel-container">
-                    <button class="carousel-btn" id="prevBtn" onclick="prevSlide()">◀</button>
-                    <div class="hint-image-wrapper">
-                        <img id="hintImage" src="" alt="ヒント画像">
-                    </div>
-                    <button class="carousel-btn" id="nextBtn" onclick="nextSlide()">▶</button>
+                    <button class="carousel-btn" id="prevBtn-s3" onclick="prevSlideS3()">◀</button>
+                    <div class="hint-image-wrapper"><img id="hintImage-s3" src="" alt="ヒント画像"></div>
+                    <button class="carousel-btn" id="nextBtn-s3" onclick="nextSlideS3()">▶</button>
                 </div>
-                <div class="carousel-indicator" id="carouselIndicator"></div>
+                <div class="carousel-indicator" id="carouselIndicator-s3"></div>
             </div>
         </div>
 
@@ -275,6 +291,44 @@
         // ==========================================
         // STEP1 専用ロジック
         // ==========================================
+        let s1_solved = new Set();
+        let s1_images = [];
+        let s1_slideIndex = 0;
+        const s1_masterImages = ["s1_hint1.jpg", "s1_hint2.jpg", "s1_hint3.jpg", "s1_hint4.jpg", "s1_hint5.jpg", "s1_hint6.jpg"];
+        const s1_dict = { "あめりか": "A", "ういるす": "B", "かしつき": "C", "くちびる": "D", "こくばん": "E", "ふうしゃ": "F" };
+
+        function updateCarouselS1() {
+            if (s1_images.length === 0) return;
+            document.getElementById("hintImage-s1").src = s1_images[s1_slideIndex];
+            document.getElementById("carouselIndicator-s1").innerText = `${s1_slideIndex + 1} / ${s1_images.length}`;
+            document.getElementById("prevBtn-s1").disabled = s1_slideIndex === 0;
+            document.getElementById("nextBtn-s1").disabled = s1_slideIndex === s1_images.length - 1;
+        }
+        function prevSlideS1() { if (s1_slideIndex > 0) { s1_slideIndex--; updateCarouselS1(); } }
+        function nextSlideS1() { if (s1_slideIndex < s1_images.length - 1) { s1_slideIndex++; updateCarouselS1(); } }
+
+        function submitAnswerS1() {
+            const input = document.getElementById("answerInput-s1").value.trim();
+            const feedback = document.getElementById("terminalFeedback-s1");
+            if (s1_dict[input]) {
+                if (!s1_solved.has(input)) {
+                    s1_solved.add(input);
+                    s1_images.push(s1_masterImages[s1_solved.size - 1]);
+                    s1_slideIndex = s1_images.length - 1;
+                }
+                feedback.style.color = "#0f0";
+                feedback.innerText = `データ承認（進捗: ${s1_solved.size}/6）`;
+                document.getElementById("hintCount-s1").innerText = s1_solved.size;
+                document.getElementById("hintArea-s1").style.display = "block";
+                updateCarouselS1();
+                sendCommand("B");
+            } else {
+                feedback.style.color = "red";
+                feedback.innerText = "エラー: 該当するデータが見つかりません";
+            }
+        }
+
+        // --- STEP1 パズル ---
         let currentPhase = 1;
         const answerPhase1 = ["B", "D", "C", "E", "F", "A"];
         const answerPhase2 = ["A", "E", "B", "F", "D", "C"];
@@ -309,17 +363,11 @@
             const resultDiv = document.getElementById("result-step1");
             if (isCorrect) {
                 if (currentPhase === 1) {
-                    resultDiv.innerText = "【解析完了】ライト取付指示書をダウンロードしました。";
+                    resultDiv.innerHTML = "【解析完了】ライト取付指示書をダウンロードしました。<br><br><span style='color:#58a6ff;font-size:16px;'>指示書に従い4つのライトを配線し、<br>ブロックの「真のデータ」で再度並び替えよ。</span>";
                     resultDiv.style.color = "#2ea043";
-                    document.getElementById("instruction-text").innerHTML = `
-                        【ミッション2】<br>
-                        指示書に従い、基盤に<span class="highlight">4つのライトを配線</span>せよ。<br>
-                        その後、ブロックに隠された「真のデータ」を読み取り、再度並び替えを実行せよ。`;
                     currentPhase = 2;
                     setTimeout(() => {
                         placedItems.forEach(id => document.getElementById("pool-" + id).appendChild(document.getElementById(id)));
-                        resultDiv.innerText = "ハードウェアとのリンクを確立しました。";
-                        resultDiv.style.color = "#58a6ff";
                     }, 3000);
                 } else if (currentPhase === 2) {
                     resultDiv.innerText = "🎉 CLEAR! ファイル①のダウンロードが完了しました。";
@@ -333,44 +381,74 @@
         }
 
         // ==========================================
-        // STEP2 専用ロジック (水汲みパズル / 10L, 7L, 3L)
+        // STEP2 専用ロジック
         // ==========================================
+        let s2_solved = new Set();
+        let s2_images = [];
+        let s2_slideIndex = 0;
+        // ※2ndの小謎が4問想定の場合（数は増減可能です）
+        const s2_masterImages = ["s2_hint1.jpg", "s2_hint2.jpg", "s2_hint3.jpg", "s2_hint4.jpg"]; 
+        const s2_dict = { "てすと1": "1", "てすと2": "2", "てすと3": "3", "てすと4": "4" };
+
+        function updateCarouselS2() {
+            if (s2_images.length === 0) return;
+            document.getElementById("hintImage-s2").src = s2_images[s2_slideIndex];
+            document.getElementById("carouselIndicator-s2").innerText = `${s2_slideIndex + 1} / ${s2_images.length}`;
+            document.getElementById("prevBtn-s2").disabled = s2_slideIndex === 0;
+            document.getElementById("nextBtn-s2").disabled = s2_slideIndex === s2_images.length - 1;
+        }
+        function prevSlideS2() { if (s2_slideIndex > 0) { s2_slideIndex--; updateCarouselS2(); } }
+        function nextSlideS2() { if (s2_slideIndex < s2_images.length - 1) { s2_slideIndex++; updateCarouselS2(); } }
+
+        function submitAnswerS2() {
+            const input = document.getElementById("answerInput-s2").value.trim();
+            const feedback = document.getElementById("terminalFeedback-s2");
+            if (s2_dict[input]) {
+                if (!s2_solved.has(input)) {
+                    s2_solved.add(input);
+                    s2_images.push(s2_masterImages[s2_solved.size - 1]);
+                    s2_slideIndex = s2_images.length - 1;
+                }
+                feedback.style.color = "#0f0";
+                feedback.innerText = `データ承認（進捗: ${s2_solved.size}/${Object.keys(s2_dict).length}）`;
+                document.getElementById("hintCount-s2").innerText = s2_solved.size;
+                document.getElementById("hintArea-s2").style.display = "block";
+                updateCarouselS2();
+                sendCommand("B");
+            } else {
+                feedback.style.color = "red";
+                feedback.innerText = "エラー: 該当するデータが見つかりません";
+            }
+        }
+
+        // --- STEP2 パズル (水汲み) ---
         const S2_CAPACITIES = [10, 7, 3];
         let s2_volumes = [10, 0, 0];
         let s2_selectedNode = null;
         let s2_isTransferring = false;
 
         function handleNodeClick(index) {
-            if (s2_isTransferring) return; // 音が鳴っている最中は操作ブロック
+            if (s2_isTransferring) return; 
 
             if (s2_selectedNode === null) {
-                // 1回目のクリック (転送元を選択)
-                if (s2_volumes[index] === 0) return; // 空のノードからは転送できない
-                
+                if (s2_volumes[index] === 0) return; 
                 s2_selectedNode = index;
                 document.getElementById(`node-${index}`).classList.add('selected');
             } else {
-                // 2回目のクリック (転送先を選択)
                 if (s2_selectedNode === index) {
-                    // 同じノードをクリックした場合はキャンセル
                     document.getElementById(`node-${index}`).classList.remove('selected');
                     s2_selectedNode = null;
                     return;
                 }
-
                 let from = s2_selectedNode;
                 let to = index;
                 document.getElementById(`node-${from}`).classList.remove('selected');
                 s2_selectedNode = null;
 
-                // 転送量を計算 (移動元の全量 or 移動先の空き容量 の小さい方)
                 let transferAmount = Math.min(s2_volumes[from], S2_CAPACITIES[to] - s2_volumes[to]);
-
                 if (transferAmount > 0) {
                     s2_volumes[from] -= transferAmount;
                     s2_volumes[to] += transferAmount;
-                    
-                    // 移動した量だけブザーを鳴らす
                     playTransferBuzzer(transferAmount, checkClearStep2);
                 }
             }
@@ -379,15 +457,11 @@
         function playTransferBuzzer(count, callback) {
             let beeps = 0;
             s2_isTransferring = true;
-            
-            // 操作ロックの視覚的フィードバック
             document.querySelectorAll('.s2-node').forEach(n => n.classList.add('locked'));
             
-            // 0.5秒間隔でブザーを鳴らす
             const interval = setInterval(() => {
                 sendCommand("B");
                 beeps++;
-                
                 if (beeps >= count) {
                     clearInterval(interval);
                     s2_isTransferring = false;
@@ -398,7 +472,6 @@
         }
 
         function checkClearStep2() {
-            // 左側2つのノードが 5:5 になっていればクリア
             if (s2_volumes[0] === 5 && s2_volumes[1] === 5) {
                 const resultDiv = document.getElementById("result-step2");
                 resultDiv.innerText = "🎉 同期完了！ファイル②のダウンロードが完了しました。";
@@ -419,66 +492,51 @@
         // ==========================================
         // STEP3 専用ロジック
         // ==========================================
-        let segTimer, ledTimer; 
-        const solvedPuzzles = new Set();
-        let unlockedImages = [];
-        let currentSlideIndex = 0;
+        let segTimerS3, ledTimer; 
+        let s3_solved = new Set();
+        let s3_images = [];
+        let s3_slideIndex = 0;
 
-        const masterHintImages = [
-            "ここに1問目正解時の画像リンク",
-            "step3_hint1.jpg",
-            "step3_hint3.jpg",
-            "step3_hint4.jpg",
-            "step3_hint5.jpg",
-            "step3_hint2.jpg"
+        const s3_masterImages = [
+            "ここに1問目正解時の画像リンク", "step3_hint1.jpg", "step3_hint3.jpg", 
+            "step3_hint4.jpg", "step3_hint5.jpg", "step3_hint2.jpg"
         ];
+        const s3_dict = { "くま": "BEAR", "とり": "BIRD", "ほし": "STAR", "つき": "MOON", "さかな": "FISH", "ほん": "BOOK" };
 
-        const puzzleDict = { "くま": "BEAR", "とり": "BIRD", "ほし": "STAR", "つき": "MOON", "さかな": "FISH", "ほん": "BOOK" };
-        const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
-
-        function getRow(char) {
-            if (QWERTY_TOP.includes(char)) return 1;
-            if (QWERTY_MID.includes(char)) return 2;
-            if (QWERTY_BOT.includes(char)) return 3;
-            return 0;
+        function updateCarouselS3() {
+            if (s3_images.length === 0) return;
+            document.getElementById("hintImage-s3").src = s3_images[s3_slideIndex];
+            document.getElementById("carouselIndicator-s3").innerText = `${s3_slideIndex + 1} / ${s3_images.length}`;
+            document.getElementById("prevBtn-s3").disabled = s3_slideIndex === 0;
+            document.getElementById("nextBtn-s3").disabled = s3_slideIndex === s3_images.length - 1;
         }
+        function prevSlideS3() { if (s3_slideIndex > 0) { s3_slideIndex--; updateCarouselS3(); } }
+        function nextSlideS3() { if (s3_slideIndex < s3_images.length - 1) { s3_slideIndex++; updateCarouselS3(); } }
 
-        function dragStep3(e) { e.dataTransfer.setData("text", e.target.id); }
+        function submitAnswerS3() {
+            const input = document.getElementById("answerInput-s3").value.trim();
+            const feedback = document.getElementById("terminalFeedback-s3");
+            if (segTimerS3) clearTimeout(segTimerS3);
 
-        function updateCarousel() {
-            if (unlockedImages.length === 0) return;
-            document.getElementById("hintImage").src = unlockedImages[currentSlideIndex];
-            document.getElementById("carouselIndicator").innerText = `${currentSlideIndex + 1} / ${unlockedImages.length}`;
-            document.getElementById("prevBtn").disabled = currentSlideIndex === 0;
-            document.getElementById("nextBtn").disabled = currentSlideIndex === unlockedImages.length - 1;
-        }
-        function prevSlide() { if (currentSlideIndex > 0) { currentSlideIndex--; updateCarousel(); } }
-        function nextSlide() { if (currentSlideIndex < unlockedImages.length - 1) { currentSlideIndex++; updateCarousel(); } }
-
-        function submitAnswer() {
-            const input = document.getElementById("answerInput").value.trim();
-            const feedback = document.getElementById("terminalFeedback");
-            if (segTimer) clearTimeout(segTimer);
-
-            if (puzzleDict[input]) {
-                const word = puzzleDict[input];
-                if (!solvedPuzzles.has(input)) {
-                    solvedPuzzles.add(input);
-                    unlockedImages.push(masterHintImages[solvedPuzzles.size - 1]);
-                    currentSlideIndex = unlockedImages.length - 1;
+            if (s3_dict[input]) {
+                const word = s3_dict[input];
+                if (!s3_solved.has(input)) {
+                    s3_solved.add(input);
+                    s3_images.push(s3_masterImages[s3_solved.size - 1]);
+                    s3_slideIndex = s3_images.length - 1;
                 }
                 feedback.style.color = "#0f0";
-                feedback.innerText = `データ承認: 該当データを7セグモニターへ出力します\n（データ解析進捗: ${solvedPuzzles.size}/6）`;
+                feedback.innerText = `データ承認: 該当データを7セグへ出力（進捗: ${s3_solved.size}/6）`;
                 
-                document.getElementById("hintCount").innerText = solvedPuzzles.size;
-                document.getElementById("hintArea").style.display = "block";
-                updateCarousel();
+                document.getElementById("hintCount-s3").innerText = s3_solved.size;
+                document.getElementById("hintArea-s3").style.display = "block";
+                updateCarouselS3();
                 
                 let cmd = "S";
                 for(let i = 0; i < 4; i++) cmd += getRow(word[i]);
                 sendCommand(cmd);
 
-                segTimer = setTimeout(() => {
+                segTimerS3 = setTimeout(() => {
                     sendCommand("S0000");
                     feedback.innerText = "スタンバイ...";
                 }, 3000);
@@ -488,6 +546,8 @@
                 sendCommand("S0000");
             }
         }
+
+        function dragStep3(e) { e.dataTransfer.setData("text", e.target.id); }
 
         function executeMainPuzzle() {
             const slots = document.querySelectorAll('.s3-slot');
