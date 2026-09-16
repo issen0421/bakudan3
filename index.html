@@ -261,18 +261,15 @@
         // 🔧 ハードウェア直接テスト用関数
         // ==========================================
         function testLight() {
-            // 4つのLEDをすべて点灯し、1秒後に消灯
             sendCommand("P1111");
             setTimeout(() => sendCommand("P0000"), 1000);
         }
 
         function testBuzzer() {
-            // ブザーを1回鳴らす (Arduino側のBコマンド)
             sendCommand("B");
         }
 
         function testMonitor() {
-            // 7セグの各桁に別々のセグメント（上・中・下・上）を表示させ、1秒後に消灯
             sendCommand("S1231");
             setTimeout(() => sendCommand("S0000"), 1000);
         }
@@ -540,7 +537,7 @@
         }
 
         // ==========================================
-        // STEP3 専用ロジック
+        // STEP3 専用ロジック (ここに不足していたコードを追加しました！)
         // ==========================================
         let segTimerS3, ledTimer; 
         let s3_solved = new Set();
@@ -552,6 +549,19 @@
             "step3_hint4.jpg", "step3_hint5.jpg", "step3_hint2.jpg"
         ];
         const s3_dict = { "くま": "BEAR", "とり": "BIRD", "ほし": "STAR", "つき": "MOON", "さかな": "FISH", "ほん": "BOOK" };
+
+        // ★ 前回抜けていた必須ロジック
+        const QWERTY_TOP = "QWERTYUIOP"; 
+        const QWERTY_MID = "ASDFGHJKL"; 
+        const QWERTY_BOT = "ZXCVBNM";
+
+        function getRow(char) {
+            if (QWERTY_TOP.includes(char)) return 1;
+            if (QWERTY_MID.includes(char)) return 2;
+            if (QWERTY_BOT.includes(char)) return 3;
+            return 0;
+        }
+        // ★ ここまで
 
         function updateCarouselS3() {
             if (s3_images.length === 0) return;
@@ -632,7 +642,6 @@
             }
         }
         
-        // 初期状態の色を反映
         window.addEventListener('DOMContentLoaded', () => {
             updateNodeColors();
         });
