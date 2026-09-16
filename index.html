@@ -16,6 +16,12 @@
         .btn-connect { background: #238636; color: white; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; font-weight: bold; }
         .btn-connect:hover { background: #2ea043; }
 
+        /* --- 🔧 動作確認（デバッグ）パネル --- */
+        .debug-panel { background: #000; padding: 10px; border-bottom: 1px solid #30363d; display: flex; justify-content: center; gap: 15px; align-items: center; }
+        .debug-panel span { color: #8b949e; font-weight: bold; }
+        .debug-btn { background: #30363d; color: white; border: 1px solid #555; padding: 5px 15px; font-size: 14px; cursor: pointer; border-radius: 4px; transition: 0.2s; font-family: monospace; }
+        .debug-btn:hover { background: #58a6ff; border-color: #58a6ff; color: #000; font-weight: bold; }
+
         .app-container { display: none; padding: 30px; }
         .app-container.active { display: block; }
 
@@ -96,6 +102,14 @@
             <button class="tab-btn" id="tab-step3" onclick="switchApp('step3')">📟 ターミナル (STEP3)</button>
         </div>
         <button class="btn-connect" onclick="connectSerial()">🔌 デバイス接続</button>
+    </div>
+
+    <!-- 🔧 動作確認用パネル (全タブ共通) -->
+    <div class="debug-panel">
+        <span>🔧 ハードウェア直接テスト:</span>
+        <button class="debug-btn" onclick="testLight()">💡 ライト(全点灯)</button>
+        <button class="debug-btn" onclick="testBuzzer()">🔊 ブザー</button>
+        <button class="debug-btn" onclick="testMonitor()">📟 モニター</button>
     </div>
 
     <!-- ========================================== -->
@@ -244,6 +258,26 @@
         }
 
         // ==========================================
+        // 🔧 ハードウェア直接テスト用関数
+        // ==========================================
+        function testLight() {
+            // 4つのLEDをすべて点灯し、1秒後に消灯
+            sendCommand("P1111");
+            setTimeout(() => sendCommand("P0000"), 1000);
+        }
+
+        function testBuzzer() {
+            // ブザーを1回鳴らす (Arduino側のBコマンド)
+            sendCommand("B");
+        }
+
+        function testMonitor() {
+            // 7セグの各桁に別々のセグメント（上・中・下・上）を表示させ、1秒後に消灯
+            sendCommand("S1231");
+            setTimeout(() => sendCommand("S0000"), 1000);
+        }
+
+        // ==========================================
         // UI: アプリ切り替え
         // ==========================================
         function switchApp(appId) {
@@ -331,7 +365,6 @@
             }
         }
 
-        // --- STEP1 パズル ---
         let currentPhase = 1;
         const answerPhase1 = ["B", "D", "C", "E", "F", "A"];
         const answerPhase2 = ["A", "E", "B", "F", "D", "C"];
@@ -423,13 +456,11 @@
             }
         }
 
-        // --- STEP2 パズル (水汲み) ---
         const S2_CAPACITIES = [10, 7, 3];
         let s2_volumes = [10, 0, 0];
         let s2_selectedNode = null;
         let s2_isTransferring = false;
 
-        // ノードの見た目を更新（満杯なら水色にする）
         function updateNodeColors() {
             for (let i = 0; i < 3; i++) {
                 const node = document.getElementById(`node-${i}`);
