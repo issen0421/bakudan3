@@ -37,53 +37,50 @@
 
         /* --- 📱 ダッシュボード分割レイアウト (横並び) --- */
         .split-layout { 
-            display: flex; 
-            justify-content: center; 
-            gap: 40px; 
-            margin-top: 40px; 
-            padding-top: 40px; 
-            border-top: 2px dashed #30363d; 
-            align-items: stretch; 
-            flex-wrap: wrap; 
+            display: flex; justify-content: center; gap: 40px; margin-top: 40px; 
+            padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; 
         }
         .split-layout > div {
-            flex: 1;
-            min-width: 320px;
-            max-width: 480px;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
+            flex: 1; min-width: 340px; max-width: 480px; margin: 0; display: flex; flex-direction: column;
         }
 
-        /* --- 🧩 小謎エリア (スクラッチ式) --- */
-        .sub-puzzle-container { background: #161b22; border: 2px dashed #444; border-radius: 8px; padding: 20px; }
-        .sub-puzzle-container h3 { margin: 0 0 10px 0; color: #58a6ff; }
-        .points-display { font-size: 18px; font-weight: bold; color: #f85149; margin-bottom: 15px; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid #f85149; }
+        /* --- 🧩 小謎エリア (左) & ターミナルエリア (右) --- */
+        .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; }
+        .analysis-panel { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 20px; }
+        
+        .puzzle-panel h3 { margin: 0 0 15px 0; color: #58a6ff; font-size: 18px; }
+        .analysis-panel h3 { margin: 0 0 15px 0; color: #0f0; font-size: 18px; }
+
+        .points-display { font-size: 16px; font-weight: bold; color: #f85149; margin-bottom: 15px; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid #f85149; }
         
         .carousel-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .carousel-btn { background: none; border: none; color: #58a6ff; font-size: 30px; cursor: pointer; transition: 0.2s; }
+        .carousel-btn { background: none; border: none; color: #58a6ff; font-size: 30px; cursor: pointer; transition: 0.2s; padding: 0; }
         .carousel-btn:disabled { color: #333; cursor: not-allowed; }
+        .analysis-panel .carousel-btn { color: #0f0; }
         
-        .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 1px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
+        /* 左右で完全に統一された画像枠 */
+        .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
         .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; }
+        
+        /* 右側(解析)用のカラースタイル */
+        .hint-border { border-color: #0f0 !important; }
+        .hint-placeholder { color: #0f0 !important; border-color: #0f0 !important; }
+        .hint-text { color: #0f0 !important; }
         
         /* 3x3 スクラッチパネル */
         .grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1px; background: #000; }
         .grid-panel { background: #161b22; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #444; cursor: pointer; }
         .grid-panel:hover { background: #21262d; color: #58a6ff; }
         .grid-panel.open { opacity: 0; pointer-events: none; }
-        
         .solved-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(35, 134, 54, 0.8); color: white; display: none; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; letter-spacing: 2px; }
         .carousel-indicator { color: #8b949e; font-size: 14px; margin-top: 10px; }
 
-        /* --- 💻 ターミナル & 取得済み解析データ --- */
-        .terminal-box { background: #000; color: #0f0; padding: 20px; border-radius: 5px; border: 1px solid #333; }
-        .terminal-box input { padding: 8px; font-size: 18px; width: 200px; text-align: center; border: 1px solid #0f0; background: #111; color: #0f0; outline: none; }
-        .terminal-box button { background: #0f0; color: #000; border: none; padding: 9px 20px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; white-space: pre-line; }
-
-        .hint-area { margin-top: 15px; display: none; background: #111; padding: 15px; border-radius: 5px; border: 1px dashed #0f0; flex-grow: 1; }
-        .hint-area p { color: #0f0; margin: 0 0 10px 0; font-size: 14px; }
+        /* 左側の解答入力エリア */
+        .answer-section { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #444; width: 100%; }
+        .answer-section p { margin: 0 0 10px 0; color: #c9d1d9; font-size: 14px;}
+        .answer-section input { padding: 8px; font-size: 16px; width: 160px; text-align: center; border: 1px solid #58a6ff; background: #0d1117; color: #c9d1d9; outline: none; border-radius: 4px; }
+        .answer-section button { background: #58a6ff; color: #000; border: none; padding: 9px 20px; font-size: 16px; cursor: pointer; font-weight: bold; border-radius: 4px; margin-left: 5px; }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 14px; }
 
         /* --- STEP 1 UI (メイン) --- */
         .s1-items { display: flex; justify-content: center; gap: 20px; margin: 30px 0; padding: 20px; border: 2px dashed #444; border-radius: 10px; background: #161b22; }
@@ -171,11 +168,11 @@
         <button class="execute-btn" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block;">判定を実行</button>
         <div id="result-step1" class="result-msg"></div>
 
-        <!-- 🧩 横並びエリア (小謎 ＆ ターミナル) -->
+        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
             
-            <!-- 左: 小謎エリア -->
-            <div class="sub-puzzle-container">
+            <!-- 左: 小謎エリア & 解答入力 -->
+            <div class="puzzle-panel">
                 <h3>【暗号化された小謎ファイル】</h3>
                 <div class="points-display">パネル開放可能回数: <span id="puzzlePoints-s1">0</span> 回</div>
                 <div class="carousel-container">
@@ -188,25 +185,33 @@
                     <button class="carousel-btn" onclick="nextPuzzle(1)">▶</button>
                 </div>
                 <div class="carousel-indicator" id="puzzleIndicator-s1">ファイル A (1 / 6)</div>
+                
+                <div class="answer-section">
+                    <p>解読した答えを入力せよ</p>
+                    <input type="text" id="answerInput-s1" placeholder="答え">
+                    <button onclick="submitAnswer(1)">送信</button>
+                    <div class="feedback" id="terminalFeedback-s1"></div>
+                </div>
             </div>
             
-            <!-- 右: ターミナル -->
-            <div class="terminal-box">
-                <p style="margin-top:0;">小謎の答えを入力せよ</p>
-                <input type="text" id="answerInput-s1" placeholder="答えを入力">
-                <button onclick="submitAnswer(1)">解答</button>
-                <div class="feedback" id="terminalFeedback-s1"></div>
+            <!-- 右: 解析データエリア -->
+            <div class="analysis-panel">
+                <h3>【取得済み 解析データ】</h3>
+                <p style="color:#0f0; margin-top:0;">進捗: <span id="hintCount-s1">0</span> / 6</p>
                 
-                <div class="hint-area" id="hintArea-s1">
-                    <p>【取得した解析データ: <span id="hintCount-s1">0</span>/6】</p>
+                <div id="hintEmpty-s1" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #555; border: 2px dashed #30363d; width: 100%; border-radius: 5px;">
+                    NO DATA
+                </div>
+                
+                <div id="hintArea-s1" style="display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="prevBtn-s1" onclick="prevAnalysis(1)">◀</button>
-                        <div class="image-wrapper" style="border-color:#0f0;">
-                            <div class="img-placeholder" id="analysisPlaceholder-s1" style="color:#0f0; border-color:#0f0;">解析データ画像</div>
+                        <div class="image-wrapper hint-border">
+                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s1">解析データ画像</div>
                         </div>
                         <button class="carousel-btn" id="nextBtn-s1" onclick="nextAnalysis(1)">▶</button>
                     </div>
-                    <div class="carousel-indicator" style="color:#0f0;" id="analysisIndicator-s1"></div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s1"></div>
                 </div>
             </div>
 
@@ -241,10 +246,10 @@
         <button class="execute-btn" onclick="resetStep2()" style="background: #444; max-width: 200px; margin: 0 auto; display: block;">🔄 リセット</button>
         <div id="result-step2" class="result-msg"></div>
 
-        <!-- 🧩 横並びエリア (小謎 ＆ ターミナル) -->
+        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
             
-            <div class="sub-puzzle-container">
+            <div class="puzzle-panel">
                 <h3>【暗号化された小謎ファイル】</h3>
                 <div class="points-display">パネル開放可能回数: <span id="puzzlePoints-s2">0</span> 回</div>
                 <div class="carousel-container">
@@ -257,24 +262,32 @@
                     <button class="carousel-btn" onclick="nextPuzzle(2)">▶</button>
                 </div>
                 <div class="carousel-indicator" id="puzzleIndicator-s2">ファイル A (1 / 6)</div>
+                
+                <div class="answer-section">
+                    <p>解読した答えを入力せよ</p>
+                    <input type="text" id="answerInput-s2" placeholder="答え">
+                    <button onclick="submitAnswer(2)">送信</button>
+                    <div class="feedback" id="terminalFeedback-s2"></div>
+                </div>
             </div>
             
-            <div class="terminal-box">
-                <p style="margin-top:0;">小謎の答えを入力せよ</p>
-                <input type="text" id="answerInput-s2" placeholder="答えを入力">
-                <button onclick="submitAnswer(2)">解答</button>
-                <div class="feedback" id="terminalFeedback-s2"></div>
+            <div class="analysis-panel">
+                <h3>【取得済み 解析データ】</h3>
+                <p style="color:#0f0; margin-top:0;">進捗: <span id="hintCount-s2">0</span> / 6</p>
                 
-                <div class="hint-area" id="hintArea-s2">
-                    <p>【取得した解析データ: <span id="hintCount-s2">0</span>/6】</p>
+                <div id="hintEmpty-s2" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #555; border: 2px dashed #30363d; width: 100%; border-radius: 5px;">
+                    NO DATA
+                </div>
+                
+                <div id="hintArea-s2" style="display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="prevBtn-s2" onclick="prevAnalysis(2)">◀</button>
-                        <div class="image-wrapper" style="border-color:#0f0;">
-                            <div class="img-placeholder" id="analysisPlaceholder-s2" style="color:#0f0; border-color:#0f0;">解析データ画像</div>
+                        <div class="image-wrapper hint-border">
+                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s2">解析データ画像</div>
                         </div>
                         <button class="carousel-btn" id="nextBtn-s2" onclick="nextAnalysis(2)">▶</button>
                     </div>
-                    <div class="carousel-indicator" style="color:#0f0;" id="analysisIndicator-s2"></div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s2"></div>
                 </div>
             </div>
 
@@ -312,10 +325,10 @@
             </div>
         </div>
 
-        <!-- 🧩 横並びエリア (小謎 ＆ ターミナル) -->
+        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
             
-            <div class="sub-puzzle-container">
+            <div class="puzzle-panel">
                 <h3>【暗号化された小謎ファイル】</h3>
                 <div class="points-display">パネル開放可能回数: <span id="puzzlePoints-s3">0</span> 回</div>
                 <div class="carousel-container">
@@ -328,24 +341,32 @@
                     <button class="carousel-btn" onclick="nextPuzzle(3)">▶</button>
                 </div>
                 <div class="carousel-indicator" id="puzzleIndicator-s3">ファイル A (1 / 6)</div>
+                
+                <div class="answer-section">
+                    <p>解読した答えを入力せよ</p>
+                    <input type="text" id="answerInput-s3" placeholder="答え">
+                    <button onclick="submitAnswer(3)">送信</button>
+                    <div class="feedback" id="terminalFeedback-s3"></div>
+                </div>
             </div>
 
-            <div class="terminal-box">
-                <p style="margin-top:0;">小謎の答えを入力せよ</p>
-                <input type="text" id="answerInput-s3" placeholder="答えを入力">
-                <button onclick="submitAnswer(3)">解答</button>
-                <div class="feedback" id="terminalFeedback-s3"></div>
+            <div class="analysis-panel">
+                <h3>【取得済み 解析データ】</h3>
+                <p style="color:#0f0; margin-top:0;">進捗: <span id="hintCount-s3">0</span> / 6</p>
                 
-                <div class="hint-area" id="hintArea-s3">
-                    <p>【取得した解析データ: <span id="hintCount-s3">0</span>/6】</p>
+                <div id="hintEmpty-s3" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #555; border: 2px dashed #30363d; width: 100%; border-radius: 5px;">
+                    NO DATA
+                </div>
+                
+                <div id="hintArea-s3" style="display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="prevBtn-s3" onclick="prevAnalysis(3)">◀</button>
-                        <div class="image-wrapper" style="border-color:#0f0;">
-                            <div class="img-placeholder" id="analysisPlaceholder-s3" style="color:#0f0; border-color:#0f0;">解析データ画像</div>
+                        <div class="image-wrapper hint-border">
+                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s3">解析データ画像</div>
                         </div>
                         <button class="carousel-btn" id="nextBtn-s3" onclick="nextAnalysis(3)">▶</button>
                     </div>
-                    <div class="carousel-indicator" style="color:#0f0;" id="analysisIndicator-s3"></div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s3"></div>
                 </div>
             </div>
 
@@ -538,8 +559,8 @@
                 feedback.style.color = "#0f0";
                 feedback.innerText = `データ承認（進捗: ${unlockedAnalysis[step].length}/6）`;
                 document.getElementById(`hintCount-s${step}`).innerText = unlockedAnalysis[step].length;
+                document.getElementById(`hintEmpty-s${step}`).style.display = "none";
                 document.getElementById(`hintArea-s${step}`).style.display = "flex";
-                document.getElementById(`hintArea-s${step}`).style.flexDirection = "column";
                 
                 renderPuzzleGrid(step); 
                 updateAnalysisCarousel(step); 
