@@ -43,12 +43,27 @@
         #ending-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: none; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 3000;
+            z-index: 3000; padding: 20px; box-sizing: border-box;
         }
         .ending-title { font-size: 40px; margin-bottom: 30px; letter-spacing: 5px; }
-        .ending-title.success { color: #2ea043; text-shadow: 0 0 15px rgba(46,160,67,0.5); }
+        .ending-title.success { color: #58a6ff; text-shadow: 0 0 15px rgba(88,166,255,0.5); }
         .ending-title.failure { color: #ff7b72; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
-        .ending-msg { font-size: 22px; color: #c9d1d9; line-height: 2; white-space: pre-wrap; text-align: center; }
+        .ending-msg { font-size: 20px; color: #c9d1d9; line-height: 1.8; text-align: center; max-width: 700px; }
+        
+        /* ニュース記事風スタイル */
+        .news-article {
+            background: #e6edf3; color: #000; padding: 20px 30px; border-radius: 4px;
+            font-family: 'Yu Mincho', 'MS PMincho', serif; text-align: left; margin: 20px auto;
+            border-left: 8px solid #30363d; box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        /* Xシェアボタン */
+        .share-btn {
+            display: inline-block; margin-top: 20px; padding: 12px 24px; background: #000; color: #fff;
+            text-decoration: none; border-radius: 30px; font-weight: bold; font-family: sans-serif;
+            border: 1px solid #555; transition: 0.2s;
+        }
+        .share-btn:hover { background: #222; border-color: #fff; }
 
         /* --- 🔧 デバッグパネル --- */
         .debug-panel { background: #000; padding: 10px; border-bottom: 1px solid #30363d; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap; }
@@ -405,7 +420,7 @@
             <div class="instruction">
                 【最終ミッション】<br>
                 システムが完全にロックされる前に、<br>
-                <span class="highlight">デバイスの「9番ピン」の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
+                <span class="highlight">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
                 ※残り時間はデバイス側のモニターを確認せよ。
             </div>
             
@@ -456,12 +471,12 @@
         }
 
         function closeIntroModal(e) {
-            e.stopPropagation(); // 親へのクリック伝播を防ぐ
+            e.stopPropagation();
             document.getElementById('intro-modal').style.display = 'none';
         }
 
         // ==========================================
-        // シリアル通信 & ハードウェアテスト (★受信ループ追加)
+        // シリアル通信 & ハードウェアテスト
         // ==========================================
         let port; let writer;
         async function connectSerial() {
@@ -472,7 +487,7 @@
                 encoder.readable.pipeTo(port.writable);
                 writer = encoder.writable.getWriter();
                 
-                // ★ 受信ループの開始
+                // ★ 受信ループ開始（エンディング判定用）
                 readLoop(port.readable);
 
                 alert("デバイスとの接続を確立しました。");
@@ -489,7 +504,7 @@
                 if (value) {
                     buffer += value;
                     let lines = buffer.split('\n');
-                    buffer = lines.pop(); // 改行のない末尾を残す
+                    buffer = lines.pop(); // 未完了の行は残す
                     for (let line of lines) {
                         if (line.includes("DEFUSED")) showEnding(true);
                         if (line.includes("EXPLODED")) showEnding(false);
@@ -514,7 +529,7 @@
         // エンディング制御
         // ==========================================
         function showEnding(isSuccess) {
-            if (lastTimerInterval) clearInterval(lastTimerInterval); // タイマー停止
+            if (lastTimerInterval) clearInterval(lastTimerInterval); // Web側のタイマー停止
             
             const screen = document.getElementById('ending-screen');
             const title = document.getElementById('ending-title');
@@ -522,14 +537,49 @@
             
             screen.style.display = 'flex';
             
+            // X(Twitter)シェア用のベースURL（ご自身のサイトURLを入れてください）
+            const shareUrl = "https://hacker-os.example.com"; 
+            
             if (isSuccess) {
-                title.innerText = "SYSTEM UNLOCKED";
+                title.innerText = "TRUE ENDING";
                 title.className = "ending-title success";
-                msg.innerText = "よくやった！金庫のロックが解除されたぞ！\nお前たちのおかげで最高のお宝が手に入った。\nすぐ迎えのヘリをよこす、脱出しろ！";
+                const tweetText = encodeURIComponent("HACKER OSで爆弾を解除し、TRUE ENDINGに到達した！");
+                
+                msg.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        爆弾を止めた僕たちは、公衆電話に向かい、ボスのアジトの場所を匿名通報した。<br>
+                        翌日の新聞には銀行強盗のボスが逮捕されたというニュースが流れていた。
+                    </div>
+                    <div style="margin: 20px auto; width: 400px; height: 250px; border: 2px dashed #58a6ff; display: flex; align-items: center; justify-content: center; color: #58a6ff; background: #161b22; border-radius: 5px;">
+                        (新聞の記事の画像)
+                    </div>
+                    <a href="https://twitter.com/intent/tweet?text=${tweetText}&url=${shareUrl}" target="_blank" class="share-btn">
+                        𝕏 「クリアしました」を共有する
+                    </a>
+                `;
             } else {
-                title.innerText = "SYSTEM LOCKDOWN";
+                title.innerText = "BAD ENDING";
                 title.className = "ending-title failure";
-                msg.innerText = "おい、何があった！？通信が…\nセキュリティシステムが作動してしまったようだ。\nすまない、作戦は失敗だ…";
+                const tweetText = encodeURIComponent("HACKER OSでハッキングに失敗し、爆発に巻き込まれた…");
+                
+                msg.innerHTML = `
+                    <div class="news-article">
+                        <strong>【新聞記事】</strong><br><br>
+                        昨日、〇〇銀行で爆発が起き、金庫の中身が盗まれるという事件があった。<br>
+                        また、現場からは爆発に巻き込まれたと見られる2人の遺体が見つかった。
+                    </div>
+                    <div style="margin-top: 20px; font-size: 16px; color: #8b949e;">
+                        失敗した場合は、予備のコードを繋ぎ直して再スタートできる。<br>
+                        <span style="font-size:12px;">（※Arduino本体の小さなリセットボタンを押してから、再スタートしてください）</span>
+                    </div>
+                    <button onclick="location.reload()" style="margin-top: 15px; padding: 10px 20px; background: #444; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; letter-spacing: 2px;">
+                        🔄 再スタート
+                    </button>
+                    <br>
+                    <a href="https://twitter.com/intent/tweet?text=${tweetText}&url=${shareUrl}" target="_blank" class="share-btn">
+                        𝕏 「プレイしました」を共有する
+                    </a>
+                `;
             }
         }
 
@@ -913,7 +963,6 @@
             
             sendCommand("Z"); // 💣Arduino側の爆弾起動コマンド
             
-            // Web側はヒント解放用のアナログタイマーだけ裏で回す
             let timeRemaining = 600;
             lastTimerInterval = setInterval(() => {
                 timeRemaining--;
