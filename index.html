@@ -57,6 +57,7 @@
         .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
         .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; }
         
+        /* 右側(解析)用のカラースタイル */
         .hint-border { border-color: #0f0 !important; }
         .hint-placeholder { color: #0f0 !important; border-color: #0f0 !important; }
         
@@ -138,7 +139,7 @@
     <!-- APP 1: STEP1 -->
     <!-- ========================================== -->
     <div class="app-container active" id="app-step1">
-        <h2>STEP1</h2>
+        <h2>STEP1 (論理ソート)</h2>
 
         <!-- 🌟 まとめ謎 (一番上) -->
         <div class="s1-slots">
@@ -168,6 +169,7 @@
             <!-- 左: 小謎エリア & 解答入力 -->
             <div class="puzzle-panel">
                 <div class="panel-header">
+                    <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
                     <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s1">0</span></div>
                 </div>
                 
@@ -199,7 +201,7 @@
                         </div>
                         <button class="carousel-btn" id="btn-next-analysis-s1" onclick="nextAnalysis(1)">▶</button>
                     </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s1" style="font-size:18px;">⚫⚪⚪⚪⚪⚪</div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s1">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
 
@@ -210,23 +212,23 @@
     <!-- APP 2: STEP2 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <h2>STEP2</h2>
+        <h2>STEP2 (データ転送)</h2>
 
         <!-- 🌟 まとめ謎 (一番上) -->
         <div class="s2-ui-wrapper">
-            <div class="s2-slot-indicator" id="s2-slot-display">⚫ ⚫</div>
+            <div class="s2-slot-indicator" id="s2-slot-display">⚪ ⚪</div>
             <div class="s2-container">
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div>
-                    <div class="s2-status-dot" id="dot-0">⚫</div>
+                    <div class="s2-status-dot" id="dot-0">⚪</div>
                 </div>
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-1" onclick="handleNodeClick(1)"></div>
-                    <div class="s2-status-dot" id="dot-1">⚫</div>
+                    <div class="s2-status-dot" id="dot-1">⚪</div>
                 </div>
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-2" onclick="handleNodeClick(2)"></div>
-                    <div class="s2-status-dot" id="dot-2">⚫</div>
+                    <div class="s2-status-dot" id="dot-2">⚪</div>
                 </div>
             </div>
         </div>
@@ -239,6 +241,7 @@
             
             <div class="puzzle-panel">
                 <div class="panel-header">
+                    <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
                     <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s2">0</span></div>
                 </div>
                 
@@ -269,7 +272,7 @@
                         </div>
                         <button class="carousel-btn" id="btn-next-analysis-s2" onclick="nextAnalysis(2)">▶</button>
                     </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s2" style="font-size:18px;">⚫⚪⚪⚪⚪⚪</div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s2">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
 
@@ -280,7 +283,7 @@
     <!-- APP 3: STEP3 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <h2>STEP3</h2>
+        <h2>STEP3 (物理配線)</h2>
 
         <!-- 🌟 まとめ謎 (一番上) -->
         <div class="puzzle-layout">
@@ -312,6 +315,7 @@
             
             <div class="puzzle-panel">
                 <div class="panel-header">
+                    <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
                     <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s3">0</span></div>
                 </div>
                 
@@ -451,6 +455,10 @@
         let panelsState = { 1: [], 2: [], 3: [] };
         let isSolved = { 1: [], 2: [], 3: [] };
 
+        // 判定時の新規パターン検知用
+        let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
+        let validTrials = { 1: 0, 2: 0, 3: 0 };
+
         const puzzleDict = {
             1: {"あめりか":0, "ういるす":1, "かしつき":2, "くちびる":3, "こくばん":4, "ふうしゃ":5},
             2: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
@@ -514,8 +522,6 @@
                 panelsState[step][pIdx][panelIdx] = true;
                 document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
                 renderPuzzleGrid(step);
-            } else {
-                alert("解析ポイントが足りません！\n判定を実行してポイントを獲得してください。");
             }
         }
 
@@ -530,7 +536,7 @@
             if (input in dict) {
                 const pIdx = dict[input]; 
                 isSolved[step][pIdx] = true;
-                analysisIdx[step] = pIdx; // 解いた画像のページへジャンプ
+                analysisIdx[step] = pIdx; 
                 
                 feedback.style.color = "#0f0";
                 feedback.innerText = "DATA DECODED";
@@ -587,7 +593,6 @@
         // ==========================================
         const s1_answer = ["A", "E", "B", "F", "D", "C"];
         function checkClearStep1() {
-            addPoint(1); 
             const slots = document.querySelectorAll('#app-step1 .s1-slot');
             let placedItems = [];
             for (let slot of slots) {
@@ -597,6 +602,15 @@
                 }
                 placedItems.push(slot.children[0].id);
             }
+
+            // 新規パターンの判定
+            let pattern = placedItems.join("");
+            if (!triedPatterns[1].has(pattern)) {
+                triedPatterns[1].add(pattern);
+                validTrials[1]++;
+                if (validTrials[1] % 3 === 0) addPoint(1);
+            }
+
             let isCorrect = placedItems.every((val, i) => val === s1_answer[i]);
             const res = document.getElementById("result-step1");
             if (isCorrect) {
@@ -623,12 +637,12 @@
             const slotDisplay = document.getElementById('s2-slot-display');
 
             if (s2_isTransferring) {
-                slotDisplay.innerText = "⚪ ⚪";
+                slotDisplay.innerText = "⚫ ⚫"; // 処理中
                 for(let i=0; i<3; i++) {
                     document.getElementById(`node-${i}`).className = "s2-node";
                     if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) document.getElementById(`node-${i}`).classList.add('full');
                     document.getElementById(`dot-${i}`).className = "s2-status-dot";
-                    document.getElementById(`dot-${i}`).innerText = "⚫";
+                    document.getElementById(`dot-${i}`).innerText = "⚪";
                 }
                 return;
             }
@@ -640,22 +654,22 @@
                 if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
 
                 if (s2_selectedNode === null) {
-                    slotDisplay.innerText = "⚫ ⚫";
+                    slotDisplay.innerText = "⚪ ⚪";
                     if (s2_volumes[i] > 0) {
-                        dot.className = "s2-status-dot active"; dot.innerText = "⚪";
+                        dot.className = "s2-status-dot active"; dot.innerText = "⚫";
                     } else {
-                        dot.className = "s2-status-dot"; dot.innerText = "⚫";
+                        dot.className = "s2-status-dot"; dot.innerText = "⚪";
                     }
                 } else {
-                    slotDisplay.innerText = "⚪ ⚫";
+                    slotDisplay.innerText = "⚫ ⚪";
                     if (i === s2_selectedNode) {
                         node.classList.add('selected');
-                        dot.className = "s2-status-dot active"; dot.innerText = "⚪";
+                        dot.className = "s2-status-dot active"; dot.innerText = "⚫";
                     } else {
                         if (S2_CAPACITIES[i] - s2_volumes[i] > 0) {
-                            dot.className = "s2-status-dot active"; dot.innerText = "⚪";
+                            dot.className = "s2-status-dot active"; dot.innerText = "⚫";
                         } else {
-                            dot.className = "s2-status-dot"; dot.innerText = "⚫";
+                            dot.className = "s2-status-dot"; dot.innerText = "⚪";
                         }
                     }
                 }
@@ -682,7 +696,14 @@
                 if (transferAmount > 0) {
                     s2_volumes[from] -= transferAmount;
                     s2_volumes[to] += transferAmount;
-                    addPoint(2); 
+                    
+                    // 新規パターンの判定 (転送後の水量を状態とする)
+                    let pattern = s2_volumes.join(",");
+                    if (!triedPatterns[2].has(pattern)) {
+                        triedPatterns[2].add(pattern);
+                        validTrials[2]++;
+                        if (validTrials[2] % 3 === 0) addPoint(2);
+                    }
                     
                     let beeps = 0; s2_isTransferring = true; updateNodeColors();
                     const interval = setInterval(() => {
@@ -717,7 +738,6 @@
         // ==========================================
         let ledTimer;
         function executeMainPuzzle() {
-            addPoint(3); 
             const slots = document.querySelectorAll('#app-step3 .s3-slot');
             let placedWords = [];
             for (let slot of slots) {
@@ -728,6 +748,15 @@
                 }
                 placedWords.push(slot.children[0].id);
             }
+
+            // 新規パターンの判定
+            let pattern = placedWords.join("");
+            if (!triedPatterns[3].has(pattern)) {
+                triedPatterns[3].add(pattern);
+                validTrials[3]++;
+                if (validTrials[3] % 3 === 0) addPoint(3);
+            }
+
             let validJoints = 0;
             for (let i = 0; i < 4; i++) {
                 let w1 = placedWords[i], w2 = placedWords[i+1];
