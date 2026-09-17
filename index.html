@@ -445,7 +445,16 @@
             } catch (err) { alert("接続エラー: " + err); }
         }
         
-        async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
+        // 修正ポイント③：余計な改行コード(\n)を省き、純粋に1文字のコマンドだけを送信するように最適化
+        async function sendCommand(cmd) { 
+            if (writer) {
+                try {
+                    await writer.write(cmd); 
+                } catch (e) {
+                    console.error("Write error", e);
+                }
+            }
+        }
 
         // --- Arduinoからの状態読み取りとクリア判定処理 ---
         let arduinoState = { s7: 1, isArmed: 0, isDefused: 0, isExploded: 0 };
@@ -494,7 +503,7 @@
             }
         }
 
-        // Arduino側の仕様に合わせてテストコマンドを修正 (L, B, T)
+        // Arduino側の仕様に合わせてテストコマンド (L, B, T) を送信
         function testLight() { sendCommand("L"); }
         function testBuzzer() { sendCommand("B"); }
         function testMonitor() { sendCommand("T"); }
@@ -694,7 +703,8 @@
                 res.innerText = "🎉 CLEAR!";
                 res.style.color = "#2ea043";
                 document.getElementById('tab-step2').style.display = 'block';
-                // 2回目以降の判定でも毎回確実に2秒間光るように"L"を送信
+                
+                // STEP1正解時に確実にライトを光らせる
                 sendCommand("L"); 
             } else {
                 res.innerText = "❌";
@@ -783,7 +793,6 @@
                     
                     let beeps = 0; s2_isTransferring = true; updateNodeColors();
                     
-                    // 音の間隔を 150 から 600 に変更（音が独立して聞こえるように修正）
                     const interval = setInterval(() => {
                         sendCommand("B");
                         beeps++;
