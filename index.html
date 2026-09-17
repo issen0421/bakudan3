@@ -187,6 +187,8 @@
 
         <!-- 🧩 横並びエリア -->
         <div class="split-layout">
+            
+            <!-- 左: 小謎エリア & 解答入力 -->
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
@@ -211,6 +213,7 @@
                 </div>
             </div>
             
+            <!-- 右: 解析データエリア -->
             <div class="analysis-panel">
                 <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -223,6 +226,7 @@
                     <div class="carousel-indicator hint-text" id="analysisIndicator-s1">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -293,6 +297,7 @@
                     <div class="carousel-indicator hint-text" id="analysisIndicator-s2">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -363,9 +368,10 @@
                         </div>
                         <button class="carousel-btn" id="btn-next-analysis-s3" onclick="nextAnalysis(3)">▶</button>
                     </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s3" style="font-size:18px;">⚫⚪⚪⚪⚪⚪</div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s3">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -751,7 +757,7 @@
                                 document.getElementById('tab-step3').style.display = 'block';
                             }
                         }
-                    }, 150); 
+                    }, 400); // ★ 転送時のブザー間隔を0.4秒(400ms)に変更
                 } else {
                     updateNodeColors();
                 }
