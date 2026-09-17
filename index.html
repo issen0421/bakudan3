@@ -32,8 +32,6 @@
         .execute-btn { background: #238636; color: white; font-size: 20px; padding: 15px; width: 100%; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .execute-btn:hover { background: #2ea043; }
         .result-msg { margin-top: 15px; font-size: 20px; font-weight: bold; min-height: 30px; line-height: 1.5; }
-        .instruction { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 8px; margin: 0 auto 30px auto; max-width: 700px; font-size: 16px; line-height: 1.5; }
-        .highlight { color: #58a6ff; font-weight: bold; }
 
         /* --- 📱 ダッシュボード分割レイアウト (横並び) --- */
         .split-layout { 
@@ -44,15 +42,15 @@
             flex: 1; min-width: 340px; max-width: 480px; margin: 0; display: flex; flex-direction: column;
         }
 
-        /* --- 🧩 小謎エリア (左) & ターミナルエリア (右) --- */
+        /* --- 🧩 左右パネル共通 & 高さ合わせ --- */
         .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; }
         .analysis-panel { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 20px; }
         
-        .puzzle-panel h3 { margin: 0 0 15px 0; color: #58a6ff; font-size: 18px; }
-        .analysis-panel h3 { margin: 0 0 15px 0; color: #0f0; font-size: 18px; }
+        /* 🔥 上のテキストの「高さ」を固定して画像の縦位置を完全に揃える */
+        .panel-header { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 85px; margin-bottom: 20px; }
+        .panel-header h3 { margin: 0 0 10px 0; font-size: 18px; }
+        .status-badge { font-size: 16px; font-weight: bold; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid; }
 
-        .points-display { font-size: 16px; font-weight: bold; color: #f85149; margin-bottom: 15px; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid #f85149; }
-        
         .carousel-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
         .carousel-btn { background: none; border: none; color: #58a6ff; font-size: 30px; cursor: pointer; transition: 0.2s; padding: 0; }
         .carousel-btn:disabled { color: #333; cursor: not-allowed; }
@@ -76,10 +74,11 @@
         .carousel-indicator { color: #8b949e; font-size: 14px; margin-top: 10px; }
 
         /* 左側の解答入力エリア */
-        .answer-section { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #444; width: 100%; }
+        .answer-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed #444; width: 100%; }
         .answer-section p { margin: 0 0 10px 0; color: #c9d1d9; font-size: 14px;}
         .answer-section input { padding: 8px; font-size: 16px; width: 160px; text-align: center; border: 1px solid #58a6ff; background: #0d1117; color: #c9d1d9; outline: none; border-radius: 4px; }
-        .answer-section button { background: #58a6ff; color: #000; border: none; padding: 9px 20px; font-size: 16px; cursor: pointer; font-weight: bold; border-radius: 4px; margin-left: 5px; }
+        .answer-section button { background: #58a6ff; color: #000; border: none; padding: 9px 20px; font-size: 16px; cursor: pointer; font-weight: bold; border-radius: 4px; margin-left: 5px; transition: 0.2s; }
+        .answer-section button:hover { background: #1f6feb; color: #fff;}
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 14px; }
 
         /* --- STEP 1 UI (メイン) --- */
@@ -173,8 +172,12 @@
             
             <!-- 左: 小謎エリア & 解答入力 -->
             <div class="puzzle-panel">
-                <h3>【暗号化された小謎ファイル】</h3>
-                <div class="points-display">パネル開放可能回数: <span id="puzzlePoints-s1">0</span> 回</div>
+                <!-- 高さ固定ヘッダー -->
+                <div class="panel-header">
+                    <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
+                    <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放可能回数: <span id="puzzlePoints-s1">0</span> 回</div>
+                </div>
+                
                 <div class="carousel-container">
                     <button class="carousel-btn" onclick="prevPuzzle(1)">◀</button>
                     <div class="image-wrapper">
@@ -196,14 +199,19 @@
             
             <!-- 右: 解析データエリア -->
             <div class="analysis-panel">
-                <h3>【取得済み 解析データ】</h3>
-                <p style="color:#0f0; margin-top:0;">進捗: <span id="hintCount-s1">0</span> / 6</p>
+                <!-- 高さ固定ヘッダー -->
+                <div class="panel-header">
+                    <h3 style="color:#0f0;">【取得済み 解析データ】</h3>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">進捗: <span id="hintCount-s1">0</span> / 6</div>
+                </div>
                 
-                <div id="hintEmpty-s1" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #555; border: 2px dashed #30363d; width: 100%; border-radius: 5px;">
+                <!-- 解析データ未取得時の空状態（画像枠と同じサイズ） -->
+                <div id="hintEmpty-s1" style="display:flex; align-items:center; justify-content:center; width:240px; height:240px; border:2px dashed #30363d; margin:0 auto; color:#555; border-radius:5px; font-weight:bold;">
                     NO DATA
                 </div>
                 
-                <div id="hintArea-s1" style="display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%;">
+                <!-- 解析データ取得後の表示 -->
+                <div id="hintArea-s1" style="display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="prevBtn-s1" onclick="prevAnalysis(1)">◀</button>
                         <div class="image-wrapper hint-border">
@@ -250,8 +258,11 @@
         <div class="split-layout">
             
             <div class="puzzle-panel">
-                <h3>【暗号化された小謎ファイル】</h3>
-                <div class="points-display">パネル開放可能回数: <span id="puzzlePoints-s2">0</span> 回</div>
+                <div class="panel-header">
+                    <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
+                    <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放可能回数: <span id="puzzlePoints-s2">0</span> 回</div>
+                </div>
+                
                 <div class="carousel-container">
                     <button class="carousel-btn" onclick="prevPuzzle(2)">◀</button>
                     <div class="image-wrapper">
@@ -272,14 +283,16 @@
             </div>
             
             <div class="analysis-panel">
-                <h3>【取得済み 解析データ】</h3>
-                <p style="color:#0f0; margin-top:0;">進捗: <span id="hintCount-s2">0</span> / 6</p>
+                <div class="panel-header">
+                    <h3 style="color:#0f0;">【取得済み 解析データ】</h3>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">進捗: <span id="hintCount-s2">0</span> / 6</div>
+                </div>
                 
-                <div id="hintEmpty-s2" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #555; border: 2px dashed #30363d; width: 100%; border-radius: 5px;">
+                <div id="hintEmpty-s2" style="display:flex; align-items:center; justify-content:center; width:240px; height:240px; border:2px dashed #30363d; margin:0 auto; color:#555; border-radius:5px; font-weight:bold;">
                     NO DATA
                 </div>
                 
-                <div id="hintArea-s2" style="display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%;">
+                <div id="hintArea-s2" style="display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="prevBtn-s2" onclick="prevAnalysis(2)">◀</button>
                         <div class="image-wrapper hint-border">
@@ -329,8 +342,11 @@
         <div class="split-layout">
             
             <div class="puzzle-panel">
-                <h3>【暗号化された小謎ファイル】</h3>
-                <div class="points-display">パネル開放可能回数: <span id="puzzlePoints-s3">0</span> 回</div>
+                <div class="panel-header">
+                    <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
+                    <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放可能回数: <span id="puzzlePoints-s3">0</span> 回</div>
+                </div>
+                
                 <div class="carousel-container">
                     <button class="carousel-btn" onclick="prevPuzzle(3)">◀</button>
                     <div class="image-wrapper">
@@ -351,14 +367,16 @@
             </div>
 
             <div class="analysis-panel">
-                <h3>【取得済み 解析データ】</h3>
-                <p style="color:#0f0; margin-top:0;">進捗: <span id="hintCount-s3">0</span> / 6</p>
+                <div class="panel-header">
+                    <h3 style="color:#0f0;">【取得済み 解析データ】</h3>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">進捗: <span id="hintCount-s3">0</span> / 6</div>
+                </div>
                 
-                <div id="hintEmpty-s3" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #555; border: 2px dashed #30363d; width: 100%; border-radius: 5px;">
+                <div id="hintEmpty-s3" style="display:flex; align-items:center; justify-content:center; width:240px; height:240px; border:2px dashed #30363d; margin:0 auto; color:#555; border-radius:5px; font-weight:bold;">
                     NO DATA
                 </div>
                 
-                <div id="hintArea-s3" style="display: none; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%;">
+                <div id="hintArea-s3" style="display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="prevBtn-s3" onclick="prevAnalysis(3)">◀</button>
                         <div class="image-wrapper hint-border">
@@ -506,7 +524,7 @@
             const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
             
             document.getElementById(`puzzleIndicator-s${step}`).innerText = `ファイル ${puzzleFiles[pIdx]} (${pIdx + 1} / 6)`;
-            placeholder.innerText = `STEP${step} 小謎 ${puzzleFiles[pIdx]} の画像`;
+            placeholder.innerText = `STEP${step}\n小謎 ${puzzleFiles[pIdx]}`;
             
             if (isSolved[step][pIdx]) {
                 grid.style.display = "none";
