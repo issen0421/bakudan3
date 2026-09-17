@@ -18,6 +18,26 @@
         .btn-connect { background: #238636; color: white; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; font-weight: bold; }
         .btn-connect:hover { background: #2ea043; }
 
+        /* --- オープニングポップアップ --- */
+        #intro-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: #0d1117; border: 2px solid #58a6ff; border-radius: 8px;
+            padding: 30px 40px; max-width: 650px; text-align: left;
+            box-shadow: 0 0 30px rgba(88, 166, 255, 0.2);
+        }
+        .modal-content p { margin-bottom: 18px; line-height: 1.8; font-size: 16px; color: #c9d1d9; }
+        .modal-btn {
+            display: block; width: 100%; background: #1f6feb; color: white; border: none;
+            padding: 15px; font-size: 18px; cursor: pointer; border-radius: 5px;
+            font-weight: bold; margin-top: 30px; transition: 0.2s; letter-spacing: 2px;
+        }
+        .modal-btn:hover { background: #58a6ff; color: #000; }
+
         /* --- 🔧 デバッグパネル --- */
         .debug-panel { background: #000; padding: 10px; border-bottom: 1px solid #30363d; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap; }
         .debug-panel span { color: #8b949e; font-weight: bold; }
@@ -114,6 +134,17 @@
     </style>
 </head>
 <body>
+
+    <!-- 🌟 オープニングポップアップ -->
+    <div id="intro-modal">
+        <div class="modal-content">
+            <p>「よし、金庫前に着いたか<br> この金庫を開けるために、今からお前たちには<br> ハッキング装置を組み立ててもらう。」</p>
+            <p>「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に金庫を開けるためのシステムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」</p>
+            <p>「特殊なルートを通ってきたから警備に見つかる心配もない。時間は十分にあるから焦らず丁寧にな。装置が完成したら連絡しろ。装置の作り方の手順は箱の中に入れた。」</p>
+            <p>「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないよう、ファイルのダウンロードにはパスワードがかけられているから、謎を解いてパスワードを導いてくれ。まずは封筒①を開けてくれ。それじゃあ頼んだぞ、作戦開始だ！」</p>
+            <button class="modal-btn" onclick="closeIntroModal()">作戦を開始する</button>
+        </div>
+    </div>
 
     <div class="header">
         <div class="app-tabs">
@@ -394,6 +425,13 @@
     </div>
 
     <script>
+        // ==========================================
+        // モーダル制御
+        // ==========================================
+        function closeIntroModal() {
+            document.getElementById('intro-modal').style.display = 'none';
+        }
+
         // ==========================================
         // シリアル通信 & ハードウェアテスト
         // ==========================================
