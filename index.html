@@ -372,7 +372,7 @@
             } catch (err) { alert("接続エラー: " + err); }
         }
         
-        // 修正ポイント：コマンドを「CMD:L\n」など明確な文字列として送信し、ノイズ誤動作を完全にシャットアウト
+        // 複数コマンドが混ざらないように確実に1行ずつ送信する
         async function sendCommand(cmd) { 
             if (writer) {
                 try {
@@ -415,14 +415,15 @@
             } catch (e) { console.error("Serial read error", e); }
         }
 
+        // 成功時と失敗時で同じ clear.html に飛ぶが、URLパラメータを変える
         function checkBombState() {
             if (arduinoState.isDefused === 1 && !isCleared) {
                 isCleared = true;
-                window.location.href = "clear.html"; 
+                window.location.href = "clear.html?status=success"; 
             }
             if (arduinoState.isExploded === 1 && !isGameOver) {
                 isGameOver = true;
-                alert("BOMB EXPLODED! GAME OVER...");
+                window.location.href = "clear.html?status=failed";
             }
         }
 
@@ -542,11 +543,24 @@
                 renderPuzzleGrid(step); 
                 updateAnalysisCarousel(step); 
                 document.getElementById(`answerInput-s${step}`).value = ""; 
+                
+                // ★ 正解時にブザーとライトを両方鳴らす（パケット詰まりを防ぐため50msずらす）
                 sendCommand("B");
+                setTimeout(() => sendCommand("L"), 50);
+
+                // ★ STEP3の小謎正解時のみ、配線用のヒント(S3121など)をモニターに表示
+                if (step === 3) {
+                    let answerWord = (input === "くま") ? "BEAR" : (input === "とり") ? "BIRD" : (input === "ほし") ? "STAR" : (input === "つき") ? "MOON" : (input === "さかな") ? "FISH" : "BOOK";
+                    let cmd = "M"; 
+                    for(let i=0; i<4; i++) cmd += getRow(answerWord[i]);
+                    setTimeout(() => sendCommand(cmd), 100);
+                }
+
                 setTimeout(() => { feedback.innerText = ""; }, 2000);
             } else {
                 feedback.style.color = "red";
                 feedback.innerText = "❌";
+                sendCommand("B");
                 setTimeout(() => { feedback.innerText = ""; }, 2000);
             }
         }
