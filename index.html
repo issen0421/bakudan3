@@ -6,7 +6,6 @@
     <style>
         body { font-family: monospace; background: #0d1117; color: #c9d1d9; text-align: center; padding: 0; margin: 0; }
         
-        /* --- グローバルヘッダー & タブ --- */
         .header { background: #161b22; padding: 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
         .app-tabs { display: flex; gap: 10px; }
         .tab-btn { background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; font-family: monospace; transition: 0.2s; }
@@ -18,7 +17,6 @@
         .btn-connect { background: #238636; color: white; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; font-weight: bold; }
         .btn-connect:hover { background: #2ea043; }
 
-        /* --- オープニングポップアップ --- */
         #intro-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
@@ -38,7 +36,6 @@
         }
         .modal-btn:hover { background: #58a6ff; color: #000; }
 
-        /* --- 🔧 デバッグパネル --- */
         .debug-panel { background: #000; padding: 10px; border-bottom: 1px solid #30363d; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap; }
         .debug-panel span { color: #8b949e; font-weight: bold; }
         .debug-btn { background: #30363d; color: white; border: 1px solid #555; padding: 5px 15px; font-size: 14px; cursor: pointer; border-radius: 4px; transition: 0.2s; font-family: monospace; }
@@ -48,12 +45,10 @@
         .app-container { display: none; padding: 30px; }
         .app-container.active { display: block; }
 
-        /* --- 共通 UI --- */
         .execute-btn { background: #238636; color: white; font-size: 20px; padding: 15px; width: 100%; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; letter-spacing: 2px; }
         .execute-btn:hover { background: #2ea043; }
         .result-msg { margin-top: 15px; font-size: 20px; font-weight: bold; min-height: 30px; line-height: 1.5; }
 
-        /* --- 📱 ダッシュボード分割レイアウト (横並び) --- */
         .split-layout { 
             display: flex; justify-content: center; gap: 40px; margin-top: 40px; 
             padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; 
@@ -62,7 +57,6 @@
             flex: 1; min-width: 340px; max-width: 480px; margin: 0; display: flex; flex-direction: column;
         }
 
-        /* --- 🧩 左右パネル共通 & 高さ合わせ --- */
         .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; }
         .analysis-panel { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 20px; justify-content: center; }
         
@@ -73,15 +67,12 @@
         .carousel-btn { background: none; border: none; color: #58a6ff; font-size: 30px; cursor: pointer; transition: 0.2s; padding: 0; width: 30px; }
         .analysis-panel .carousel-btn { color: #0f0; }
         
-        /* 左右で完全に統一された画像枠 */
         .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
         .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; }
         
-        /* 右側(解析)用のカラースタイル */
         .hint-border { border-color: #0f0 !important; }
         .hint-placeholder { color: #0f0 !important; border-color: #0f0 !important; }
         
-        /* 3x3 スクラッチパネル */
         .grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1px; background: #000; }
         .grid-panel { background: #161b22; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #444; cursor: pointer; }
         .grid-panel:hover { background: #21262d; color: #58a6ff; }
@@ -89,14 +80,12 @@
         .solved-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(35, 134, 54, 0.8); color: white; display: none; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; letter-spacing: 2px; }
         .carousel-indicator { color: #8b949e; font-size: 14px; margin-top: 15px; letter-spacing: 2px;}
 
-        /* 左側の解答入力エリア */
         .answer-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed #444; width: 100%; }
         .answer-section input { padding: 8px; font-size: 16px; width: 140px; text-align: center; border: 1px solid #58a6ff; background: #0d1117; color: #c9d1d9; outline: none; border-radius: 4px; }
         .answer-section button { background: #58a6ff; color: #000; border: none; padding: 9px 20px; font-size: 16px; cursor: pointer; font-weight: bold; border-radius: 4px; margin-left: 5px; transition: 0.2s; }
         .answer-section button:hover { background: #1f6feb; color: #fff;}
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
-        /* --- STEP 1 UI (メイン) --- */
         .s1-items { display: flex; justify-content: center; gap: 20px; margin: 30px 0; padding: 20px; border: 2px dashed #444; border-radius: 10px; background: #161b22; }
         .s1-item-slot { width: 60px; height: 60px; background: transparent; }
         .s1-item { width: 60px; height: 60px; background: #30363d; border: 2px solid #8b949e; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; cursor: grab; transition: transform 0.1s; color: #fff; }
@@ -105,7 +94,6 @@
         .s1-slot { width: 60px; height: 60px; border: 2px dashed #555; background: #0d1117; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .s1-slot.drag-over { background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; }
 
-        /* --- STEP 2 UI (メイン) --- */
         .s2-ui-wrapper { margin: 10px 0 30px 0; }
         .s2-slot-indicator { font-size: 24px; margin-bottom: 20px; letter-spacing: 5px; color: #8b949e; }
         .s2-container { display: flex; justify-content: center; gap: 60px; }
@@ -116,7 +104,6 @@
         .s2-status-dot { font-size: 20px; color: #555; transition: 0.3s; }
         .s2-status-dot.active { color: #fff; text-shadow: 0 0 8px #fff; }
 
-        /* --- STEP 3 UI (メイン) --- */
         .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; margin: 0 auto; max-width: 900px; }
         .s3-slots-container { display: flex; flex-direction: column; gap: 40px; width: 180px; position: relative; padding: 0; background: linear-gradient(to right, transparent 24%, #444 24%, #444 26%, transparent 26%, transparent 49%, #444 49%, #444 51%, transparent 51%, transparent 74%, #444 74%, #444 76%, transparent 76%); }
         .s3-slot { width: 180px; height: 60px; border: 3px solid #555; background: #161b22; display: flex; align-items: center; justify-content: center; font-size: 30px; z-index: 1; transition: 0.2s; }
@@ -127,7 +114,6 @@
         .s3-item { width: 180px; height: 60px; background: #30363d; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: grab; box-shadow: 2px 4px 8px rgba(0,0,0,0.5); transition: transform 0.1s; color: white; border: 1px solid #555; }
         .s3-item:active { cursor: grabbing; transform: scale(0.95); border-color: #58a6ff; }
 
-        /* --- LAST STEP UI --- */
         .instruction { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 8px; margin: 0 auto 30px auto; max-width: 700px; font-size: 16px; line-height: 1.5; }
         .last-hint-box { background: #161b22; border: 1px solid #ff7b72; padding: 15px; border-radius: 5px; margin: 20px auto; max-width: 500px; display: none; }
         .last-hint-text { color: #ff7b72; font-size: 16px; margin-bottom: 10px; font-weight: bold; }
@@ -135,7 +121,6 @@
 </head>
 <body>
 
-    <!-- 🌟 オープニングポップアップ -->
     <div id="intro-modal">
         <div class="modal-content">
             <p>「よし、金庫前に着いたか<br> この金庫を開けるために、今からお前たちには<br> ハッキング装置を組み立ててもらう。」</p>
@@ -156,7 +141,6 @@
         <button class="btn-connect" onclick="connectSerial()">🔌 デバイス接続</button>
     </div>
 
-    <!-- 🔧 デバッグパネル -->
     <div class="debug-panel">
         <span>🔧 テスト:</span>
         <button class="debug-btn" onclick="testLight()">💡 ライト</button>
@@ -168,10 +152,8 @@
 
     <!-- ========================================== -->
     <!-- APP 1: STEP1 -->
-    <!-- ========================================== -->
     <div class="app-container active" id="app-step1">
         <h2>STEP1 (論理ソート)</h2>
-
         <div class="s1-slots">
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -180,7 +162,6 @@
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
         </div>
-
         <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
             <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)">A</div></div>
             <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)">B</div></div>
@@ -189,17 +170,14 @@
             <div class="s1-item-slot item-slot" id="pool-E"><div class="s1-item item" draggable="true" id="E" ondragstart="dragItem(event)">E</div></div>
             <div class="s1-item-slot item-slot" id="pool-F"><div class="s1-item item" draggable="true" id="F" ondragstart="dragItem(event)">F</div></div>
         </div>
-
         <button class="execute-btn" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block;">判定</button>
         <div id="result-step1" class="result-msg"></div>
-
         <div class="split-layout">
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
                     <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s1">0</span></div>
                 </div>
-                
                 <div class="carousel-container">
                     <button class="carousel-btn" id="btn-prev-puzzle-s1" onclick="prevPuzzle(1)">◀</button>
                     <div class="image-wrapper">
@@ -210,14 +188,12 @@
                     <button class="carousel-btn" id="btn-next-puzzle-s1" onclick="nextPuzzle(1)">▶</button>
                 </div>
                 <div class="carousel-indicator" id="puzzleIndicator-s1">FILE A</div>
-                
                 <div class="answer-section">
                     <input type="text" id="answerInput-s1" placeholder="ANSWER">
                     <button onclick="submitAnswer(1)">送信</button>
                     <div class="feedback" id="terminalFeedback-s1"></div>
                 </div>
             </div>
-            
             <div class="analysis-panel">
                 <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -235,38 +211,24 @@
 
     <!-- ========================================== -->
     <!-- APP 2: STEP2 -->
-    <!-- ========================================== -->
     <div class="app-container" id="app-step2">
         <h2>STEP2 (データ転送)</h2>
-
         <div class="s2-ui-wrapper">
             <div class="s2-slot-indicator" id="s2-slot-display">⚪ ⚪</div>
             <div class="s2-container">
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div>
-                    <div class="s2-status-dot" id="dot-0">⚪</div>
-                </div>
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-1" onclick="handleNodeClick(1)"></div>
-                    <div class="s2-status-dot" id="dot-1">⚪</div>
-                </div>
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-2" onclick="handleNodeClick(2)"></div>
-                    <div class="s2-status-dot" id="dot-2">⚪</div>
-                </div>
+                <div class="s2-node-wrapper"><div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div><div class="s2-status-dot" id="dot-0">⚪</div></div>
+                <div class="s2-node-wrapper"><div class="s2-node" id="node-1" onclick="handleNodeClick(1)"></div><div class="s2-status-dot" id="dot-1">⚪</div></div>
+                <div class="s2-node-wrapper"><div class="s2-node" id="node-2" onclick="handleNodeClick(2)"></div><div class="s2-status-dot" id="dot-2">⚪</div></div>
             </div>
         </div>
-
         <button class="execute-btn" onclick="resetStep2()" style="background: #444; max-width: 200px; margin: 0 auto; display: block;">🔄 リセット</button>
         <div id="result-step2" class="result-msg"></div>
-
         <div class="split-layout">
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
                     <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s2">0</span></div>
                 </div>
-                
                 <div class="carousel-container">
                     <button class="carousel-btn" id="btn-prev-puzzle-s2" onclick="prevPuzzle(2)">◀</button>
                     <div class="image-wrapper">
@@ -277,14 +239,12 @@
                     <button class="carousel-btn" id="btn-next-puzzle-s2" onclick="nextPuzzle(2)">▶</button>
                 </div>
                 <div class="carousel-indicator" id="puzzleIndicator-s2">FILE A</div>
-                
                 <div class="answer-section">
                     <input type="text" id="answerInput-s2" placeholder="ANSWER">
                     <button onclick="submitAnswer(2)">送信</button>
                     <div class="feedback" id="terminalFeedback-s2"></div>
                 </div>
             </div>
-            
             <div class="analysis-panel">
                 <div id="hintArea-s2" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -302,10 +262,8 @@
 
     <!-- ========================================== -->
     <!-- APP 3: STEP3 -->
-    <!-- ========================================== -->
     <div class="app-container" id="app-step3">
         <h2>STEP3 (物理配線)</h2>
-
         <div class="puzzle-layout">
             <div class="s3-slots-container">
                 <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -314,7 +272,6 @@
                 <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             </div>
-
             <div class="s3-side-panel">
                 <div class="s3-items" id="s3-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
                     <div class="s3-item-slot item-slot" id="pool-SUN"><div class="s3-item item" draggable="true" id="SUN" ondragstart="dragItem(event)">☀️</div></div>
@@ -329,14 +286,12 @@
                 <div id="result-step3" class="result-msg"></div>
             </div>
         </div>
-
         <div class="split-layout">
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
                     <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s3">0</span></div>
                 </div>
-                
                 <div class="carousel-container">
                     <button class="carousel-btn" id="btn-prev-puzzle-s3" onclick="prevPuzzle(3)">◀</button>
                     <div class="image-wrapper">
@@ -347,14 +302,12 @@
                     <button class="carousel-btn" id="btn-next-puzzle-s3" onclick="nextPuzzle(3)">▶</button>
                 </div>
                 <div class="carousel-indicator" id="puzzleIndicator-s3">FILE A</div>
-                
                 <div class="answer-section">
                     <input type="text" id="answerInput-s3" placeholder="ANSWER">
                     <button onclick="submitAnswer(3)">送信</button>
                     <div class="feedback" id="terminalFeedback-s3"></div>
                 </div>
             </div>
-
             <div class="analysis-panel">
                 <div id="hintArea-s3" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -372,7 +325,6 @@
 
     <!-- ========================================== -->
     <!-- APP 4: LAST STEP (BOMB) -->
-    <!-- ========================================== -->
     <div class="app-container" id="app-last">
         <h2>FINAL PROTOCOL</h2>
         <div id="last-start-screen">
@@ -390,37 +342,16 @@
                 <span class="highlight">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
                 ※残り時間はデバイス側のモニターを確認せよ。
             </div>
-            
-            <div id="last-hint-8" class="last-hint-box">
-                <div class="last-hint-text">傍受データ1 (残り8分)</div>
-                <!-- ここに画像 -->
-            </div>
-            <div id="last-hint-6" class="last-hint-box">
-                <div class="last-hint-text">傍受データ2 (残り6分)</div>
-                <!-- ここに画像 -->
-            </div>
-            <div id="last-hint-4" class="last-hint-box">
-                <div class="last-hint-text">傍受データ3 (残り4分)</div>
-                <!-- ここに画像 -->
-            </div>
-            <div id="last-hint-2" class="last-hint-box">
-                <div class="last-hint-text">最終データ (残り2分)</div>
-                <!-- ここに画像 -->
-            </div>
+            <div id="last-hint-8" class="last-hint-box"><div class="last-hint-text">傍受データ1 (残り8分)</div></div>
+            <div id="last-hint-6" class="last-hint-box"><div class="last-hint-text">傍受データ2 (残り6分)</div></div>
+            <div id="last-hint-4" class="last-hint-box"><div class="last-hint-text">傍受データ3 (残り4分)</div></div>
+            <div id="last-hint-2" class="last-hint-box"><div class="last-hint-text">最終データ (残り2分)</div></div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // モーダル制御
-        // ==========================================
-        function closeIntroModal() {
-            document.getElementById('intro-modal').style.display = 'none';
-        }
+        function closeIntroModal() { document.getElementById('intro-modal').style.display = 'none'; }
 
-        // ==========================================
-        // シリアル通信 & ハードウェアテスト
-        // ==========================================
         let port; let writer; let reader;
         
         async function connectSerial() {
@@ -428,35 +359,30 @@
                 port = await navigator.serial.requestPort();
                 await port.open({ baudRate: 9600 });
                 
-                // 送信用エンコーダー設定
                 const encoder = new TextEncoderStream();
                 encoder.readable.pipeTo(port.writable);
                 writer = encoder.writable.getWriter();
                 
-                // 受信用デコーダー設定（爆弾解除状況の読み取り用）
                 const decoder = new TextDecoderStream();
                 port.readable.pipeTo(decoder.writable);
                 reader = decoder.readable.getReader();
                 
                 alert("デバイスとの接続を確立しました。");
-                
-                // 非同期でArduinoからのデータを読み取り続ける
                 readLoop();
             } catch (err) { alert("接続エラー: " + err); }
         }
         
-        // 修正ポイント③：余計な改行コード(\n)を省き、純粋に1文字のコマンドだけを送信するように最適化
+        // 修正ポイント：コマンドを「CMD:L\n」など明確な文字列として送信し、ノイズ誤動作を完全にシャットアウト
         async function sendCommand(cmd) { 
             if (writer) {
                 try {
-                    await writer.write(cmd); 
+                    await writer.write("CMD:" + cmd + "\n"); 
                 } catch (e) {
                     console.error("Write error", e);
                 }
             }
         }
 
-        // --- Arduinoからの状態読み取りとクリア判定処理 ---
         let arduinoState = { s7: 1, isArmed: 0, isDefused: 0, isExploded: 0 };
         let isCleared = false;
         let isGameOver = false;
@@ -470,7 +396,7 @@
                     if (value) {
                         buffer += value;
                         let lines = buffer.split('\n');
-                        buffer = lines.pop(); // 最後の不完全な行は次回へ持ち越し
+                        buffer = lines.pop();
                         for (let line of lines) {
                             line = line.trim();
                             if (line.startsWith("S:")) {
@@ -486,15 +412,12 @@
                         }
                     }
                 }
-            } catch (e) {
-                console.error("Serial read error", e);
-            }
+            } catch (e) { console.error("Serial read error", e); }
         }
 
         function checkBombState() {
             if (arduinoState.isDefused === 1 && !isCleared) {
                 isCleared = true;
-                // 爆弾解除成功でクリアページに遷移
                 window.location.href = "clear.html"; 
             }
             if (arduinoState.isExploded === 1 && !isGameOver) {
@@ -503,7 +426,6 @@
             }
         }
 
-        // Arduino側の仕様に合わせてテストコマンド (L, B, T) を送信
         function testLight() { sendCommand("L"); }
         function testBuzzer() { sendCommand("B"); }
         function testMonitor() { sendCommand("T"); }
@@ -514,9 +436,6 @@
             document.getElementById('tab-last').style.display = 'block';
         }
 
-        // ==========================================
-        // 共通ドラッグ＆ドロップ
-        // ==========================================
         function allowDrop(e) { e.preventDefault(); if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) e.target.classList.add('drag-over'); }
         function dragLeave(e) { e.target.classList.remove('drag-over'); }
         function dragItem(e) { e.dataTransfer.setData("text", e.target.id); }
@@ -539,17 +458,12 @@
             document.getElementById(`tab-${appId}`).classList.add('active');
         }
 
-        // ==========================================
-        // スクラッチ小謎 ＆ 解析データ 管理システム
-        // ==========================================
         const puzzleFiles = ["A", "B", "C", "D", "E", "F"];
         let openPoints = { 1: 0, 2: 0, 3: 0 }; 
         let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 }; 
         let analysisIdx = { 1: 0, 2: 0, 3: 0 }; 
-        
         let panelsState = { 1: [], 2: [], 3: [] };
         let isSolved = { 1: [], 2: [], 3: [] };
-
         let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
         let validTrials = { 1: 0, 2: 0, 3: 0 };
 
@@ -558,7 +472,6 @@
             2: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
             3: {"くま":0, "とり":1, "ほし":2, "つき":3, "さかな":4, "ほん":5}
         };
-        
         const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
         function getRow(char) { return QWERTY_TOP.includes(char) ? 1 : QWERTY_MID.includes(char) ? 2 : QWERTY_BOT.includes(char) ? 3 : 0; }
 
@@ -583,10 +496,8 @@
             const grid = document.getElementById(`puzzleGrid-s${step}`);
             const overlay = document.getElementById(`solvedOverlay-s${step}`);
             const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
-            
             document.getElementById(`puzzleIndicator-s${step}`).innerText = `FILE ${puzzleFiles[pIdx]}`;
             placeholder.innerHTML = `STEP${step}<br>小謎 ${puzzleFiles[pIdx]}`;
-            
             if (isSolved[step][pIdx]) {
                 grid.style.display = "none";
                 overlay.style.display = "flex";
@@ -597,15 +508,11 @@
                 for(let i=0; i<9; i++) {
                     let div = document.createElement("div");
                     div.className = "grid-panel";
-                    if (panelsState[step][pIdx][i]) {
-                        div.classList.add("open");
-                    } else {
-                        div.onclick = () => openPanel(step, pIdx, i);
-                    }
+                    if (panelsState[step][pIdx][i]) div.classList.add("open");
+                    else div.onclick = () => openPanel(step, pIdx, i);
                     grid.appendChild(div);
                 }
             }
-
             document.getElementById(`btn-prev-puzzle-s${step}`).style.visibility = (pIdx === 0) ? 'hidden' : 'visible';
             document.getElementById(`btn-next-puzzle-s${step}`).style.visibility = (pIdx === 5) ? 'hidden' : 'visible';
         }
@@ -618,7 +525,6 @@
                 renderPuzzleGrid(step);
             }
         }
-
         function prevPuzzle(step) { if(currentPuzzleIdx[step] > 0) { currentPuzzleIdx[step]--; renderPuzzleGrid(step); } }
         function nextPuzzle(step) { if(currentPuzzleIdx[step] < 5) { currentPuzzleIdx[step]++; renderPuzzleGrid(step); } }
 
@@ -631,14 +537,11 @@
                 const pIdx = dict[input]; 
                 isSolved[step][pIdx] = true;
                 analysisIdx[step] = pIdx; 
-                
                 feedback.style.color = "#0f0";
                 feedback.innerText = "DATA DECODED";
-                
                 renderPuzzleGrid(step); 
                 updateAnalysisCarousel(step); 
                 document.getElementById(`answerInput-s${step}`).value = ""; 
-
                 sendCommand("B");
                 setTimeout(() => { feedback.innerText = ""; }, 2000);
             } else {
@@ -652,250 +555,148 @@
             const idx = analysisIdx[step];
             const pName = puzzleFiles[idx];
             const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
-            
             if (isSolved[step][idx]) {
                 placeholder.innerHTML = `解析データ ${pName}`;
-                placeholder.style.color = "#0f0";
-                placeholder.style.borderColor = "#0f0";
+                placeholder.style.color = "#0f0"; placeholder.style.borderColor = "#0f0";
             } else {
                 placeholder.innerHTML = `Locked 🔐`;
-                placeholder.style.color = "#555";
-                placeholder.style.borderColor = "#555";
+                placeholder.style.color = "#555"; placeholder.style.borderColor = "#555";
             }
-            
-            let dots = "";
-            for(let i=0; i<6; i++) {
-                dots += (i === idx) ? "⚫" : "⚪";
-            }
+            let dots = ""; for(let i=0; i<6; i++) dots += (i === idx) ? "⚫" : "⚪";
             document.getElementById(`analysisIndicator-s${step}`).innerText = dots;
-
             document.getElementById(`btn-prev-analysis-s${step}`).style.visibility = (idx === 0) ? 'hidden' : 'visible';
             document.getElementById(`btn-next-analysis-s${step}`).style.visibility = (idx === 5) ? 'hidden' : 'visible';
         }
         function prevAnalysis(step) { if (analysisIdx[step] > 0) { analysisIdx[step]--; updateAnalysisCarousel(step); } }
         function nextAnalysis(step) { if (analysisIdx[step] < 5) { analysisIdx[step]++; updateAnalysisCarousel(step); } }
 
-        // ==========================================
-        // STEP 1 メイン
-        // ==========================================
         const s1_answer = ["A", "E", "B", "F", "D", "C"];
         function checkClearStep1() {
             const slots = document.querySelectorAll('#app-step1 .s1-slot');
             let placedItems = [];
             for (let slot of slots) {
-                if (slot.children.length === 0) {
-                    document.getElementById("result-step1").innerText = "❌";
-                    return;
-                }
+                if (slot.children.length === 0) { document.getElementById("result-step1").innerText = "❌"; return; }
                 placedItems.push(slot.children[0].id);
             }
-
             let pattern = placedItems.join("");
             if (!triedPatterns[1].has(pattern)) {
                 triedPatterns[1].add(pattern);
                 validTrials[1]++;
                 if (validTrials[1] % 3 === 0) addPoint(1);
             }
-
             let isCorrect = placedItems.every((val, i) => val === s1_answer[i]);
             const res = document.getElementById("result-step1");
             if (isCorrect) {
-                res.innerText = "🎉 CLEAR!";
-                res.style.color = "#2ea043";
+                res.innerText = "🎉 CLEAR!"; res.style.color = "#2ea043";
                 document.getElementById('tab-step2').style.display = 'block';
-                
-                // STEP1正解時に確実にライトを光らせる
                 sendCommand("L"); 
-            } else {
-                res.innerText = "❌";
-                res.style.color = "#ff7b72";
-            }
+            } else { res.innerText = "❌"; res.style.color = "#ff7b72"; }
         }
 
-        // ==========================================
-        // STEP 2 メイン 
-        // ==========================================
         const S2_CAPACITIES = [10, 7, 3];
         let s2_volumes = [10, 0, 0];
         let s2_selectedNode = null;
         let s2_isTransferring = false;
-
         function updateNodeColors() {
             const slotDisplay = document.getElementById('s2-slot-display');
-
             if (s2_isTransferring) {
                 slotDisplay.innerText = "⚫ ⚫"; 
                 for(let i=0; i<3; i++) {
                     document.getElementById(`node-${i}`).className = "s2-node";
                     if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) document.getElementById(`node-${i}`).classList.add('full');
-                    document.getElementById(`dot-${i}`).className = "s2-status-dot";
-                    document.getElementById(`dot-${i}`).innerText = "⚪";
+                    document.getElementById(`dot-${i}`).className = "s2-status-dot"; document.getElementById(`dot-${i}`).innerText = "⚪";
                 }
                 return;
             }
-
             for (let i = 0; i < 3; i++) {
                 const node = document.getElementById(`node-${i}`);
                 const dot = document.getElementById(`dot-${i}`);
                 node.className = "s2-node"; 
                 if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
-
                 if (s2_selectedNode === null) {
                     slotDisplay.innerText = "⚪ ⚪";
-                    if (s2_volumes[i] > 0) {
-                        dot.className = "s2-status-dot active"; dot.innerText = "⚫";
-                    } else {
-                        dot.className = "s2-status-dot"; dot.innerText = "⚪";
-                    }
+                    if (s2_volumes[i] > 0) { dot.className = "s2-status-dot active"; dot.innerText = "⚫"; } 
+                    else { dot.className = "s2-status-dot"; dot.innerText = "⚪"; }
                 } else {
                     slotDisplay.innerText = "⚫ ⚪";
-                    if (i === s2_selectedNode) {
-                        node.classList.add('selected');
-                        dot.className = "s2-status-dot active"; dot.innerText = "⚫";
-                    } else {
-                        if (S2_CAPACITIES[i] - s2_volumes[i] > 0) {
-                            dot.className = "s2-status-dot active"; dot.innerText = "⚫";
-                        } else {
-                            dot.className = "s2-status-dot"; dot.innerText = "⚪";
-                        }
+                    if (i === s2_selectedNode) { node.classList.add('selected'); dot.className = "s2-status-dot active"; dot.innerText = "⚫"; } 
+                    else {
+                        if (S2_CAPACITIES[i] - s2_volumes[i] > 0) { dot.className = "s2-status-dot active"; dot.innerText = "⚫"; } 
+                        else { dot.className = "s2-status-dot"; dot.innerText = "⚪"; }
                     }
                 }
             }
         }
-
         function handleNodeClick(index) {
             if (s2_isTransferring) return; 
-
             if (s2_selectedNode === null) {
                 if (s2_volumes[index] === 0) return; 
-                s2_selectedNode = index;
-                updateNodeColors();
+                s2_selectedNode = index; updateNodeColors();
             } else {
-                if (s2_selectedNode === index) { 
-                    s2_selectedNode = null;
-                    updateNodeColors();
-                    return;
-                }
-                let from = s2_selectedNode; let to = index;
-                s2_selectedNode = null;
-
+                if (s2_selectedNode === index) { s2_selectedNode = null; updateNodeColors(); return; }
+                let from = s2_selectedNode; let to = index; s2_selectedNode = null;
                 let transferAmount = Math.min(s2_volumes[from], S2_CAPACITIES[to] - s2_volumes[to]);
                 if (transferAmount > 0) {
-                    s2_volumes[from] -= transferAmount;
-                    s2_volumes[to] += transferAmount;
-                    
+                    s2_volumes[from] -= transferAmount; s2_volumes[to] += transferAmount;
                     let pattern = s2_volumes.join(",");
-                    if (!triedPatterns[2].has(pattern)) {
-                        triedPatterns[2].add(pattern);
-                        validTrials[2]++;
-                        if (validTrials[2] % 3 === 0) addPoint(2);
-                    }
-                    
+                    if (!triedPatterns[2].has(pattern)) { triedPatterns[2].add(pattern); validTrials[2]++; if (validTrials[2] % 3 === 0) addPoint(2); }
                     let beeps = 0; s2_isTransferring = true; updateNodeColors();
-                    
                     const interval = setInterval(() => {
-                        sendCommand("B");
-                        beeps++;
+                        sendCommand("B"); beeps++;
                         if (beeps >= transferAmount) {
-                            clearInterval(interval);
-                            s2_isTransferring = false;
-                            updateNodeColors();
+                            clearInterval(interval); s2_isTransferring = false; updateNodeColors();
                             if (s2_volumes[0] === 5 && s2_volumes[1] === 5) {
-                                document.getElementById("result-step2").innerText = "🎉 CLEAR!";
-                                document.getElementById("result-step2").style.color = "#2ea043";
+                                document.getElementById("result-step2").innerText = "🎉 CLEAR!"; document.getElementById("result-step2").style.color = "#2ea043";
                                 document.getElementById('tab-step3').style.display = 'block';
                             }
                         }
                     }, 600); 
-                } else {
-                    updateNodeColors();
-                }
+                } else { updateNodeColors(); }
             }
         }
-
         function resetStep2() {
             if (s2_isTransferring) return;
-            s2_volumes = [10, 0, 0]; s2_selectedNode = null;
-            updateNodeColors();
-            document.getElementById("result-step2").innerText = ""; 
+            s2_volumes = [10, 0, 0]; s2_selectedNode = null; updateNodeColors(); document.getElementById("result-step2").innerText = ""; 
         }
 
-        // ==========================================
-        // STEP 3 メイン
-        // ==========================================
         function executeMainPuzzle() {
             const slots = document.querySelectorAll('#app-step3 .s3-slot');
             let placedWords = [];
             for (let slot of slots) {
-                if (slot.children.length === 0) { 
-                    document.getElementById("result-step3").innerText = "❌"; 
-                    document.getElementById("result-step3").style.color = "#ff7b72";
-                    return; 
-                }
+                if (slot.children.length === 0) { document.getElementById("result-step3").innerText = "❌"; document.getElementById("result-step3").style.color = "#ff7b72"; return; }
                 placedWords.push(slot.children[0].id);
             }
-
             let pattern = placedWords.join("");
-            if (!triedPatterns[3].has(pattern)) {
-                triedPatterns[3].add(pattern);
-                validTrials[3]++;
-                if (validTrials[3] % 3 === 0) addPoint(3);
-            }
-
+            if (!triedPatterns[3].has(pattern)) { triedPatterns[3].add(pattern); validTrials[3]++; if (validTrials[3] % 3 === 0) addPoint(3); }
             let validJoints = 0;
             for (let i = 0; i < 4; i++) {
                 let w1 = placedWords[i], w2 = placedWords[i+1];
                 if (getRow(w1[0]) !== getRow(w2[0]) && getRow(w1[1]) !== getRow(w2[1]) && getRow(w1[2]) !== getRow(w2[2])) validJoints++;
             }
-            
             const res = document.getElementById("result-step3");
             if (validJoints === 4) {
-                sendCommand("L"); // 正解時のみデバイスを光らせる
-                setTimeout(() => {
-                    res.innerText = "🎉 CLEAR!";
-                    res.style.color = "#0f0";
-                    document.getElementById('tab-last').style.display = 'block';
-                }, 500);
-            } else {
-                sendCommand("B");
-                res.innerText = "❌";
-                res.style.color = "#ff7b72";
-            }
+                sendCommand("L"); 
+                setTimeout(() => { res.innerText = "🎉 CLEAR!"; res.style.color = "#0f0"; document.getElementById('tab-last').style.display = 'block'; }, 500);
+            } else { sendCommand("B"); res.innerText = "❌"; res.style.color = "#ff7b72"; }
         }
 
-        // ==========================================
-        // LAST STEP (BOMB) メイン
-        // ==========================================
-        let lastTimerInterval;
-        let timeRemaining = 600;
-        
+        let lastTimerInterval; let timeRemaining = 600;
         function startLastStep() {
             document.getElementById('last-start-screen').style.display = 'none';
             document.getElementById('last-active-screen').style.display = 'block';
-            
-            // Arduino側に'S'コマンドを送信して、本物の爆弾タイマーを起動させる
             sendCommand("S"); 
-            
-            // ブラウザ側のタイマーはヒント表示用としてのみ稼働
             timeRemaining = 600;
             lastTimerInterval = setInterval(() => {
                 timeRemaining--;
-                
                 if(timeRemaining === 480) document.getElementById('last-hint-8').style.display = 'block';
                 if(timeRemaining === 360) document.getElementById('last-hint-6').style.display = 'block';
                 if(timeRemaining === 240) document.getElementById('last-hint-4').style.display = 'block';
                 if(timeRemaining === 120) document.getElementById('last-hint-2').style.display = 'block';
-                
-                if (timeRemaining <= 0) {
-                    clearInterval(lastTimerInterval);
-                }
+                if (timeRemaining <= 0) clearInterval(lastTimerInterval);
             }, 1000);
         }
 
-        window.addEventListener('DOMContentLoaded', () => { 
-            initPuzzles(); 
-            updateNodeColors(); 
-        });
+        window.addEventListener('DOMContentLoaded', () => { initPuzzles(); updateNodeColors(); });
     </script>
 </body>
 </html>
