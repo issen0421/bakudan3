@@ -172,7 +172,6 @@
     <div class="app-container active" id="app-step1">
         <h2>STEP1 (論理ソート)</h2>
 
-        <!-- 🌟 まとめ謎 (一番上) -->
         <div class="s1-slots">
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -194,10 +193,7 @@
         <button class="execute-btn" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block;">判定</button>
         <div id="result-step1" class="result-msg"></div>
 
-        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
-            
-            <!-- 左: 小謎エリア & 解答入力 -->
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
@@ -222,7 +218,6 @@
                 </div>
             </div>
             
-            <!-- 右: 解析データエリア -->
             <div class="analysis-panel">
                 <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -235,7 +230,6 @@
                     <div class="carousel-indicator hint-text" id="analysisIndicator-s1">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -245,7 +239,6 @@
     <div class="app-container" id="app-step2">
         <h2>STEP2 (データ転送)</h2>
 
-        <!-- 🌟 まとめ謎 (一番上) -->
         <div class="s2-ui-wrapper">
             <div class="s2-slot-indicator" id="s2-slot-display">⚪ ⚪</div>
             <div class="s2-container">
@@ -267,9 +260,7 @@
         <button class="execute-btn" onclick="resetStep2()" style="background: #444; max-width: 200px; margin: 0 auto; display: block;">🔄 リセット</button>
         <div id="result-step2" class="result-msg"></div>
 
-        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
-            
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
@@ -306,7 +297,6 @@
                     <div class="carousel-indicator hint-text" id="analysisIndicator-s2">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -316,7 +306,6 @@
     <div class="app-container" id="app-step3">
         <h2>STEP3 (物理配線)</h2>
 
-        <!-- 🌟 まとめ謎 (一番上) -->
         <div class="puzzle-layout">
             <div class="s3-slots-container">
                 <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -341,9 +330,7 @@
             </div>
         </div>
 
-        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
-            
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
@@ -380,7 +367,6 @@
                     <div class="carousel-indicator hint-text" id="analysisIndicator-s3" style="font-size:18px;">⚫⚪⚪⚪⚪⚪</div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -435,22 +421,84 @@
         // ==========================================
         // シリアル通信 & ハードウェアテスト
         // ==========================================
-        let port; let writer;
+        let port; let writer; let reader;
+        
         async function connectSerial() {
             try {
                 port = await navigator.serial.requestPort();
                 await port.open({ baudRate: 9600 });
+                
+                // 送信用エンコーダー設定
                 const encoder = new TextEncoderStream();
                 encoder.readable.pipeTo(port.writable);
                 writer = encoder.writable.getWriter();
+                
+                // 受信用デコーダー設定（爆弾解除状況の読み取り用）
+                const decoder = new TextDecoderStream();
+                port.readable.pipeTo(decoder.writable);
+                reader = decoder.readable.getReader();
+                
                 alert("デバイスとの接続を確立しました。");
+                
+                // 非同期でArduinoからのデータを読み取り続ける
+                readLoop();
             } catch (err) { alert("接続エラー: " + err); }
         }
+        
         async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
 
-        function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000"), 1000); }
+        // --- Arduinoからの状態読み取りとクリア判定処理 ---
+        let arduinoState = { s7: 1, isArmed: 0, isDefused: 0, isExploded: 0 };
+        let isCleared = false;
+        let isGameOver = false;
+
+        async function readLoop() {
+            let buffer = "";
+            try {
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    if (value) {
+                        buffer += value;
+                        let lines = buffer.split('\n');
+                        buffer = lines.pop(); // 最後の不完全な行は次回へ持ち越し
+                        for (let line of lines) {
+                            line = line.trim();
+                            if (line.startsWith("S:")) {
+                                let parts = line.substring(2).split(',');
+                                if (parts.length === 4) {
+                                    arduinoState.s7 = parseInt(parts[0]);
+                                    arduinoState.isArmed = parseInt(parts[1]);
+                                    arduinoState.isDefused = parseInt(parts[2]);
+                                    arduinoState.isExploded = parseInt(parts[3]);
+                                    checkBombState();
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Serial read error", e);
+            }
+        }
+
+        function checkBombState() {
+            if (arduinoState.isDefused === 1 && !isCleared) {
+                isCleared = true;
+                // 爆弾解除成功でクリアページに遷移
+                window.location.href = "clear.html"; 
+            }
+            if (arduinoState.isExploded === 1 && !isGameOver) {
+                isGameOver = true;
+                alert("BOMB EXPLODED! GAME OVER...");
+            }
+        }
+
+        // Arduino側の仕様に合わせてテストコマンドを修正 (L, B, T)
+        function testLight() { sendCommand("L"); }
         function testBuzzer() { sendCommand("B"); }
-        function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S0000"), 1000); }
+        function testMonitor() { sendCommand("T"); }
+        
         function devUnlockTabs() { 
             document.getElementById('tab-step2').style.display = 'block';
             document.getElementById('tab-step3').style.display = 'block';
@@ -493,7 +541,6 @@
         let panelsState = { 1: [], 2: [], 3: [] };
         let isSolved = { 1: [], 2: [], 3: [] };
 
-        // 判定時の新規パターン検知用
         let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
         let validTrials = { 1: 0, 2: 0, 3: 0 };
 
@@ -583,15 +630,8 @@
                 updateAnalysisCarousel(step); 
                 document.getElementById(`answerInput-s${step}`).value = ""; 
 
-                if (step === 3) {
-                    let answerWord = (input === "くま") ? "BEAR" : (input === "とり") ? "BIRD" : (input === "ほし") ? "STAR" : (input === "つき") ? "MOON" : (input === "さかな") ? "FISH" : "BOOK";
-                    let cmd = "S"; for(let i=0; i<4; i++) cmd += getRow(answerWord[i]);
-                    sendCommand(cmd);
-                    setTimeout(() => { sendCommand("S0000"); feedback.innerText = ""; }, 4000); 
-                } else {
-                    sendCommand("B");
-                    setTimeout(() => { feedback.innerText = ""; }, 2000);
-                }
+                sendCommand("B");
+                setTimeout(() => { feedback.innerText = ""; }, 2000);
             } else {
                 feedback.style.color = "red";
                 feedback.innerText = "❌";
@@ -641,7 +681,6 @@
                 placedItems.push(slot.children[0].id);
             }
 
-            // 新規パターンの判定
             let pattern = placedItems.join("");
             if (!triedPatterns[1].has(pattern)) {
                 triedPatterns[1].add(pattern);
@@ -655,8 +694,8 @@
                 res.innerText = "🎉 CLEAR!";
                 res.style.color = "#2ea043";
                 document.getElementById('tab-step2').style.display = 'block';
-                sendCommand("P1111"); 
-                setTimeout(() => sendCommand("P0000"), 3000); 
+                // 2回目以降の判定でも毎回確実に2秒間光るように"L"を送信
+                sendCommand("L"); 
             } else {
                 res.innerText = "❌";
                 res.style.color = "#ff7b72";
@@ -675,7 +714,7 @@
             const slotDisplay = document.getElementById('s2-slot-display');
 
             if (s2_isTransferring) {
-                slotDisplay.innerText = "⚫ ⚫"; // 処理中
+                slotDisplay.innerText = "⚫ ⚫"; 
                 for(let i=0; i<3; i++) {
                     document.getElementById(`node-${i}`).className = "s2-node";
                     if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) document.getElementById(`node-${i}`).classList.add('full');
@@ -735,7 +774,6 @@
                     s2_volumes[from] -= transferAmount;
                     s2_volumes[to] += transferAmount;
                     
-                    // 新規パターンの判定 (転送後の水量を状態とする)
                     let pattern = s2_volumes.join(",");
                     if (!triedPatterns[2].has(pattern)) {
                         triedPatterns[2].add(pattern);
@@ -744,6 +782,8 @@
                     }
                     
                     let beeps = 0; s2_isTransferring = true; updateNodeColors();
+                    
+                    // 音の間隔を 150 から 600 に変更（音が独立して聞こえるように修正）
                     const interval = setInterval(() => {
                         sendCommand("B");
                         beeps++;
@@ -757,7 +797,7 @@
                                 document.getElementById('tab-step3').style.display = 'block';
                             }
                         }
-                    }, 150); 
+                    }, 600); 
                 } else {
                     updateNodeColors();
                 }
@@ -774,7 +814,6 @@
         // ==========================================
         // STEP 3 メイン
         // ==========================================
-        let ledTimer;
         function executeMainPuzzle() {
             const slots = document.querySelectorAll('#app-step3 .s3-slot');
             let placedWords = [];
@@ -787,7 +826,6 @@
                 placedWords.push(slot.children[0].id);
             }
 
-            // 新規パターンの判定
             let pattern = placedWords.join("");
             if (!triedPatterns[3].has(pattern)) {
                 triedPatterns[3].add(pattern);
@@ -800,21 +838,17 @@
                 let w1 = placedWords[i], w2 = placedWords[i+1];
                 if (getRow(w1[0]) !== getRow(w2[0]) && getRow(w1[1]) !== getRow(w2[1]) && getRow(w1[2]) !== getRow(w2[2])) validJoints++;
             }
-            if (ledTimer) clearTimeout(ledTimer);
-            sendCommand("L" + validJoints);
-            if (validJoints === 0) sendCommand("B");
-            
-            ledTimer = setTimeout(() => sendCommand("L0"), 3000);
             
             const res = document.getElementById("result-step3");
             if (validJoints === 4) {
-                clearTimeout(ledTimer);
+                sendCommand("L"); // 正解時のみデバイスを光らせる
                 setTimeout(() => {
                     res.innerText = "🎉 CLEAR!";
                     res.style.color = "#0f0";
                     document.getElementById('tab-last').style.display = 'block';
                 }, 500);
             } else {
+                sendCommand("B");
                 res.innerText = "❌";
                 res.style.color = "#ff7b72";
             }
@@ -830,11 +864,13 @@
             document.getElementById('last-start-screen').style.display = 'none';
             document.getElementById('last-active-screen').style.display = 'block';
             
+            // Arduino側に'S'コマンドを送信して、本物の爆弾タイマーを起動させる
+            sendCommand("S"); 
+            
+            // ブラウザ側のタイマーはヒント表示用としてのみ稼働
+            timeRemaining = 600;
             lastTimerInterval = setInterval(() => {
                 timeRemaining--;
-                let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
-                let s = (timeRemaining % 60).toString().padStart(2, '0');
-                sendCommand(`T${m}${s}`); 
                 
                 if(timeRemaining === 480) document.getElementById('last-hint-8').style.display = 'block';
                 if(timeRemaining === 360) document.getElementById('last-hint-6').style.display = 'block';
@@ -843,8 +879,6 @@
                 
                 if (timeRemaining <= 0) {
                     clearInterval(lastTimerInterval);
-                    sendCommand("T0000"); 
-                    sendCommand("P1111"); sendCommand("B"); 
                 }
             }, 1000);
         }
