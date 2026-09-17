@@ -12,28 +12,43 @@
         .tab-btn { background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; font-family: monospace; transition: 0.2s; }
         .tab-btn:hover { background: #30363d; color: #c9d1d9; }
         .tab-btn.active { background: #1f6feb; color: white; border-color: #1f6feb; }
-        
         #tab-step2, #tab-step3, #tab-last { display: none; }
         
         .btn-connect { background: #238636; color: white; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; font-weight: bold; }
         .btn-connect:hover { background: #2ea043; }
 
-        /* --- オープニングポップアップ --- */
+        /* --- オープニング (タップ送り) --- */
         #intro-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 2000;
+            background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; 
+            z-index: 2000; cursor: pointer;
         }
         .modal-content {
             background: #0d1117; border: 2px solid #58a6ff; border-radius: 8px;
-            padding: 30px 40px; max-width: 650px; text-align: left; box-shadow: 0 0 30px rgba(88, 166, 255, 0.2);
+            padding: 40px; max-width: 650px; text-align: left; box-shadow: 0 0 30px rgba(88, 166, 255, 0.2);
+            min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;
         }
-        .modal-content p { margin-bottom: 18px; line-height: 1.8; font-size: 16px; color: #c9d1d9; }
+        .intro-text { font-size: 18px; color: #c9d1d9; line-height: 1.8; margin-bottom: 20px; white-space: pre-wrap; }
+        .tap-indicator { text-align: right; color: #58a6ff; font-size: 14px; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        
         .modal-btn {
-            display: block; width: 100%; background: #1f6feb; color: white; border: none;
+            display: none; width: 100%; background: #1f6feb; color: white; border: none;
             padding: 15px; font-size: 18px; cursor: pointer; border-radius: 5px;
-            font-weight: bold; margin-top: 30px; transition: 0.2s; letter-spacing: 2px;
+            font-weight: bold; margin-top: 10px; transition: 0.2s; letter-spacing: 2px;
         }
         .modal-btn:hover { background: #58a6ff; color: #000; }
+
+        /* --- エンディング画面 --- */
+        #ending-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: none; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 3000;
+        }
+        .ending-title { font-size: 40px; margin-bottom: 30px; letter-spacing: 5px; }
+        .ending-title.success { color: #2ea043; text-shadow: 0 0 15px rgba(46,160,67,0.5); }
+        .ending-title.failure { color: #ff7b72; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
+        .ending-msg { font-size: 22px; color: #c9d1d9; line-height: 2; white-space: pre-wrap; text-align: center; }
 
         /* --- 🔧 デバッグパネル --- */
         .debug-panel { background: #000; padding: 10px; border-bottom: 1px solid #30363d; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap; }
@@ -51,10 +66,7 @@
         .result-msg { margin-top: 15px; font-size: 20px; font-weight: bold; min-height: 30px; line-height: 1.5; }
 
         /* --- 📱 ダッシュボード分割レイアウト (横並び) --- */
-        .split-layout { 
-            display: flex; justify-content: center; gap: 40px; margin-top: 40px; 
-            padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; 
-        }
+        .split-layout { display: flex; justify-content: center; gap: 40px; margin-top: 40px; padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; }
         .split-layout > div { flex: 1; min-width: 340px; max-width: 480px; margin: 0; display: flex; flex-direction: column; }
 
         /* --- 🧩 左右パネル共通 & 高さ合わせ --- */
@@ -125,15 +137,19 @@
 </head>
 <body>
 
-    <!-- 🌟 オープニングポップアップ -->
-    <div id="intro-modal">
-        <div class="modal-content">
-            <p>「よし、金庫前に着いたか<br> この金庫を開けるために、今からお前たちには<br> ハッキング装置を組み立ててもらう。」</p>
-            <p>「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に金庫を開けるためのシステムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」</p>
-            <p>「特殊なルートを通ってきたから警備に見つかる心配もない。時間は十分にあるから焦らず丁寧にな。装置が完成したら連絡しろ。装置の作り方の手順は箱の中に入れた。」</p>
-            <p>「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないよう、ファイルのダウンロードにはパスワードがかけられているから、謎を解いてパスワードを導いてくれ。まずは封筒①を開けてくれ。それじゃあ頼んだぞ、作戦開始だ！」</p>
-            <button class="modal-btn" onclick="closeIntroModal()">作戦を開始する</button>
+    <!-- 🌟 オープニングポップアップ (タップ送り) -->
+    <div id="intro-modal" onclick="nextIntro()">
+        <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
+            <div id="intro-text" class="intro-text"></div>
+            <div id="intro-indicator" class="tap-indicator">▼ タップして次へ</div>
+            <button id="intro-btn" class="modal-btn" onclick="closeIntroModal(event)">作戦を開始する</button>
         </div>
+    </div>
+
+    <!-- 🌟 エンディング画面 -->
+    <div id="ending-screen">
+        <div id="ending-title" class="ending-title"></div>
+        <div id="ending-msg" class="ending-msg"></div>
     </div>
 
     <div class="header">
@@ -173,7 +189,6 @@
         </div>
 
         <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
-            <!-- 🔥 ondragend を追加して、手を離した時に消灯するように修正 -->
             <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">A</div></div>
             <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">B</div></div>
             <div class="s1-item-slot item-slot" id="pool-C"><div class="s1-item item" draggable="true" id="C" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">C</div></div>
@@ -188,7 +203,6 @@
         <!-- 🧩 横並びエリア -->
         <div class="split-layout">
             
-            <!-- 左: 小謎エリア & 解答入力 -->
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff;">【暗号化された小謎ファイル】</h3>
@@ -213,7 +227,6 @@
                 </div>
             </div>
             
-            <!-- 右: 解析データエリア -->
             <div class="analysis-panel">
                 <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -392,7 +405,7 @@
             <div class="instruction">
                 【最終ミッション】<br>
                 システムが完全にロックされる前に、<br>
-                <span class="highlight">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
+                <span class="highlight">デバイスの「9番ピン」の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
                 ※残り時間はデバイス側のモニターを確認せよ。
             </div>
             
@@ -417,14 +430,38 @@
 
     <script>
         // ==========================================
-        // モーダル制御
+        // モーダル・オープニング制御
         // ==========================================
-        function closeIntroModal() {
+        const introStory = [
+            "「よし、金庫前に着いたか。\n この金庫を開けるために、今からお前たちには\n ハッキング装置を組み立ててもらう。」",
+            "「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に、システムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」",
+            "「特殊なルートを通ってきたから警備に見つかる心配もない。時間は十分にあるから焦らず丁寧にな。装置の作り方の手順は箱の中に入れた。」",
+            "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けてくれ。それじゃあ頼んだぞ、作戦開始だ！」"
+        ];
+        let introIdx = 0;
+
+        function initIntro() {
+            document.getElementById('intro-text').innerText = introStory[0];
+        }
+
+        function nextIntro() {
+            introIdx++;
+            if (introIdx < introStory.length) {
+                document.getElementById('intro-text').innerText = introStory[introIdx];
+                if (introIdx === introStory.length - 1) {
+                    document.getElementById('intro-indicator').style.display = 'none';
+                    document.getElementById('intro-btn').style.display = 'block';
+                }
+            }
+        }
+
+        function closeIntroModal(e) {
+            e.stopPropagation(); // 親へのクリック伝播を防ぐ
             document.getElementById('intro-modal').style.display = 'none';
         }
 
         // ==========================================
-        // シリアル通信 & ハードウェアテスト
+        // シリアル通信 & ハードウェアテスト (★受信ループ追加)
         // ==========================================
         let port; let writer;
         async function connectSerial() {
@@ -434,9 +471,34 @@
                 const encoder = new TextEncoderStream();
                 encoder.readable.pipeTo(port.writable);
                 writer = encoder.writable.getWriter();
+                
+                // ★ 受信ループの開始
+                readLoop(port.readable);
+
                 alert("デバイスとの接続を確立しました。");
             } catch (err) { alert("接続エラー: " + err); }
         }
+
+        async function readLoop(readableStream) {
+            const decoder = new TextDecoderStream();
+            readableStream.pipeTo(decoder.writable);
+            const reader = decoder.readable.getReader();
+            let buffer = "";
+            while (true) {
+                const { value, done } = await reader.read();
+                if (value) {
+                    buffer += value;
+                    let lines = buffer.split('\n');
+                    buffer = lines.pop(); // 改行のない末尾を残す
+                    for (let line of lines) {
+                        if (line.includes("DEFUSED")) showEnding(true);
+                        if (line.includes("EXPLODED")) showEnding(false);
+                    }
+                }
+                if (done) break;
+            }
+        }
+
         async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
 
         function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000"), 1000); }
@@ -449,19 +511,40 @@
         }
 
         // ==========================================
-        // 共通ドラッグ＆ドロップ (STEP1ライト修正)
+        // エンディング制御
+        // ==========================================
+        function showEnding(isSuccess) {
+            if (lastTimerInterval) clearInterval(lastTimerInterval); // タイマー停止
+            
+            const screen = document.getElementById('ending-screen');
+            const title = document.getElementById('ending-title');
+            const msg = document.getElementById('ending-msg');
+            
+            screen.style.display = 'flex';
+            
+            if (isSuccess) {
+                title.innerText = "SYSTEM UNLOCKED";
+                title.className = "ending-title success";
+                msg.innerText = "よくやった！金庫のロックが解除されたぞ！\nお前たちのおかげで最高のお宝が手に入った。\nすぐ迎えのヘリをよこす、脱出しろ！";
+            } else {
+                title.innerText = "SYSTEM LOCKDOWN";
+                title.className = "ending-title failure";
+                msg.innerText = "おい、何があった！？通信が…\nセキュリティシステムが作動してしまったようだ。\nすまない、作戦は失敗だ…";
+            }
+        }
+
+        // ==========================================
+        // 共通ドラッグ＆ドロップ
         // ==========================================
         function allowDrop(e) { e.preventDefault(); if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) e.target.classList.add('drag-over'); }
         function dragLeave(e) { e.target.classList.remove('drag-over'); }
         
         function dragItem(e) { 
             e.dataTransfer.setData("text", e.target.id); 
-            // 🔥 STEP1用ライト点灯
             const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
             if (ledPatterns[e.target.id]) sendCommand(ledPatterns[e.target.id]);
         }
         function dragEndItem(e) {
-            // 🔥 ドラッグ終了時に消灯
             const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
             if (ledPatterns[e.target.id]) sendCommand('P0000');
         }
@@ -757,7 +840,7 @@
                                 document.getElementById('tab-step3').style.display = 'block';
                             }
                         }
-                    }, 400); // ★ 転送時のブザー間隔を0.4秒(400ms)に変更
+                    }, 400); 
                 } else {
                     updateNodeColors();
                 }
@@ -822,6 +905,8 @@
         // ==========================================
         // LAST STEP (BOMB) メイン
         // ==========================================
+        let lastTimerInterval;
+        
         function startLastStep() {
             document.getElementById('last-start-screen').style.display = 'none';
             document.getElementById('last-active-screen').style.display = 'block';
@@ -830,7 +915,7 @@
             
             // Web側はヒント解放用のアナログタイマーだけ裏で回す
             let timeRemaining = 600;
-            let lastTimerInterval = setInterval(() => {
+            lastTimerInterval = setInterval(() => {
                 timeRemaining--;
                 
                 if(timeRemaining === 480) document.getElementById('last-hint-8').style.display = 'block';
@@ -843,6 +928,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => { 
+            initIntro();
             initPuzzles(); 
             updateNodeColors(); 
         });
