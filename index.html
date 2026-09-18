@@ -120,12 +120,22 @@
             user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
         .gojuon-cell { 
+            position: relative;
             background: transparent; border: 1px solid transparent; color: transparent; 
             display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; 
             user-select: none; -webkit-user-select: none;
         }
-        /* 光った時だけ浮かび上がる */
-        .gojuon-cell.active { background: rgba(88, 166, 255, 0.7); box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); border: 1px solid #58a6ff; }
+        
+        /* 光るドット（通常時は透明） */
+        .gojuon-cell::after {
+            content: ''; position: absolute; width: 16px; height: 16px; background: transparent; border-radius: 50%; transition: 0.2s;
+        }
+        
+        /* 光った時だけドットが浮かび上がる */
+        .gojuon-cell.active::after { 
+            background: #58a6ff; box-shadow: 0 0 15px 3px rgba(88, 166, 255, 0.8); 
+        }
+        
         .gojuon-cell.empty { background: transparent; border: none; }
 
         /* --- STEP 1 UI (メイン) --- */
@@ -208,7 +218,7 @@
     <div class="app-container active" id="app-step1">
         <h2>STEP1 (論理ソート)</h2>
 
-        <!-- 🌟 五十音表 (完全に透明化) -->
+        <!-- 🌟 五十音表 (完全に透明化 + ドット点灯) -->
         <div id="gojuon-table" class="gojuon-table"></div>
 
         <!-- 🌟 まとめ謎 (一番上) -->
