@@ -114,10 +114,15 @@
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
         /* --- STEP 1 UI (五十音表) --- */
-        .gojuon-table { display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; max-width: 440px; margin: 0 auto 30px auto; }
+        .gojuon-table { 
+            display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; max-width: 440px; margin: 0 auto 30px auto;
+            /* ドラッグ選択によるハイライトを完全に禁止 */
+            user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
+        }
         .gojuon-cell { 
-            background: transparent; border: 1px solid transparent; color: transparent; /* 完全に見えなくする */
+            background: transparent; border: 1px solid transparent; color: transparent; 
             display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; 
+            user-select: none; -webkit-user-select: none;
         }
         /* 光った時だけ浮かび上がる */
         .gojuon-cell.active { background: rgba(88, 166, 255, 0.7); box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); border: 1px solid #58a6ff; }
