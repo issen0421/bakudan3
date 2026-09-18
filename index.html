@@ -114,9 +114,13 @@
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
         /* --- STEP 1 UI (五十音表) --- */
-        .gojuon-table { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; max-width: 400px; margin: 0 auto 30px auto; }
-        .gojuon-cell { background: #161b22; border: 1px solid #30363d; color: #8b949e; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 16px; transition: 0.2s; aspect-ratio: 1 / 1; }
-        .gojuon-cell.active { background: #1f6feb; color: #fff; font-weight: bold; box-shadow: 0 0 10px #1f6feb; border-color: #1f6feb; }
+        .gojuon-table { display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; max-width: 440px; margin: 0 auto 30px auto; }
+        .gojuon-cell { 
+            background: transparent; border: 1px solid transparent; color: transparent; /* 完全に見えなくする */
+            display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; 
+        }
+        /* 光った時だけ浮かび上がる */
+        .gojuon-cell.active { background: rgba(88, 166, 255, 0.7); box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); border: 1px solid #58a6ff; }
         .gojuon-cell.empty { background: transparent; border: none; }
 
         /* --- STEP 1 UI (メイン) --- */
@@ -199,7 +203,7 @@
     <div class="app-container active" id="app-step1">
         <h2>STEP1 (論理ソート)</h2>
 
-        <!-- 🌟 五十音表 -->
+        <!-- 🌟 五十音表 (完全に透明化) -->
         <div id="gojuon-table" class="gojuon-table"></div>
 
         <!-- 🌟 まとめ謎 (一番上) -->
@@ -471,17 +475,16 @@
         }
 
         // ==========================================
-        // 五十音表生成ロジック (STEP1用)
+        // 五十音表生成ロジック (完全に透明・右から「あかさたな」)
         // ==========================================
         const gojuonLayout = [
-            ['わ','ら','や','ま','は','な','た','さ','か','あ'],
-            ['','り','','み','ひ','に','ち','し','き','い'],
-            ['ん','る','ゆ','む','ふ','ぬ','つ','す','く','う'],
-            ['','れ','','め','へ','ね','て','せ','け','え'],
-            ['を','ろ','よ','も','ほ','の','と','そ','こ','お']
+            ['ん','わ','ら','や','ま','は','な','た','さ','か','あ'],
+            ['','','り','','み','ひ','に','ち','し','き','い'],
+            ['','','る','ゆ','む','ふ','ぬ','つ','す','く','う'],
+            ['','','れ','','め','へ','ね','て','せ','け','え'],
+            ['','を','ろ','よ','も','ほ','の','と','そ','こ','お']
         ];
 
-        // ドラッグ時に光らせる文字（濁点などは清音にマッピング）
         const blockChars = {
             'A': ['あ','め','り','か'],
             'B': ['う','い','る','す'],
@@ -613,7 +616,7 @@
         }
 
         // ==========================================
-        // 共通ドラッグ＆ドロップ (スワップ対応)
+        // 共通ドラッグ＆ドロップ (スワップ・連動対応)
         // ==========================================
         function allowDrop(e) { e.preventDefault(); if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) e.target.classList.add('drag-over'); }
         function dragLeave(e) { e.target.classList.remove('drag-over'); }
@@ -621,11 +624,9 @@
         function dragItem(e) { 
             e.dataTransfer.setData("text", e.target.id); 
             
-            // 💡 LED点灯
             const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
             if (ledPatterns[e.target.id]) sendCommand(ledPatterns[e.target.id]);
 
-            // 💡 五十音ハイライト (STEP1用)
             if (blockChars[e.target.id]) {
                 blockChars[e.target.id].forEach(char => {
                     let cell = document.getElementById("gojuon-" + char);
@@ -638,7 +639,6 @@
             const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
             if (ledPatterns[e.target.id]) sendCommand('P0000');
             
-            // 五十音ハイライト解除
             document.querySelectorAll(".gojuon-cell.active").forEach(el => el.classList.remove("active"));
         }
 
