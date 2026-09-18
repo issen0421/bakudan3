@@ -111,8 +111,8 @@
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
         /* --- STEP 1 UI (五十音表) --- */
-        .gojuon-table { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 300px; margin: 0 auto 30px auto; }
-        .gojuon-cell { background: #161b22; border: 1px solid #30363d; color: #8b949e; padding: 8px 0; text-align: center; border-radius: 4px; font-size: 16px; transition: 0.2s; }
+        .gojuon-table { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; max-width: 400px; margin: 0 auto 30px auto; }
+        .gojuon-cell { background: #161b22; border: 1px solid #30363d; color: #8b949e; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 16px; transition: 0.2s; aspect-ratio: 1 / 1; }
         .gojuon-cell.active { background: #1f6feb; color: #fff; font-weight: bold; box-shadow: 0 0 10px #1f6feb; border-color: #1f6feb; }
         .gojuon-cell.empty { background: transparent; border: none; }
 
@@ -471,16 +471,11 @@
         // 五十音表生成ロジック (STEP1用)
         // ==========================================
         const gojuonLayout = [
-            ['あ','い','う','え','お'],
-            ['か','き','く','け','こ'],
-            ['さ','し','す','せ','そ'],
-            ['た','ち','つ','て','と'],
-            ['な','に','ぬ','ね','の'],
-            ['は','ひ','ふ','へ','ほ'],
-            ['ま','み','む','め','も'],
-            ['や','','ゆ','','よ'],
-            ['ら','り','る','れ','ろ'],
-            ['わ','','','','ん']
+            ['あ','か','さ','た','な','は','ま','や','ら','わ'],
+            ['い','き','し','ち','に','ひ','み','','り',''],
+            ['う','く','す','つ','ぬ','ふ','む','ゆ','る',''],
+            ['え','け','せ','て','ね','へ','め','','れ',''],
+            ['お','こ','そ','と','の','ほ','も','よ','ろ','ん']
         ];
 
         // ドラッグ時に光らせる文字（濁点などは清音にマッピング）
@@ -650,17 +645,15 @@
             let dropTarget = e.target.classList.contains('item') ? e.target.parentElement : e.target;
             const data = e.dataTransfer.getData("text"); 
             const dragged = document.getElementById(data);
-            const sourceEl = dragged.parentElement; // ドラッグ元の親要素
+            const sourceEl = dragged.parentElement; 
 
             if (dropTarget.classList.contains('slot')) {
-                // 移動先に既にアイテムがある場合は、そのアイテムをドラッグ元の場所に戻す（スワップ）
                 if (dropTarget.children.length > 0) {
                     let existingItem = dropTarget.children[0];
                     sourceEl.appendChild(existingItem);
                 }
                 dropTarget.appendChild(dragged);
             } else if (dropTarget.classList.contains('item-slot') || dropTarget.id.startsWith("pool-")) {
-                // プール領域に戻す場合
                 document.getElementById("pool-" + dragged.id).appendChild(dragged);
             }
         }
