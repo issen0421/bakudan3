@@ -50,11 +50,14 @@
         .ending-title.failure { color: #ff7b72; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
         .ending-msg { font-size: 20px; color: #c9d1d9; line-height: 1.8; text-align: center; max-width: 700px; }
         
+        /* ニュース記事風スタイル */
         .news-article {
             background: #e6edf3; color: #000; padding: 20px 30px; border-radius: 4px;
             font-family: 'Yu Mincho', 'MS PMincho', serif; text-align: left; margin: 20px auto;
             border-left: 8px solid #30363d; box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
+        
+        /* Xシェアボタン */
         .share-btn {
             display: inline-block; margin-top: 20px; padding: 12px 24px; background: #000; color: #fff;
             text-decoration: none; border-radius: 30px; font-weight: bold; font-family: sans-serif;
@@ -471,11 +474,11 @@
         // 五十音表生成ロジック (STEP1用)
         // ==========================================
         const gojuonLayout = [
-            ['あ','か','さ','た','な','は','ま','や','ら','わ'],
-            ['い','き','し','ち','に','ひ','み','','り',''],
-            ['う','く','す','つ','ぬ','ふ','む','ゆ','る',''],
-            ['え','け','せ','て','ね','へ','め','','れ',''],
-            ['お','こ','そ','と','の','ほ','も','よ','ろ','ん']
+            ['わ','ら','や','ま','は','な','た','さ','か','あ'],
+            ['','り','','み','ひ','に','ち','し','き','い'],
+            ['ん','る','ゆ','む','ふ','ぬ','つ','す','く','う'],
+            ['','れ','','め','へ','ね','て','せ','け','え'],
+            ['を','ろ','よ','も','ほ','の','と','そ','こ','お']
         ];
 
         // ドラッグ時に光らせる文字（濁点などは清音にマッピング）
