@@ -93,7 +93,7 @@
         .analysis-panel .carousel-btn { color: #0f0; }
         
         .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
-        .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column; gap: 10px; }
         
         .hint-border { border-color: #0f0 !important; }
         .hint-placeholder { color: #0f0 !important; border-color: #0f0 !important; }
@@ -120,12 +120,22 @@
             display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; width: 100%; margin: 0;
             user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
+        
+        /* 💡 五十音表の文字フェードインアニメーション用 */
         .gojuon-cell { 
-            position: relative; background: transparent; border: 1px solid transparent; color: transparent; 
-            display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; 
+            position: relative; background: transparent; border: 1px solid transparent; 
+            color: transparent; text-shadow: none; font-size: 18px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center; border-radius: 4px; 
+            transition: color 2.5s ease-in-out, text-shadow 2.5s ease-in-out; aspect-ratio: 1 / 1; 
             user-select: none; -webkit-user-select: none;
         }
         .gojuon-cell.empty { pointer-events: none; }
+        
+        /* 全問解き終わった時に付与されるクラス */
+        .gojuon-table.revealed .gojuon-cell:not(.empty) {
+            color: #58a6ff;
+            text-shadow: 0 0 10px rgba(88, 166, 255, 0.8);
+        }
 
         /* --- STEP 1 UI (メイン) --- */
         .s1-slots { 
@@ -554,14 +564,14 @@
             ['','を','ろ','よ','も','ほ','の','と','そ','こ','お']
         ];
 
-        // アイテム定義 (抽出前4文字と抽出後2文字)
+        // アイテム定義
         const blockData = {
-            'A': { color: '#ec3321', chars4: ['う','い','る','す'], chars2: ['い','す'] }, // 赤
-            'B': { color: '#ff8b00', chars4: ['く','り','お','ね'], chars2: ['く','り'] }, // 橙
-            'C': { color: '#fdd900', chars4: ['し','い','た','け'], chars2: ['い','け'] }, // 黄
-            'D': { color: '#00b18e', chars4: ['か','し','つ','き'], chars2: ['つ','き'] }, // 緑
-            'E': { color: '#0081ce', chars4: ['と','く','し','ま'], chars2: ['く','ま'] }, // 青
-            'F': { color: '#58278c', chars4: ['あ','め','り','か'], chars2: ['あ','り'] }  // 紫
+            'A': { color: '#ec3321', chars4: ['う','い','る','す'], chars2: ['い','す'] }, 
+            'B': { color: '#ff8b00', chars4: ['く','り','お','ね'], chars2: ['く','り'] }, 
+            'C': { color: '#fdd900', chars4: ['し','い','た','け'], chars2: ['い','け'] }, 
+            'D': { color: '#00b18e', chars4: ['か','し','つ','き'], chars2: ['つ','き'] }, 
+            'E': { color: '#0081ce', chars4: ['と','く','し','ま'], chars2: ['く','ま'] }, 
+            'F': { color: '#58278c', chars4: ['あ','め','り','か'], chars2: ['あ','り'] }  
         };
 
         function initGojuon() {
@@ -583,7 +593,6 @@
 
         let currentDrawMode = 0; 
 
-        // SVG図形の描画関数 (持っている色の図形だけを描画)
         function drawGojuonShape(id, mode) {
             const svg = document.getElementById("gojuon-svg");
             
@@ -600,7 +609,6 @@
             currentDrawMode = mode;
             svg.dataset.currentId = id;
             
-            // 下枠にいる時のみ図形（四角形/三角形）を描画
             if (mode === 4) {
                 const data = blockData[id];
                 const chars = data.chars4;
@@ -618,7 +626,7 @@
                 if (points.length > 2) {
                     const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
                     polygon.setAttribute("points", points.join(" "));
-                    polygon.setAttribute("fill", data.color + "30"); // 透過適用
+                    polygon.setAttribute("fill", data.color + "30"); 
                     polygon.setAttribute("stroke", data.color);
                     polygon.setAttribute("stroke-width", "3");
                     polygon.setAttribute("stroke-linejoin", "round");
@@ -632,7 +640,7 @@
         // 共通ドラッグ＆ドロップ (ゾーン連動対応)
         // ==========================================
         let currentDragId = null;
-        let currentDragZone = 0; // 0: none, 1: bottom, 2: top
+        let currentDragZone = 0; 
 
         function allowDrop(e) { 
             e.preventDefault(); 
@@ -645,10 +653,9 @@
         function dragItem(e) { 
             e.dataTransfer.setData("text", e.target.id); 
             currentDragId = e.target.id;
-            currentDragZone = 0; // 状態をリセットしてdragoverでの更新を強制
+            currentDragZone = 0; 
         }
 
-        // 画面全体のdragoverでゾーンを判定し状態を更新する
         document.addEventListener('dragover', (e) => {
             if (!currentDragId) return;
             
@@ -662,18 +669,14 @@
             if (currentDragZone !== newZone) {
                 currentDragZone = newZone;
                 
-                // SVGとArduinoの更新
                 if (currentDragZone === 1) {
-                    // 下枠にいる時: その色の4文字図形を表示 ＋ デバイスは全点灯
                     drawGojuonShape(currentDragId, 4); 
                     sendCommand("P1111"); 
                 } else if (currentDragZone === 2) {
-                    // 上枠にいる時: 画面の図形は消灯 ＋ デバイスはそのアイテムの2文字分点灯
                     drawGojuonShape(null, 0); 
                     const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
                     if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
                 } else {
-                    // 枠外にいる時: 消灯
                     drawGojuonShape(null, 0); 
                     sendCommand("P0000"); 
                 }
@@ -935,7 +938,6 @@
             if (input in dict) {
                 const pIdx = dict[input]; 
                 
-                // 新規正解時のみポイントを付与
                 if (!isSolved[step][pIdx]) {
                     isSolved[step][pIdx] = true;
                     availableAnalysisPoints[step]++;
@@ -964,12 +966,16 @@
                 unlockedAnalysisCount[step]++;
                 document.getElementById(`analysisPoints-s${step}`).innerText = availableAnalysisPoints[step];
                 
-                // 自動的に新しく解放したデータを表示する
                 analysisIdx[step] = unlockedAnalysisCount[step] - 1; 
                 updateAnalysisCarousel(step);
                 
                 sendCommand("P1111"); 
                 setTimeout(() => sendCommand("P0000"), 500); 
+
+                // 🌟 STEP1で全データ（6個）を解除した瞬間に五十音表を浮かび上がらせる
+                if (step === 1 && unlockedAnalysisCount[1] === 6) {
+                    document.getElementById("gojuon-table").classList.add("revealed");
+                }
             }
         }
 
@@ -979,14 +985,17 @@
             const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
             
             if (idx < unlockedAnalysisCount[step]) {
-                // 解放済み
-                placeholder.innerHTML = `DATA ${pName}`;
+                if (step === 1 && unlockedAnalysisCount[1] === 6 && idx === 5) {
+                    // 全解放時の特別メッセージ
+                    placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを解除</span>`;
+                } else {
+                    placeholder.innerHTML = `DECRYPTED: ${pName}`;
+                }
                 placeholder.style.color = "#0f0";
                 placeholder.style.borderColor = "#0f0";
                 placeholder.style.cursor = "default";
                 placeholder.onclick = null;
             } else {
-                // ロック中（次に解放できるもの）
                 if (idx === unlockedAnalysisCount[step] && availableAnalysisPoints[step] > 0) {
                     placeholder.innerHTML = `タップして解放 🔓`;
                     placeholder.style.color = "#58a6ff";
@@ -994,7 +1003,6 @@
                     placeholder.style.cursor = "pointer";
                     placeholder.onclick = () => unlockAnalysis(step);
                 } else {
-                    // 単なるロック中
                     placeholder.innerHTML = `Locked 🔐`;
                     placeholder.style.color = "#555";
                     placeholder.style.borderColor = "#555";
@@ -1013,7 +1021,6 @@
 
             document.getElementById(`btn-prev-analysis-s${step}`).style.visibility = (idx === 0) ? 'hidden' : 'visible';
             
-            // ロックされている次のデータまでしか進めないようにする
             const maxIdx = Math.min(5, unlockedAnalysisCount[step]);
             document.getElementById(`btn-next-analysis-s${step}`).style.visibility = (idx >= maxIdx) ? 'hidden' : 'visible';
         }
