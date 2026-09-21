@@ -111,7 +111,11 @@
         .answer-section button:hover { background: #1f6feb; color: #fff;}
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
-        /* --- STEP 1 UI (五十音表) --- */
+        /* --- STEP 1 UI (五十音表の存在枠) --- */
+        .gojuon-container {
+            max-width: 480px; margin: 0 auto 30px auto; padding: 15px;
+            border: 2px dashed #444; border-radius: 12px; background: rgba(255,255,255,0.02);
+        }
         .gojuon-table { 
             display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; width: 100%; margin: 0;
             user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
@@ -121,7 +125,7 @@
             display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; 
             user-select: none; -webkit-user-select: none;
         }
-        .gojuon-cell.empty { background: transparent; border: none; pointer-events: none; }
+        .gojuon-cell.empty { pointer-events: none; }
 
         /* --- STEP 1 UI (メイン) --- */
         /* 上の枠内 (Slots) */
@@ -135,7 +139,7 @@
         }
         .s1-slot.drag-over { border-color: #58a6ff; background: rgba(88, 166, 255, 0.2); }
 
-        /* 下の枠内 (Pool) */
+        /* 下の枠内 (Pool) - 六角形デザイン */
         .s1-items { 
             display: inline-flex; justify-content: center; gap: 15px; margin: 30px 0; padding: 15px 40px; 
             background: #f2f2f2; 
@@ -144,10 +148,11 @@
         .s1-item-slot { width: 50px; height: 50px; background: transparent; }
         .s1-item { 
             width: 50px; height: 50px; cursor: grab; transition: transform 0.1s; 
-            border-radius: 50%; border: none; 
+            border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
         }
-        .s1-item:active { cursor: grabbing; transform: scale(0.95); }
+        .s1-item:active { cursor: grabbing; transform: scale(0.95); box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
         
+        /* 指定カラー */
         #A.s1-item { background-color: #ec3321; } /* 赤 */
         #B.s1-item { background-color: #ff8b00; } /* 橙 */
         #C.s1-item { background-color: #fdd900; } /* 黄 */
@@ -246,13 +251,15 @@
     <div class="app-container active" id="app-step1">
         <h2>STEP1 (論理ソート)</h2>
 
-        <!-- 🌟 五十音表 (完全に透明化) ＆ SVG図形描画レイヤー -->
-        <div class="gojuon-wrapper" style="position:relative; max-width: 440px; margin: 0 auto 30px auto;">
-            <svg id="gojuon-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; overflow:visible;"></svg>
-            <div id="gojuon-table" class="gojuon-table"></div>
+        <!-- 🌟 五十音表 (枠のみ表示) ＆ SVG図形描画レイヤー -->
+        <div class="gojuon-container">
+            <div class="gojuon-wrapper" style="position:relative;">
+                <svg id="gojuon-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; overflow:visible;"></svg>
+                <div id="gojuon-table" class="gojuon-table"></div>
+            </div>
         </div>
 
-        <!-- 🌟 まとめ謎 (上の枠：2文字の解答枠) -->
+        <!-- 🌟 まとめ謎 (上の枠) -->
         <div class="s1-slots">
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -263,7 +270,7 @@
         </div>
         <br>
 
-        <!-- 🌟 まとめ謎 (下の枠：4文字のアイテムプール) -->
+        <!-- 🌟 まとめ謎 (下のプール) -->
         <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
             <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
             <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
@@ -536,7 +543,7 @@
             ['','を','ろ','よ','も','ほ','の','と','そ','こ','お']
         ];
 
-        // アイテム定義 (抽出前4文字と抽出後2文字)
+        // 新しいアイテム定義 (抽出前4文字と抽出後2文字)
         const blockData = {
             'A': { color: '#ec3321', chars4: ['う','い','る','す'], chars2: ['い','す'] }, // 赤
             'B': { color: '#ff8b00', chars4: ['く','り','お','ね'], chars2: ['く','り'] }, // 橙
@@ -563,15 +570,13 @@
             });
         }
 
-        let currentDragId = null;
-        let currentDrawMode = 0; // 0=none, 4=4-chars, 2=2-chars
+        let currentDrawMode = 0; // 0=none, 4=4-chars
 
-        // SVG図形の描画関数
-        function drawGojuonShape(id, mode) {
+        // SVG図形の描画関数 (下枠で全表示)
+        function drawGojuonShape(mode) {
             const svg = document.getElementById("gojuon-svg");
             
-            // モード0またはID未指定の場合はクリアして終了
-            if (!id || mode === 0) {
+            if (mode === 0) {
                 if (currentDrawMode !== 0) {
                     svg.innerHTML = "";
                     currentDrawMode = 0;
@@ -579,66 +584,125 @@
                 return;
             }
             
-            // 既に同じモードを描画中なら更新をスキップ（パフォーマンス保護）
             if (currentDrawMode === mode) return;
-            
             svg.innerHTML = "";
             currentDrawMode = mode;
             
-            const data = blockData[id];
-            const chars = mode === 2 ? data.chars2 : data.chars4;
-            let points = [];
-            
-            // 該当するマスの中心座標を取得
-            chars.forEach(char => {
-                const cell = document.getElementById("gojuon-" + char);
-                if (cell) {
-                    const x = cell.offsetLeft + cell.offsetWidth / 2;
-                    const y = cell.offsetTop + cell.offsetHeight / 2;
-                    points.push(`${x},${y}`);
-                }
-            });
-            
-            if (points.length > 0) {
-                if (mode === 2) {
-                    // 上枠：2文字の直線
-                    const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-                    line.setAttribute("points", points.join(" "));
-                    line.setAttribute("fill", "none");
-                    line.setAttribute("stroke", data.color);
-                    line.setAttribute("stroke-width", "6");
-                    line.setAttribute("stroke-linecap", "round");
-                    line.setAttribute("stroke-linejoin", "round");
-                    line.style.filter = `drop-shadow(0 0 8px ${data.color})`;
-                    svg.appendChild(line);
-                } else {
-                    // 下枠：4文字の四角形（三角形）
-                    const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-                    polygon.setAttribute("points", points.join(" "));
-                    polygon.setAttribute("fill", data.color + "50"); // 透過を適用
-                    polygon.setAttribute("stroke", data.color);
-                    polygon.setAttribute("stroke-width", "4");
-                    polygon.setAttribute("stroke-linejoin", "round");
-                    polygon.style.filter = `drop-shadow(0 0 8px ${data.color})`;
-                    svg.appendChild(polygon);
-                }
+            if (mode === 4) {
+                // 下枠：すべての4文字図形を描画
+                const ids = ['A', 'B', 'C', 'D', 'E', 'F'];
+                ids.forEach(blockId => {
+                    const data = blockData[blockId];
+                    const chars = data.chars4;
+                    let points = [];
+                    
+                    chars.forEach(char => {
+                        const cell = document.getElementById("gojuon-" + char);
+                        if (cell) {
+                            const x = cell.offsetLeft + cell.offsetWidth / 2;
+                            const y = cell.offsetTop + cell.offsetHeight / 2;
+                            points.push(`${x},${y}`);
+                        }
+                    });
+                    
+                    // 最低3点あれば多角形を描画可能
+                    if (points.length > 2) {
+                        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                        polygon.setAttribute("points", points.join(" "));
+                        polygon.setAttribute("fill", data.color + "30"); // 透過適用
+                        polygon.setAttribute("stroke", data.color);
+                        polygon.setAttribute("stroke-width", "3");
+                        polygon.setAttribute("stroke-linejoin", "round");
+                        polygon.style.filter = `drop-shadow(0 0 5px ${data.color})`;
+                        svg.appendChild(polygon);
+                    }
+                });
             }
         }
 
-        // ドラッグ位置に応じた図形切り替え (画面全体のdragoverで監視)
+        // ==========================================
+        // 共通ドラッグ＆ドロップ (ゾーン連動対応)
+        // ==========================================
+        let currentDragId = null;
+        let currentDragZone = 0; // 0: none, 1: bottom, 2: top
+
+        function allowDrop(e) { 
+            e.preventDefault(); 
+            if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) {
+                e.target.classList.add('drag-over'); 
+            }
+        }
+        function dragLeave(e) { e.target.classList.remove('drag-over'); }
+        
+        function dragItem(e) { 
+            e.dataTransfer.setData("text", e.target.id); 
+            currentDragId = e.target.id;
+        }
+
+        // 画面全体のdragoverでゾーンを判定し状態を更新する
         document.addEventListener('dragover', (e) => {
-            if (currentDragId) {
-                const isTopSlot = e.target.closest('.s1-slots');
-                const isBottomPool = e.target.closest('.s1-items');
-                if (isTopSlot) {
-                    drawGojuonShape(currentDragId, 2);
-                } else if (isBottomPool) {
-                    drawGojuonShape(currentDragId, 4);
+            if (!currentDragId) return;
+            
+            const isTopSlot = e.target.closest('.s1-slots');
+            const isBottomPool = e.target.closest('.s1-items');
+            
+            let newZone = 0;
+            if (isBottomPool) newZone = 1;
+            else if (isTopSlot) newZone = 2;
+
+            if (currentDragZone !== newZone) {
+                currentDragZone = newZone;
+                
+                // SVGとArduinoの更新
+                if (currentDragZone === 1) {
+                    // 下枠にいる時
+                    drawGojuonShape(4); // 4文字図形を全部描画
+                    sendCommand("P1111"); // 全部点灯
+                } else if (currentDragZone === 2) {
+                    // 上枠にいる時
+                    drawGojuonShape(0); // 画面上の図形は描画しない
+                    const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
+                    if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); // 2文字ランプ点灯
                 } else {
-                    drawGojuonShape(null, 0); // 枠外に出たら消灯
+                    // 枠外にいる時
+                    drawGojuonShape(0); // 消灯
+                    sendCommand("P0000"); // 消灯
                 }
             }
         });
+
+        function dragEndItem(e) {
+            sendCommand('P0000');
+            currentDragId = null;
+            currentDragZone = 0;
+            drawGojuonShape(0);
+        }
+
+        function drop(e) {
+            e.preventDefault(); e.target.classList.remove('drag-over');
+            
+            let dropTarget = e.target.classList.contains('item') ? e.target.parentElement : e.target;
+            const data = e.dataTransfer.getData("text"); 
+            const dragged = document.getElementById(data);
+            const sourceEl = dragged.parentElement; 
+
+            if (dropTarget.classList.contains('slot')) {
+                if (dropTarget.children.length > 0) {
+                    let existingItem = dropTarget.children[0];
+                    sourceEl.appendChild(existingItem);
+                }
+                dropTarget.appendChild(dragged);
+            } else if (dropTarget.classList.contains('item-slot') || dropTarget.id.startsWith("pool-")) {
+                document.getElementById("pool-" + dragged.id).appendChild(dragged);
+            }
+        }
+
+        function switchApp(appId) {
+            document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`app-${appId}`).classList.add('active');
+            document.getElementById(`tab-${appId}`).classList.add('active');
+        }
 
         // ==========================================
         // ポリオミノ盤面生成ロジック (STEP3用)
@@ -770,118 +834,6 @@
             document.getElementById('tab-step2').style.display = 'block';
             document.getElementById('tab-step3').style.display = 'block';
             document.getElementById('tab-last').style.display = 'block';
-        }
-
-        // ==========================================
-        // エンディング制御
-        // ==========================================
-        function showEnding(isSuccess) {
-            if (lastTimerInterval) clearInterval(lastTimerInterval); 
-            
-            const screen = document.getElementById('ending-screen');
-            const title = document.getElementById('ending-title');
-            const msg = document.getElementById('ending-msg');
-            
-            screen.style.display = 'flex';
-            const shareUrl = "https://hacker-os.example.com"; 
-            
-            if (isSuccess) {
-                title.innerText = "TRUE ENDING";
-                title.className = "ending-title success";
-                const tweetText = encodeURIComponent("HACKER OSで爆弾を解除し、TRUE ENDINGに到達した！");
-                
-                msg.innerHTML = `
-                    <div style="margin-bottom: 20px;">
-                        爆弾を止めた僕たちは、公衆電話に向かい、ボスのアジトの場所を匿名通報した。<br>
-                        翌日の新聞には銀行強盗のボスが逮捕されたというニュースが流れていた。
-                    </div>
-                    <div style="margin: 20px auto; width: 400px; height: 250px; border: 2px dashed #58a6ff; display: flex; align-items: center; justify-content: center; color: #58a6ff; background: #161b22; border-radius: 5px;">
-                        (新聞の記事の画像)
-                    </div>
-                    <a href="https://twitter.com/intent/tweet?text=${tweetText}&url=${shareUrl}" target="_blank" class="share-btn">
-                        𝕏 「クリアしました」を共有する
-                    </a>
-                `;
-            } else {
-                title.innerText = "BAD ENDING";
-                title.className = "ending-title failure";
-                const tweetText = encodeURIComponent("HACKER OSでハッキングに失敗し、爆発に巻き込まれた…");
-                
-                msg.innerHTML = `
-                    <div class="news-article">
-                        <strong>【新聞記事】</strong><br><br>
-                        昨日、〇〇銀行で爆発が起き、金庫の中身が盗まれるという事件があった。<br>
-                        また、現場からは爆発に巻き込まれたと見られる2人の遺体が見つかった。
-                    </div>
-                    <div style="margin-top: 20px; font-size: 16px; color: #8b949e;">
-                        失敗した場合は、予備のコードを繋ぎ直して再スタートできる。<br>
-                        <span style="font-size:12px;">（※Arduino本体の小さなリセットボタンを押してから、再スタートしてください）</span>
-                    </div>
-                    <button onclick="location.reload()" style="margin-top: 15px; padding: 10px 20px; background: #444; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; letter-spacing: 2px;">
-                        🔄 再スタート
-                    </button>
-                    <br>
-                    <a href="https://twitter.com/intent/tweet?text=${tweetText}&url=${shareUrl}" target="_blank" class="share-btn">
-                        𝕏 「プレイしました」を共有する
-                    </a>
-                `;
-            }
-        }
-
-        // ==========================================
-        // 共通ドラッグ＆ドロップ (連動対応)
-        // ==========================================
-        function allowDrop(e) { e.preventDefault(); if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) e.target.classList.add('drag-over'); }
-        function dragLeave(e) { e.target.classList.remove('drag-over'); }
-        
-        function dragItem(e) { 
-            e.dataTransfer.setData("text", e.target.id); 
-            
-            // デバイス連動 (Arduino)
-            const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
-            if (ledPatterns[e.target.id]) sendCommand(ledPatterns[e.target.id]);
-
-            // STEP 1用 SVG図形描画開始
-            if (blockData[e.target.id]) {
-                currentDragId = e.target.id;
-                const isTopSlot = e.target.closest('.s1-slots');
-                drawGojuonShape(currentDragId, isTopSlot ? 2 : 4);
-            }
-        }
-
-        function dragEndItem(e) {
-            const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
-            if (ledPatterns[e.target.id]) sendCommand('P0000');
-            
-            // 図形クリア
-            currentDragId = null;
-            drawGojuonShape(null, 0);
-        }
-
-        function drop(e) {
-            e.preventDefault(); e.target.classList.remove('drag-over');
-            
-            let dropTarget = e.target.classList.contains('item') ? e.target.parentElement : e.target;
-            const data = e.dataTransfer.getData("text"); 
-            const dragged = document.getElementById(data);
-            const sourceEl = dragged.parentElement; 
-
-            if (dropTarget.classList.contains('slot')) {
-                if (dropTarget.children.length > 0) {
-                    let existingItem = dropTarget.children[0];
-                    sourceEl.appendChild(existingItem);
-                }
-                dropTarget.appendChild(dragged);
-            } else if (dropTarget.classList.contains('item-slot') || dropTarget.id.startsWith("pool-")) {
-                document.getElementById("pool-" + dragged.id).appendChild(dragged);
-            }
-        }
-
-        function switchApp(appId) {
-            document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`app-${appId}`).classList.add('active');
-            document.getElementById(`tab-${appId}`).classList.add('active');
         }
 
         // ==========================================
