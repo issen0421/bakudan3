@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <title>HACKER OS - ダッシュボード</title>
     <style>
-        /* 💡 画面全体に薄い方眼（グリッド）模様を敷き詰める */
+        /* 💡 画面全体にドットグリッド（交点）を敷き詰める */
         body { 
             font-family: monospace; 
             background-color: #0d1117; 
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
             background-size: 40px 40px; 
-            background-position: center top;
             color: #c9d1d9; text-align: center; padding: 0; margin: 0; 
+            transition: background-position 0.1s;
         }
         
         /* --- グローバルヘッダー & タブ --- */
@@ -60,12 +58,6 @@
         .ending-title.failure { color: #ff7b72; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
         .ending-msg { font-size: 20px; color: #c9d1d9; line-height: 1.8; text-align: center; max-width: 700px; }
         
-        .news-article {
-            background: #e6edf3; color: #000; padding: 20px 30px; border-radius: 4px;
-            font-family: 'Yu Mincho', 'MS PMincho', serif; text-align: left; margin: 20px auto;
-            border-left: 8px solid #30363d; box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
-        
         .share-btn {
             display: inline-block; margin-top: 20px; padding: 12px 24px; background: #000; color: #fff;
             text-decoration: none; border-radius: 30px; font-weight: bold; font-family: sans-serif;
@@ -89,10 +81,10 @@
         .result-msg { margin-top: 15px; font-size: 20px; font-weight: bold; min-height: 30px; line-height: 1.5; text-shadow: 0 0 5px #000; }
 
         /* --- 📱 ダッシュボード分割レイアウト (横並び) --- */
-        .split-layout { display: flex; justify-content: center; gap: 40px; margin-top: 40px; padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; background: rgba(13, 17, 23, 0.8); } /* 背景を少し暗くして視認性確保 */
+        .split-layout { display: flex; justify-content: center; gap: 40px; margin-top: 40px; padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; background: rgba(13, 17, 23, 0.85); box-shadow: 0 0 20px rgba(0,0,0,0.5); } 
         .split-layout > div { flex: 1; min-width: 340px; max-width: 480px; margin: 0; display: flex; flex-direction: column; }
 
-        /* --- 🧩 左右パネル共通 & 高さ合わせ --- */
+        /* --- 🧩 左右パネル共通 --- */
         .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; }
         .analysis-panel { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 20px; justify-content: center; }
         .panel-header { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin-bottom: 20px; }
@@ -100,7 +92,6 @@
 
         .carousel-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
         .carousel-btn { background: none; border: none; color: #58a6ff; font-size: 30px; cursor: pointer; transition: 0.2s; padding: 0; width: 30px; }
-        .analysis-panel .carousel-btn { color: #0f0; }
         
         .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
         .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column; gap: 10px; }
@@ -121,30 +112,31 @@
         .answer-section button:hover { background: #1f6feb; color: #fff;}
         .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
-        /* --- STEP 1 UI (五十音表) --- */
+        /* --- STEP 1 UI (五十音表の存在枠) --- */
         .gojuon-container {
-            max-width: 480px; margin: 0 auto 30px auto; padding: 15px;
-            /* 💡 枠線と背景を削除し、完全に背景グリッドと同化させる */
+            /* 💡 背景と同化させるため完全に透明に */
+            margin: 0 auto 30px auto; padding: 0; width: 440px; height: 200px;
         }
         .gojuon-table { 
-            display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; width: 100%; margin: 0;
+            display: grid; grid-template-columns: repeat(11, 40px); grid-template-rows: repeat(5, 40px); 
+            gap: 0; width: 440px; height: 200px; margin: 0;
             user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
         
         .gojuon-cell { 
             position: relative; background: transparent; 
-            /* 💡 マス目の枠線も削除し、完全に透明にする */
-            color: transparent; font-size: 18px; font-weight: bold;
-            display: flex; align-items: center; justify-content: center; border-radius: 4px; 
-            transition: color 2.5s ease-in-out, text-shadow 2.5s ease-in-out; aspect-ratio: 1 / 1; 
+            border: 1px solid transparent; /* 最初は完全に見えない */
+            box-sizing: border-box;
+            display: flex; align-items: center; justify-content: center; 
+            transition: border-color 2.5s ease-in-out, box-shadow 2.5s ease-in-out; 
             user-select: none; -webkit-user-select: none;
         }
         .gojuon-cell.empty { pointer-events: none; }
         
-        /* 💡 全問解き終わった時、文字だけが青く発光して浮かび上がる */
+        /* 💡 全問解き終わった時、マス目だけが青く発光して浮かび上がる（文字は出ない） */
         .gojuon-table.revealed .gojuon-cell:not(.empty) {
-            color: #58a6ff;
-            text-shadow: 0 0 10px rgba(88, 166, 255, 0.8);
+            border-color: rgba(88, 166, 255, 0.6);
+            box-shadow: inset 0 0 10px rgba(88, 166, 255, 0.2);
         }
 
         /* --- STEP 1 UI (メイン) --- */
@@ -168,8 +160,7 @@
 
         .s1-items { 
             display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 30px 0; padding: 25px 40px; 
-            background: #f2f2f2; 
-            min-height: 80px; 
+            background: #f2f2f2; min-height: 80px; 
             clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%);
             transition: 0.3s;
         }
@@ -185,8 +176,7 @@
 
         .s1-item { 
             width: 100%; height: 100%; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; 
-            border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-            flex-shrink: 0;
+            border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); flex-shrink: 0;
         }
         
         .s1-item:active { width: 50px !important; height: 50px !important; cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
@@ -293,9 +283,9 @@
     <div class="app-container active" id="app-step1">
         <h2>STEP1 (論理ソート)</h2>
 
-        <!-- 🌟 五十音表 (枠のみ表示) ＆ SVG図形描画レイヤー -->
+        <!-- 🌟 五十音表 (透明) ＆ SVG図形描画レイヤー -->
         <div class="gojuon-container">
-            <div class="gojuon-wrapper" style="position:relative;">
+            <div class="gojuon-wrapper" style="position:relative; width: 440px; height: 200px; margin: 0 auto;">
                 <svg id="gojuon-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; overflow:visible;"></svg>
                 <div id="gojuon-table" class="gojuon-table"></div>
             </div>
@@ -592,6 +582,23 @@
         }
 
         // ==========================================
+        // 💡 ドットグリッド背景と五十音表の完全同期
+        // ==========================================
+        function alignBackgroundGrid() {
+            const table = document.getElementById('gojuon-table');
+            if (table) {
+                const rect = table.getBoundingClientRect();
+                // ページ全体のスクロール量を加味して絶対座標を計算
+                const x = rect.left + window.scrollX;
+                const y = rect.top + window.scrollY;
+                // ドット（交点）がセルの左上角(0,0)にピッタリ重なるようにオフセットを調整
+                document.body.style.backgroundPosition = `${x - 20}px ${y - 20}px`;
+            }
+        }
+
+        window.addEventListener('resize', alignBackgroundGrid);
+
+        // ==========================================
         // STEP 1: 五十音表と図形描画ロジック
         // ==========================================
         const gojuonLayout = [
@@ -771,6 +778,10 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`app-${appId}`).classList.add('active');
             document.getElementById(`tab-${appId}`).classList.add('active');
+            
+            if (appId === 'step1') {
+                setTimeout(alignBackgroundGrid, 50); // タブ切り替え時にグリッドを再同期
+            }
         }
 
         // ==========================================
@@ -1340,6 +1351,7 @@
             initPolyomino();
             initPuzzles(); 
             updateNodeColors(); 
+            alignBackgroundGrid(); // 💡 初期ロード時にも背景グリッドを同期
         });
     </script>
 </body>
