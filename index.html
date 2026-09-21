@@ -164,14 +164,14 @@
 
         /* --- STEP 3 UI (ポリオミノ盤面パーツ) --- */
         .pieces-container {
-            display: flex; justify-content: center; align-items: flex-end; gap: 40px; flex-wrap: wrap; margin: 0 auto 40px auto; max-width: 800px;
+            display: flex; justify-content: center; align-items: flex-end; gap: 25px; flex-wrap: nowrap; margin: 0 auto 30px auto; max-width: 100%;
         }
-        .poly-piece { display: grid; gap: 4px; }
-        .piece-1 { grid-template-columns: repeat(3, 45px); }
-        .piece-2 { grid-template-columns: repeat(3, 45px); }
-        .piece-3 { grid-template-columns: repeat(2, 45px); }
-        .piece-4 { grid-template-columns: repeat(4, 45px); }
-        .piece-5 { grid-template-columns: repeat(3, 45px); }
+        .poly-piece { display: grid; gap: 3px; }
+        .piece-1 { grid-template-columns: repeat(4, 30px); }
+        .piece-2 { grid-template-columns: repeat(3, 30px); }
+        .piece-3 { grid-template-columns: repeat(3, 30px); }
+        .piece-4 { grid-template-columns: repeat(3, 30px); }
+        .piece-5 { grid-template-columns: repeat(2, 30px); }
         
         .poly-cell {
             display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1;
@@ -557,38 +557,37 @@
         // ポリオミノ盤面生成ロジック (STEP3用)
         // ==========================================
         const polyPiecesLayout = [
-            // Piece 1
+            // 新 Piece 1 (旧 Piece 4)
             [
-                ['A', 'B', 'C'],
-                ['F', '',  'H']
+                ['',  '',  'R', ''],
+                ['U', 'V', 'W', 'X']
             ],
-            // Piece 2
+            // 新 Piece 2 (旧 Piece 2)
             [
                 ['',  'D', 'E'],
                 ['',  'I', ''],
                 ['M', 'N', '']
             ],
-            // Piece 3
-            [
-                ['',  'G'],
-                ['K', 'L'],
-                ['P', 'Q']
-            ],
-            // Piece 4
-            [
-                ['',  '',  'R', ''],
-                ['U', 'V', 'W', 'X']
-            ],
-            // Piece 5
+            // 新 Piece 3 (旧 Piece 5)
             [
                 ['', 'J', ''],
                 ['', 'O', ''],
                 ['S', 'T', ''],
                 ['', 'Y', 'Z']
+            ],
+            // 新 Piece 4 (旧 Piece 1)
+            [
+                ['A', 'B', 'C'],
+                ['F', '',  'H']
+            ],
+            // 新 Piece 5 (旧 Piece 3)
+            [
+                ['',  'G'],
+                ['K', 'L'],
+                ['P', 'Q']
             ]
         ];
 
-        // 曜日に使用されるアルファベット (SUN, MON, TUE, WED, THU, FRI, SATに含まれる文字)
         const blackCells = new Set(['A','D','E','F','H','I','M','N','O','R','S','T','U','W']);
 
         function initPolyomino() {
@@ -605,7 +604,7 @@
                             div.className = "poly-cell empty";
                         } else {
                             div.id = "poly-" + char;
-                            div.innerText = char; // CSSで色は透明に設定
+                            div.innerText = char; 
                             if (blackCells.has(char)) {
                                 div.className = "poly-cell black";
                             } else {
@@ -620,7 +619,6 @@
             });
         }
 
-        // ポリオミノクリック制御
         let polyTimer;
         function clickPolyomino(char) {
             let row = getRow(char);
@@ -744,7 +742,7 @@
         }
 
         // ==========================================
-        // 共通ドラッグ＆ドロップ (スワップ・連動対応)
+        // 共通ドラッグ＆ドロップ
         // ==========================================
         function allowDrop(e) { e.preventDefault(); if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) e.target.classList.add('drag-over'); }
         function dragLeave(e) { e.target.classList.remove('drag-over'); }
