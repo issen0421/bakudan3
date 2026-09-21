@@ -50,14 +50,12 @@
         .ending-title.failure { color: #ff7b72; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
         .ending-msg { font-size: 20px; color: #c9d1d9; line-height: 1.8; text-align: center; max-width: 700px; }
         
-        /* ニュース記事風スタイル */
         .news-article {
             background: #e6edf3; color: #000; padding: 20px 30px; border-radius: 4px;
             font-family: 'Yu Mincho', 'MS PMincho', serif; text-align: left; margin: 20px auto;
             border-left: 8px solid #30363d; box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
         
-        /* Xシェアボタン */
         .share-btn {
             display: inline-block; margin-top: 20px; padding: 12px 24px; background: #000; color: #fff;
             text-decoration: none; border-radius: 30px; font-weight: bold; font-family: sans-serif;
@@ -119,8 +117,7 @@
             user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
         .gojuon-cell { 
-            position: relative;
-            background: transparent; border: 1px solid transparent; color: transparent; 
+            position: relative; background: transparent; border: 1px solid transparent; color: transparent; 
             display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; 
             user-select: none; -webkit-user-select: none;
         }
@@ -163,15 +160,20 @@
         .s2-status-dot { font-size: 20px; color: #555; transition: 0.3s; }
         .s2-status-dot.active { color: #fff; text-shadow: 0 0 8px #fff; }
 
-        /* --- STEP 3 UI (ポリオミノ盤面) --- */
-        .poly-table {
-            display: grid; grid-template-columns: repeat(6, 45px); gap: 4px; justify-content: center; margin: 0 auto 30px auto;
-            user-select: none; -webkit-user-select: none;
+        /* --- STEP 3 UI (ポリオミノ盤面パーツ) --- */
+        .pieces-container {
+            display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; margin: 0 auto 40px auto; max-width: 700px;
         }
+        .poly-piece { display: grid; gap: 4px; }
+        .piece-1 { grid-template-columns: 45px; }
+        .piece-2 { grid-template-columns: 45px; }
+        .piece-3 { grid-template-columns: repeat(2, 45px); }
+        .piece-4 { grid-template-columns: repeat(3, 45px); }
+        .piece-5 { grid-template-columns: 45px; }
+        
         .poly-cell {
             display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1;
-            color: transparent; /* 内部アルファベットを隠す */
-            user-select: none; -webkit-user-select: none;
+            color: transparent; user-select: none; -webkit-user-select: none;
         }
         .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
         .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
@@ -238,7 +240,7 @@
     <div class="app-container active" id="app-step1">
         <h2>STEP1 (論理ソート)</h2>
 
-        <!-- 🌟 五十音表 (完全に透明化 + ドット点灯) -->
+        <!-- 🌟 五十音表 (完全に透明化) -->
         <div id="gojuon-table" class="gojuon-table"></div>
 
         <!-- 🌟 まとめ謎 (一番上) -->
@@ -373,8 +375,41 @@
     <div class="app-container" id="app-step3">
         <h2>STEP3 (物理配線)</h2>
 
-        <!-- 🌟 ポリオミノ (一番上) -->
-        <div id="poly-table" class="poly-table"></div>
+        <!-- 🌟 ポリオミノパーツ (一番上) -->
+        <div class="pieces-container">
+            <!-- Piece 1 (A, F) -->
+            <div class="poly-piece piece-1">
+                <div class="poly-cell black"></div>
+                <div class="poly-cell black"></div>
+            </div>
+            <!-- Piece 2 (J) -->
+            <div class="poly-piece piece-2">
+                <div class="poly-cell white" id="poly-J" onclick="clickPolyomino('J')"></div>
+            </div>
+            <!-- Piece 3 (B, C, G, K, L, P, Q, V) -->
+            <div class="poly-piece piece-3">
+                <div class="poly-cell white" id="poly-B" onclick="clickPolyomino('B')"></div>
+                <div class="poly-cell white" id="poly-C" onclick="clickPolyomino('C')"></div>
+                <div class="poly-cell white" id="poly-G" onclick="clickPolyomino('G')"></div>
+                <div class="poly-cell empty"></div>
+                <div class="poly-cell white" id="poly-K" onclick="clickPolyomino('K')"></div>
+                <div class="poly-cell white" id="poly-L" onclick="clickPolyomino('L')"></div>
+                <div class="poly-cell white" id="poly-P" onclick="clickPolyomino('P')"></div>
+                <div class="poly-cell white" id="poly-Q" onclick="clickPolyomino('Q')"></div>
+                <div class="poly-cell empty"></div>
+                <div class="poly-cell white" id="poly-V" onclick="clickPolyomino('V')"></div>
+            </div>
+            <!-- Piece 4 (X, Y, Z) -->
+            <div class="poly-piece piece-4">
+                <div class="poly-cell white" id="poly-X" onclick="clickPolyomino('X')"></div>
+                <div class="poly-cell white" id="poly-Y" onclick="clickPolyomino('Y')"></div>
+                <div class="poly-cell white" id="poly-Z" onclick="clickPolyomino('Z')"></div>
+            </div>
+            <!-- Piece 5 (U) -->
+            <div class="poly-piece piece-5">
+                <div class="poly-cell black"></div>
+            </div>
+        </div>
 
         <!-- 🌟 まとめ謎 -->
         <div class="puzzle-layout">
@@ -513,7 +548,7 @@
         }
 
         // ==========================================
-        // 五十音表生成ロジック (完全に透明・右から「あかさたな」)
+        // 五十音表生成ロジック (STEP1用)
         // ==========================================
         const gojuonLayout = [
             ['ん','わ','ら','や','ま','は','な','た','さ','か','あ'],
@@ -527,9 +562,9 @@
             'A': ['あ','め','り','か'],
             'B': ['う','い','る','す'],
             'C': ['か','し','つ','き'],
-            'D': ['く','ち','ひ','る'], // び -> ひ
-            'E': ['こ','く','は','ん'], // ば -> は
-            'F': ['ふ','う','し','や']  // ゃ -> や
+            'D': ['く','ち','ひ','る'],
+            'E': ['こ','く','は','ん'],
+            'F': ['ふ','う','し','や']
         };
 
         function initGojuon() {
@@ -550,43 +585,11 @@
         }
 
         // ==========================================
-        // STEP 3 ポリオミノ生成ロジック
+        // ポリオミノクリック制御 (STEP3用)
         // ==========================================
-        const polyLayout = [
-            ['A','B','C','D','E',''],
-            ['F','G','H','I','J',''],
-            ['K','L','M','N','O',''],
-            ['P','Q','R','S','T',''],
-            ['U','V','W','X','Y','Z']
-        ];
-        
-        // 曜日に使用されるアルファベット (SUN, MON, TUE, WED, THU, FRI, SATに含まれる14文字)
-        const blackCells = new Set(['A','D','E','F','H','I','M','N','O','R','S','T','U','W']);
-
-        function initPolyomino() {
-            const table = document.getElementById("poly-table");
-            polyLayout.forEach(row => {
-                row.forEach(char => {
-                    let div = document.createElement("div");
-                    if (char === "") {
-                        div.className = "poly-cell empty";
-                    } else {
-                        div.id = "poly-" + char;
-                        div.innerText = char; // CSSで非表示
-                        if (blackCells.has(char)) {
-                            div.className = "poly-cell black";
-                        } else {
-                            div.className = "poly-cell white";
-                            div.onclick = () => clickPolyomino(char);
-                        }
-                    }
-                    table.appendChild(div);
-                });
-            });
-        }
-
         let polyTimer;
         function clickPolyomino(char) {
+            // キーボードの列判定 (QWERTY)
             let row = getRow(char);
             let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
             
@@ -595,11 +598,11 @@
             
             document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
             let cell = document.getElementById("poly-" + char);
-            cell.classList.add("active");
+            if (cell) cell.classList.add("active");
             
             polyTimer = setTimeout(() => {
                 sendCommand("S0000");
-                cell.classList.remove("active");
+                if (cell) cell.classList.remove("active");
             }, 2000);
         }
 
