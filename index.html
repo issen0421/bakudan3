@@ -147,7 +147,7 @@
         }
         .s1-slot.drag-over { border-color: #58a6ff; background: rgba(88, 166, 255, 0.2); }
 
-        /* 💡 5つ目の手がかり解放時のサイズ変化アニメーション */
+        /* 💡 5つ目の手がかり解放時のスロットサイズ変化アニメーション */
         .s1-slots.size-hint-active .s1-slot:nth-child(1) { width: 30px; height: 30px; }
         .s1-slots.size-hint-active .s1-slot:nth-child(2) { width: 40px; height: 40px; }
         .s1-slots.size-hint-active .s1-slot:nth-child(3) { width: 50px; height: 50px; }
@@ -160,7 +160,7 @@
             background: #f2f2f2; 
             clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%);
         }
-        .s1-item-slot { width: 50px; height: 50px; background: transparent; }
+        .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; }
         
         .s1-item { 
             width: 50px; height: 50px; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; 
@@ -168,10 +168,16 @@
         }
         .s1-item:active { cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
         
+        /* 💡 4つ目の手がかり解放時の下のプールサイズ変化アニメーション */
+        .s1-items.pool-size-hint-active #A.s1-item:not(:active) { width: 30px; height: 30px; } /* 赤 */
+        .s1-items.pool-size-hint-active #B.s1-item:not(:active) { width: 40px; height: 40px; } /* 橙 */
+        .s1-items.pool-size-hint-active #C.s1-item:not(:active) { width: 50px; height: 50px; } /* 黄 */
+        .s1-items.pool-size-hint-active #D.s1-item:not(:active) { width: 60px; height: 60px; } /* 緑 */
+        .s1-items.pool-size-hint-active #E.s1-item:not(:active) { width: 70px; height: 70px; } /* 青 */
+        .s1-items.pool-size-hint-active #F.s1-item:not(:active) { width: 80px; height: 80px; } /* 紫 */
+
         /* 💡 スロットに入ったら自動で親サイズにフィットさせる */
         .s1-slot .s1-item { width: 100%; height: 100%; }
-        /* 💡 プールにいるときは元の50pxに戻る */
-        .s1-item-slot .s1-item { width: 50px; height: 50px; }
         
         #A.s1-item { background-color: #ec3321; } /* 赤 */
         #B.s1-item { background-color: #ff8b00; } /* 橙 */
@@ -190,6 +196,9 @@
         .s2-node.selected { border-color: #f85149; background: rgba(248, 81, 73, 0.2); transform: scale(1.05); }
         .s2-status-dot { font-size: 20px; color: #555; transition: 0.3s; }
         .s2-status-dot.active { color: #fff; text-shadow: 0 0 8px #fff; }
+        
+        /* 💡 6つ目の手がかり解放時に表示される数字 */
+        .s2-vol { display: none; color: #58a6ff; font-weight: bold; font-size: 18px; margin-top: -5px; }
 
         /* --- STEP 3 UI (ポリオミノ盤面パーツ) --- */
         .pieces-container {
@@ -218,7 +227,7 @@
         .s3-slot.drag-over { background: #1f6feb; border-color: #58a6ff; }
         .s3-side-panel { display: flex; flex-direction: column; gap: 20px; }
         .s3-items { display: grid; grid-template-columns: 180px 180px; gap: 20px; padding: 20px; border: 2px dashed #444; border-radius: 10px; background: #161b22; }
-        .s3-item-slot { width: 180px; height: 60px; background: transparent; }
+        .s3-item-slot { width: 180px; height: 60px; background: transparent; display: flex; align-items: center; justify-content: center;}
         .s3-item { width: 180px; height: 60px; background: #30363d; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: grab; box-shadow: 2px 4px 8px rgba(0,0,0,0.5); transition: transform 0.1s; color: white; border: 1px solid #555; }
         .s3-item:active { cursor: grabbing; transform: scale(0.95); border-color: #58a6ff; }
 
@@ -359,14 +368,17 @@
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div>
                     <div class="s2-status-dot" id="dot-0">⚪</div>
+                    <div class="s2-vol" id="vol-0">10L</div>
                 </div>
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-1" onclick="handleNodeClick(1)"></div>
                     <div class="s2-status-dot" id="dot-1">⚪</div>
+                    <div class="s2-vol" id="vol-1">0L</div>
                 </div>
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-2" onclick="handleNodeClick(2)"></div>
                     <div class="s2-status-dot" id="dot-2">⚪</div>
+                    <div class="s2-vol" id="vol-2">0L</div>
                 </div>
             </div>
         </div>
@@ -1005,14 +1017,26 @@
                 sendCommand("P1111"); 
                 setTimeout(() => sendCommand("P0000"), 500); 
 
-                // 🌟 STEP1で全データ（6個）を解除した瞬間に五十音のグリッドを浮かび上がらせる
-                if (step === 1 && unlockedAnalysisCount[1] === 6) {
-                    document.getElementById("gojuon-table").classList.add("revealed");
+                // 🌟 STEP1でデータ4個目を解除した瞬間にプール側のサイズヒントを有効にする
+                if (step === 1 && unlockedAnalysisCount[1] >= 4) {
+                    document.getElementById("s1-item-pool").classList.add("pool-size-hint-active");
                 }
                 
                 // 🌟 STEP1でデータ5個目を解除した瞬間にサイズヒントを有効にする
                 if (step === 1 && unlockedAnalysisCount[1] >= 5) {
                     document.getElementById("s1-slots-container").classList.add("size-hint-active");
+                }
+
+                // 🌟 STEP1で全データ（6個）を解除した瞬間に五十音のグリッドを浮かび上がらせる
+                if (step === 1 && unlockedAnalysisCount[1] === 6) {
+                    document.getElementById("gojuon-table").classList.add("revealed");
+                }
+
+                // 🌟 STEP2で全データ（6個）を解除した瞬間に水量の数字を表示する
+                if (step === 2 && unlockedAnalysisCount[2] === 6) {
+                    document.getElementById("vol-0").style.display = "block";
+                    document.getElementById("vol-1").style.display = "block";
+                    document.getElementById("vol-2").style.display = "block";
                 }
             }
         }
@@ -1130,6 +1154,9 @@
             if (s2_isTransferring) {
                 slotDisplay.innerText = "⚫ ⚫"; 
                 for(let i=0; i<3; i++) {
+                    const vol = document.getElementById(`vol-${i}`);
+                    if(vol) vol.innerText = s2_volumes[i] + "L";
+
                     document.getElementById(`node-${i}`).className = "s2-node";
                     if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) document.getElementById(`node-${i}`).classList.add('full');
                     document.getElementById(`dot-${i}`).className = "s2-status-dot";
@@ -1141,6 +1168,10 @@
             for (let i = 0; i < 3; i++) {
                 const node = document.getElementById(`node-${i}`);
                 const dot = document.getElementById(`dot-${i}`);
+                const vol = document.getElementById(`vol-${i}`);
+                
+                if(vol) vol.innerText = s2_volumes[i] + "L";
+
                 node.className = "s2-node"; 
                 if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
 
