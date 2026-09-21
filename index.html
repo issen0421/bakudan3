@@ -116,7 +116,6 @@
         /* --- STEP 1 UI (五十音表) --- */
         .gojuon-table { 
             display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; max-width: 440px; margin: 0 auto 30px auto;
-            /* ドラッグ選択によるハイライトを完全に禁止 */
             user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
         .gojuon-cell { 
@@ -125,11 +124,9 @@
             display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; 
             user-select: none; -webkit-user-select: none;
         }
-        /* 光るドット（通常時は透明） */
         .gojuon-cell::after {
             content: ''; position: absolute; width: 16px; height: 16px; background: transparent; border-radius: 50%; transition: 0.2s;
         }
-        /* 光った時だけドットが浮かび上がる */
         .gojuon-cell.active::after { 
             background: #58a6ff; box-shadow: 0 0 15px 3px rgba(88, 166, 255, 0.8); 
         }
@@ -138,14 +135,12 @@
         /* --- STEP 1 UI (メイン) --- */
         .s1-items { display: flex; justify-content: center; gap: 20px; margin: 30px 0; padding: 20px; border: 2px dashed #444; border-radius: 12px; background: #161b22; }
         .s1-item-slot { width: 60px; height: 60px; background: transparent; }
-        /* ブロックを色のみ・角丸にする */
         .s1-item { 
             width: 60px; height: 60px; cursor: grab; transition: transform 0.1s, box-shadow 0.2s; 
             border-radius: 12px; box-shadow: 2px 2px 8px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); 
         }
         .s1-item:active { cursor: grabbing; transform: scale(0.95); box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
         
-        /* 各ブロックの色 */
         #A.s1-item { background-color: #ec3321; }
         #B.s1-item { background-color: #ff8b00; }
         #C.s1-item { background-color: #fdd900; }
@@ -154,7 +149,6 @@
         #F.s1-item { background-color: #58278c; }
 
         .s1-slots { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
-        /* スロットも角丸に合わせる */
         .s1-slot { width: 60px; height: 60px; border: 2px dashed #555; background: #0d1117; display: flex; align-items: center; justify-content: center; transition: 0.2s; border-radius: 12px; }
         .s1-slot.drag-over { background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; }
 
@@ -168,6 +162,21 @@
         .s2-node.selected { border-color: #f85149; background: rgba(248, 81, 73, 0.2); transform: scale(1.05); }
         .s2-status-dot { font-size: 20px; color: #555; transition: 0.3s; }
         .s2-status-dot.active { color: #fff; text-shadow: 0 0 8px #fff; }
+
+        /* --- STEP 3 UI (ポリオミノ盤面) --- */
+        .poly-table {
+            display: grid; grid-template-columns: repeat(6, 45px); gap: 4px; justify-content: center; margin: 0 auto 30px auto;
+            user-select: none; -webkit-user-select: none;
+        }
+        .poly-cell {
+            display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1;
+            color: transparent; /* 内部アルファベットを隠す */
+            user-select: none; -webkit-user-select: none;
+        }
+        .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
+        .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
+        .poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
+        .poly-cell.empty { background: transparent; pointer-events: none; border: none; }
 
         /* --- STEP 3 UI (メイン) --- */
         .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; margin: 0 auto; max-width: 900px; }
@@ -364,7 +373,10 @@
     <div class="app-container" id="app-step3">
         <h2>STEP3 (物理配線)</h2>
 
-        <!-- 🌟 まとめ謎 (一番上) -->
+        <!-- 🌟 ポリオミノ (一番上) -->
+        <div id="poly-table" class="poly-table"></div>
+
+        <!-- 🌟 まとめ謎 -->
         <div class="puzzle-layout">
             <div class="s3-slots-container">
                 <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -535,6 +547,60 @@
                     table.appendChild(div);
                 });
             });
+        }
+
+        // ==========================================
+        // STEP 3 ポリオミノ生成ロジック
+        // ==========================================
+        const polyLayout = [
+            ['A','B','C','D','E',''],
+            ['F','G','H','I','J',''],
+            ['K','L','M','N','O',''],
+            ['P','Q','R','S','T',''],
+            ['U','V','W','X','Y','Z']
+        ];
+        
+        // 曜日に使用されるアルファベット (SUN, MON, TUE, WED, THU, FRI, SATに含まれる14文字)
+        const blackCells = new Set(['A','D','E','F','H','I','M','N','O','R','S','T','U','W']);
+
+        function initPolyomino() {
+            const table = document.getElementById("poly-table");
+            polyLayout.forEach(row => {
+                row.forEach(char => {
+                    let div = document.createElement("div");
+                    if (char === "") {
+                        div.className = "poly-cell empty";
+                    } else {
+                        div.id = "poly-" + char;
+                        div.innerText = char; // CSSで非表示
+                        if (blackCells.has(char)) {
+                            div.className = "poly-cell black";
+                        } else {
+                            div.className = "poly-cell white";
+                            div.onclick = () => clickPolyomino(char);
+                        }
+                    }
+                    table.appendChild(div);
+                });
+            });
+        }
+
+        let polyTimer;
+        function clickPolyomino(char) {
+            let row = getRow(char);
+            let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
+            
+            if (polyTimer) clearTimeout(polyTimer);
+            sendCommand("S" + val + val + val + val);
+            
+            document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
+            let cell = document.getElementById("poly-" + char);
+            cell.classList.add("active");
+            
+            polyTimer = setTimeout(() => {
+                sendCommand("S0000");
+                cell.classList.remove("active");
+            }, 2000);
         }
 
         // ==========================================
@@ -711,7 +777,7 @@
         const puzzleDict = {
             1: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
             2: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
-            3: {"くま":0, "とり":1, "ほし":2, "つき":3, "さかな":4, "ほん":5}
+            3: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5}
         };
         
         const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
@@ -794,15 +860,8 @@
                 updateAnalysisCarousel(step); 
                 document.getElementById(`answerInput-s${step}`).value = ""; 
 
-                if (step === 3) {
-                    let answerWord = (input === "くま") ? "BEAR" : (input === "とり") ? "BIRD" : (input === "ほし") ? "STAR" : (input === "つき") ? "MOON" : (input === "さかな") ? "FISH" : "BOOK";
-                    let cmd = "S"; for(let i=0; i<4; i++) cmd += getRow(answerWord[i]);
-                    sendCommand(cmd);
-                    setTimeout(() => { sendCommand("S0000"); feedback.innerText = ""; }, 4000); 
-                } else {
-                    sendCommand("B");
-                    setTimeout(() => { feedback.innerText = ""; }, 2000);
-                }
+                sendCommand("B");
+                setTimeout(() => { feedback.innerText = ""; }, 2000);
             } else {
                 feedback.style.color = "red";
                 feedback.innerText = "❌";
@@ -1055,6 +1114,7 @@
         window.addEventListener('DOMContentLoaded', () => { 
             initIntro();
             initGojuon();
+            initPolyomino();
             initPuzzles(); 
             updateNodeColors(); 
         });
