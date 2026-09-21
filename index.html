@@ -156,8 +156,9 @@
         .s1-slots.size-hint-active .s1-slot:nth-child(6) { width: 80px; height: 80px; }
 
         .s1-items { 
-            display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 30px 0; padding: 15px 40px; 
+            display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 30px 0; padding: 25px 40px; /* はみ出し防止のためpadding増 */
             background: #f2f2f2; 
+            min-height: 80px; /* 六角形の高さを確保 */
             clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%);
         }
         .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; }
@@ -165,6 +166,7 @@
         .s1-item { 
             width: 50px; height: 50px; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; 
             border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+            flex-shrink: 0; /* 💡 正円を保つために追加 */
         }
         .s1-item:active { cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
         
@@ -659,9 +661,9 @@
                     svg.appendChild(polygon);
                 }
 
-                // 🌟 4つ目の手がかり解放で、抽出する2文字の頂点に丸を表示
+                // 🌟 4つ目の手がかり解放で、4文字すべての頂点に丸を表示
                 if (unlockedAnalysisCount[1] >= 4) {
-                    data.chars2.forEach(char => {
+                    data.chars4.forEach(char => {
                         const cell = document.getElementById("gojuon-" + char);
                         if (cell) {
                             const x = cell.offsetLeft + cell.offsetWidth / 2;
