@@ -122,13 +122,14 @@
         }
         
         .gojuon-cell { 
-            position: relative; background: transparent; border: 1px solid transparent; 
+            position: relative; background: transparent; 
+            border: 1px solid rgba(255, 255, 255, 0.1); /* 💡 最初から薄いグリッド線を表示 */
             color: transparent; font-size: 18px; font-weight: bold;
             display: flex; align-items: center; justify-content: center; border-radius: 4px; 
             transition: border-color 2.5s ease-in-out, box-shadow 2.5s ease-in-out; aspect-ratio: 1 / 1; 
             user-select: none; -webkit-user-select: none;
         }
-        .gojuon-cell.empty { pointer-events: none; }
+        .gojuon-cell.empty { border-color: transparent; pointer-events: none; } /* 💡 空のセルは枠線なし */
         
         .gojuon-table.revealed .gojuon-cell:not(.empty) {
             border-color: #58a6ff;
@@ -660,7 +661,6 @@
                     svg.appendChild(polygon);
                 }
 
-                // 🌟 4つ目の手がかり解放で、4文字すべての頂点に丸を表示
                 if (unlockedAnalysisCount[1] >= 4) {
                     data.chars4.forEach(char => {
                         const cell = document.getElementById("gojuon-" + char);
@@ -720,7 +720,6 @@
                     sendCommand("P1111"); 
                 } else if (currentDragZone === 2) {
                     drawGojuonShape(null, 0); 
-                    // 💡 LEDの光るパターンを新しい単語に修正
                     const ledPatterns = { 'A': 'P0101', 'B': 'P1100', 'C': 'P0101', 'D': 'P0011', 'E': 'P0101', 'F': 'P1010' };
                     if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
                 } else {
@@ -1019,18 +1018,15 @@
                 sendCommand("P1111"); 
                 setTimeout(() => sendCommand("P0000"), 500); 
                 
-                // 🌟 STEP1でデータ5個目を解除した瞬間に上下のサイズヒントを有効にする
                 if (step === 1 && unlockedAnalysisCount[1] >= 5) {
                     document.getElementById("s1-slots-container").classList.add("size-hint-active");
                     document.getElementById("s1-item-pool").classList.add("pool-size-hint-active");
                 }
 
-                // 🌟 STEP1で全データ（6個）を解除した瞬間に五十音のグリッドを浮かび上がらせる
                 if (step === 1 && unlockedAnalysisCount[1] === 6) {
                     document.getElementById("gojuon-table").classList.add("revealed");
                 }
 
-                // 🌟 STEP2で全データ（6個）を解除した瞬間に水量の数字を表示する
                 if (step === 2 && unlockedAnalysisCount[2] === 6) {
                     document.getElementById("vol-0").style.display = "block";
                     document.getElementById("vol-1").style.display = "block";
