@@ -128,7 +128,6 @@
         .gojuon-cell.empty { pointer-events: none; }
 
         /* --- STEP 1 UI (メイン) --- */
-        /* 上の枠内 (Slots) */
         .s1-slots { 
             display: inline-flex; justify-content: center; gap: 15px; margin-bottom: 20px; 
             background: #f2f2f2; border-radius: 40px; padding: 15px 30px; 
@@ -139,7 +138,6 @@
         }
         .s1-slot.drag-over { border-color: #58a6ff; background: rgba(88, 166, 255, 0.2); }
 
-        /* 下の枠内 (Pool) - 六角形デザイン */
         .s1-items { 
             display: inline-flex; justify-content: center; gap: 15px; margin: 30px 0; padding: 15px 40px; 
             background: #f2f2f2; 
@@ -152,7 +150,6 @@
         }
         .s1-item:active { cursor: grabbing; transform: scale(0.95); box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
         
-        /* 指定カラー */
         #A.s1-item { background-color: #ec3321; } /* 赤 */
         #B.s1-item { background-color: #ff8b00; } /* 橙 */
         #C.s1-item { background-color: #fdd900; } /* 黄 */
@@ -306,7 +303,12 @@
                     <div class="feedback" id="terminalFeedback-s1"></div>
                 </div>
             </div>
+            
             <div class="analysis-panel">
+                <div class="panel-header">
+                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">解放権: <span id="analysisPoints-s1">0</span></div>
+                </div>
                 <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="btn-prev-analysis-s1" onclick="prevAnalysis(1)">◀</button>
@@ -315,7 +317,7 @@
                         </div>
                         <button class="carousel-btn" id="btn-next-analysis-s1" onclick="nextAnalysis(1)">▶</button>
                     </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s1">⚫⚪⚪⚪⚪⚪</div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s1">⚫⚫⚫⚫⚫⚫</div>
                 </div>
             </div>
         </div>
@@ -372,7 +374,12 @@
                     <div class="feedback" id="terminalFeedback-s2"></div>
                 </div>
             </div>
+            
             <div class="analysis-panel">
+                <div class="panel-header">
+                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">解放権: <span id="analysisPoints-s2">0</span></div>
+                </div>
                 <div id="hintArea-s2" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="btn-prev-analysis-s2" onclick="prevAnalysis(2)">◀</button>
@@ -381,7 +388,7 @@
                         </div>
                         <button class="carousel-btn" id="btn-next-analysis-s2" onclick="nextAnalysis(2)">▶</button>
                     </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s2">⚫⚪⚪⚪⚪⚪</div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s2">⚫⚫⚫⚫⚫⚫</div>
                 </div>
             </div>
         </div>
@@ -446,6 +453,10 @@
             </div>
 
             <div class="analysis-panel">
+                <div class="panel-header">
+                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">解放権: <span id="analysisPoints-s3">0</span></div>
+                </div>
                 <div id="hintArea-s3" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
                         <button class="carousel-btn" id="btn-prev-analysis-s3" onclick="prevAnalysis(3)">◀</button>
@@ -454,7 +465,7 @@
                         </div>
                         <button class="carousel-btn" id="btn-next-analysis-s3" onclick="nextAnalysis(3)">▶</button>
                     </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s3">⚫⚪⚪⚪⚪⚪</div>
+                    <div class="carousel-indicator hint-text" id="analysisIndicator-s3">⚫⚫⚫⚫⚫⚫</div>
                 </div>
             </div>
         </div>
@@ -570,7 +581,6 @@
             });
         }
 
-        let currentDragId = null;
         let currentDrawMode = 0; 
 
         // SVG図形の描画関数 (持っている色の図形だけを描画)
@@ -621,6 +631,7 @@
         // ==========================================
         // 共通ドラッグ＆ドロップ (ゾーン連動対応)
         // ==========================================
+        let currentDragId = null;
         let currentDragZone = 0; // 0: none, 1: bottom, 2: top
 
         function allowDrop(e) { 
@@ -706,30 +717,25 @@
         // ポリオミノ盤面生成ロジック (STEP3用)
         // ==========================================
         const polyPiecesLayout = [
-            // 新 Piece 1 (旧 Piece 4)
             [
                 ['',  '',  'R', ''],
                 ['U', 'V', 'W', 'X']
             ],
-            // 新 Piece 2 (旧 Piece 2)
             [
                 ['',  'D', 'E'],
                 ['',  'I', ''],
                 ['M', 'N', '']
             ],
-            // 新 Piece 3 (旧 Piece 5)
             [
                 ['', 'J', ''],
                 ['', 'O', ''],
                 ['S', 'T', ''],
                 ['', 'Y', 'Z']
             ],
-            // 新 Piece 4 (旧 Piece 1)
             [
                 ['A', 'B', 'C'],
                 ['F', '',  'H']
             ],
-            // 新 Piece 5 (旧 Piece 3)
             [
                 ['',  'G'],
                 ['K', 'L'],
@@ -838,9 +844,13 @@
         // スクラッチ小謎 ＆ 解析データ 管理システム
         // ==========================================
         const puzzleFiles = ["A", "B", "C", "D", "E", "F"];
-        let openPoints = { 1: 0, 2: 0, 3: 0 }; 
-        let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 }; 
+        
+        let availableAnalysisPoints = { 1: 0, 2: 0, 3: 0 }; 
+        let unlockedAnalysisCount = { 1: 0, 2: 0, 3: 0 }; 
         let analysisIdx = { 1: 0, 2: 0, 3: 0 }; 
+        
+        let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 }; 
+        let openPoints = { 1: 0, 2: 0, 3: 0 }; 
         
         let panelsState = { 1: [], 2: [], 3: [] };
         let isSolved = { 1: [], 2: [], 3: [] };
@@ -924,8 +934,13 @@
 
             if (input in dict) {
                 const pIdx = dict[input]; 
-                isSolved[step][pIdx] = true;
-                analysisIdx[step] = pIdx; 
+                
+                // 新規正解時のみポイントを付与
+                if (!isSolved[step][pIdx]) {
+                    isSolved[step][pIdx] = true;
+                    availableAnalysisPoints[step]++;
+                    document.getElementById(`analysisPoints-s${step}`).innerText = availableAnalysisPoints[step];
+                }
                 
                 feedback.style.color = "#0f0";
                 feedback.innerText = "DATA DECODED";
@@ -939,7 +954,22 @@
             } else {
                 feedback.style.color = "red";
                 feedback.innerText = "❌";
-                setTimeout(() => { feedback.innerText = ""; }, 2000);
+                setTimeout(() => { if (feedback.innerText === "❌") feedback.innerText = ""; }, 2000);
+            }
+        }
+        
+        function unlockAnalysis(step) {
+            if (availableAnalysisPoints[step] > 0 && unlockedAnalysisCount[step] < 6) {
+                availableAnalysisPoints[step]--;
+                unlockedAnalysisCount[step]++;
+                document.getElementById(`analysisPoints-s${step}`).innerText = availableAnalysisPoints[step];
+                
+                // 自動的に新しく解放したデータを表示する
+                analysisIdx[step] = unlockedAnalysisCount[step] - 1; 
+                updateAnalysisCarousel(step);
+                
+                sendCommand("P1111"); 
+                setTimeout(() => sendCommand("P0000"), 500); 
             }
         }
 
@@ -948,32 +978,62 @@
             const pName = puzzleFiles[idx];
             const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
             
-            if (isSolved[step][idx]) {
-                placeholder.innerHTML = `解析データ ${pName}`;
+            if (idx < unlockedAnalysisCount[step]) {
+                // 解放済み
+                placeholder.innerHTML = `DATA ${pName}`;
                 placeholder.style.color = "#0f0";
                 placeholder.style.borderColor = "#0f0";
+                placeholder.style.cursor = "default";
+                placeholder.onclick = null;
             } else {
-                placeholder.innerHTML = `Locked 🔐`;
-                placeholder.style.color = "#555";
-                placeholder.style.borderColor = "#555";
+                // ロック中（次に解放できるもの）
+                if (idx === unlockedAnalysisCount[step] && availableAnalysisPoints[step] > 0) {
+                    placeholder.innerHTML = `タップして解放 🔓`;
+                    placeholder.style.color = "#58a6ff";
+                    placeholder.style.borderColor = "#58a6ff";
+                    placeholder.style.cursor = "pointer";
+                    placeholder.onclick = () => unlockAnalysis(step);
+                } else {
+                    // 単なるロック中
+                    placeholder.innerHTML = `Locked 🔐`;
+                    placeholder.style.color = "#555";
+                    placeholder.style.borderColor = "#555";
+                    placeholder.style.cursor = "default";
+                    placeholder.onclick = null;
+                }
             }
             
             let dots = "";
             for(let i=0; i<6; i++) {
-                dots += (i === idx) ? "⚫" : "⚪";
+                if (i === idx) dots += "🟢";
+                else if (i < unlockedAnalysisCount[step]) dots += "⚪";
+                else dots += "⚫";
             }
             document.getElementById(`analysisIndicator-s${step}`).innerText = dots;
 
             document.getElementById(`btn-prev-analysis-s${step}`).style.visibility = (idx === 0) ? 'hidden' : 'visible';
-            document.getElementById(`btn-next-analysis-s${step}`).style.visibility = (idx === 5) ? 'hidden' : 'visible';
+            
+            // ロックされている次のデータまでしか進めないようにする
+            const maxIdx = Math.min(5, unlockedAnalysisCount[step]);
+            document.getElementById(`btn-next-analysis-s${step}`).style.visibility = (idx >= maxIdx) ? 'hidden' : 'visible';
         }
-        function prevAnalysis(step) { if (analysisIdx[step] > 0) { analysisIdx[step]--; updateAnalysisCarousel(step); } }
-        function nextAnalysis(step) { if (analysisIdx[step] < 5) { analysisIdx[step]++; updateAnalysisCarousel(step); } }
+        
+        function prevAnalysis(step) { 
+            if (analysisIdx[step] > 0) { 
+                analysisIdx[step]--; updateAnalysisCarousel(step); 
+            } 
+        }
+        
+        function nextAnalysis(step) { 
+            const maxIdx = Math.min(5, unlockedAnalysisCount[step]);
+            if (analysisIdx[step] < maxIdx) { 
+                analysisIdx[step]++; updateAnalysisCarousel(step); 
+            } 
+        }
 
         // ==========================================
-        // STEP 1 メイン (正解配列: F, B, A, E, C, D)
+        // STEP 1 メイン
         // ==========================================
-        // 正解順: 紫(F/あり), 橙(B/くり), 赤(A/いす), 青(E/くま), 黄(C/いけ), 緑(D/つき)
         const s1_answer = ["F", "B", "A", "E", "C", "D"];
         
         function checkClearStep1() {
@@ -981,7 +1041,10 @@
             let placedItems = [];
             for (let slot of slots) {
                 if (slot.children.length === 0) {
-                    document.getElementById("result-step1").innerText = "❌";
+                    const res = document.getElementById("result-step1");
+                    res.innerText = "❌";
+                    res.style.color = "#ff7b72";
+                    setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
                     return;
                 }
                 placedItems.push(slot.children[0].id);
@@ -1005,6 +1068,7 @@
             } else {
                 res.innerText = "❌";
                 res.style.color = "#ff7b72";
+                setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
             }
         }
 
@@ -1124,8 +1188,10 @@
             let placedWords = [];
             for (let slot of slots) {
                 if (slot.children.length === 0) { 
-                    document.getElementById("result-step3").innerText = "❌"; 
-                    document.getElementById("result-step3").style.color = "#ff7b72";
+                    const res = document.getElementById("result-step3");
+                    res.innerText = "❌"; 
+                    res.style.color = "#ff7b72";
+                    setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
                     return; 
                 }
                 placedWords.push(slot.children[0].id);
@@ -1160,6 +1226,7 @@
             } else {
                 res.innerText = "❌";
                 res.style.color = "#ff7b72";
+                setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
             }
         }
 
