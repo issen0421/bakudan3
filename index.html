@@ -543,7 +543,7 @@
             ['','を','ろ','よ','も','ほ','の','と','そ','こ','お']
         ];
 
-        // 新しいアイテム定義 (抽出前4文字と抽出後2文字)
+        // アイテム定義 (抽出前4文字と抽出後2文字)
         const blockData = {
             'A': { color: '#ec3321', chars4: ['う','い','る','す'], chars2: ['い','す'] }, // 赤
             'B': { color: '#ff8b00', chars4: ['く','り','お','ね'], chars2: ['く','り'] }, // 橙
@@ -570,13 +570,14 @@
             });
         }
 
-        let currentDrawMode = 0; // 0=none, 4=4-chars
+        let currentDragId = null;
+        let currentDrawMode = 0; 
 
-        // SVG図形の描画関数 (下枠で全表示)
-        function drawGojuonShape(mode) {
+        // SVG図形の描画関数 (持っている色の図形だけを描画)
+        function drawGojuonShape(id, mode) {
             const svg = document.getElementById("gojuon-svg");
             
-            if (mode === 0) {
+            if (!id || mode === 0) {
                 if (currentDrawMode !== 0) {
                     svg.innerHTML = "";
                     currentDrawMode = 0;
@@ -584,46 +585,42 @@
                 return;
             }
             
-            if (currentDrawMode === mode) return;
+            if (currentDrawMode === mode && svg.dataset.currentId === id) return;
             svg.innerHTML = "";
             currentDrawMode = mode;
+            svg.dataset.currentId = id;
             
+            // 下枠にいる時のみ図形（四角形/三角形）を描画
             if (mode === 4) {
-                // 下枠：すべての4文字図形を描画
-                const ids = ['A', 'B', 'C', 'D', 'E', 'F'];
-                ids.forEach(blockId => {
-                    const data = blockData[blockId];
-                    const chars = data.chars4;
-                    let points = [];
-                    
-                    chars.forEach(char => {
-                        const cell = document.getElementById("gojuon-" + char);
-                        if (cell) {
-                            const x = cell.offsetLeft + cell.offsetWidth / 2;
-                            const y = cell.offsetTop + cell.offsetHeight / 2;
-                            points.push(`${x},${y}`);
-                        }
-                    });
-                    
-                    // 最低3点あれば多角形を描画可能
-                    if (points.length > 2) {
-                        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-                        polygon.setAttribute("points", points.join(" "));
-                        polygon.setAttribute("fill", data.color + "30"); // 透過適用
-                        polygon.setAttribute("stroke", data.color);
-                        polygon.setAttribute("stroke-width", "3");
-                        polygon.setAttribute("stroke-linejoin", "round");
-                        polygon.style.filter = `drop-shadow(0 0 5px ${data.color})`;
-                        svg.appendChild(polygon);
+                const data = blockData[id];
+                const chars = data.chars4;
+                let points = [];
+                
+                chars.forEach(char => {
+                    const cell = document.getElementById("gojuon-" + char);
+                    if (cell) {
+                        const x = cell.offsetLeft + cell.offsetWidth / 2;
+                        const y = cell.offsetTop + cell.offsetHeight / 2;
+                        points.push(`${x},${y}`);
                     }
                 });
+                
+                if (points.length > 2) {
+                    const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                    polygon.setAttribute("points", points.join(" "));
+                    polygon.setAttribute("fill", data.color + "30"); // 透過適用
+                    polygon.setAttribute("stroke", data.color);
+                    polygon.setAttribute("stroke-width", "3");
+                    polygon.setAttribute("stroke-linejoin", "round");
+                    polygon.style.filter = `drop-shadow(0 0 5px ${data.color})`;
+                    svg.appendChild(polygon);
+                }
             }
         }
 
         // ==========================================
         // 共通ドラッグ＆ドロップ (ゾーン連動対応)
         // ==========================================
-        let currentDragId = null;
         let currentDragZone = 0; // 0: none, 1: bottom, 2: top
 
         function allowDrop(e) { 
@@ -637,6 +634,7 @@
         function dragItem(e) { 
             e.dataTransfer.setData("text", e.target.id); 
             currentDragId = e.target.id;
+            currentDragZone = 0; // 状態をリセットしてdragoverでの更新を強制
         }
 
         // 画面全体のdragoverでゾーンを判定し状態を更新する
@@ -655,18 +653,18 @@
                 
                 // SVGとArduinoの更新
                 if (currentDragZone === 1) {
-                    // 下枠にいる時
-                    drawGojuonShape(4); // 4文字図形を全部描画
-                    sendCommand("P1111"); // 全部点灯
+                    // 下枠にいる時: その色の4文字図形を表示 ＋ デバイスは全点灯
+                    drawGojuonShape(currentDragId, 4); 
+                    sendCommand("P1111"); 
                 } else if (currentDragZone === 2) {
-                    // 上枠にいる時
-                    drawGojuonShape(0); // 画面上の図形は描画しない
+                    // 上枠にいる時: 画面の図形は消灯 ＋ デバイスはそのアイテムの2文字分点灯
+                    drawGojuonShape(null, 0); 
                     const ledPatterns = { 'A': 'P1010', 'B': 'P0101', 'C': 'P0011', 'D': 'P0011', 'E': 'P1011', 'F': 'P0110' };
-                    if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); // 2文字ランプ点灯
+                    if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
                 } else {
-                    // 枠外にいる時
-                    drawGojuonShape(0); // 消灯
-                    sendCommand("P0000"); // 消灯
+                    // 枠外にいる時: 消灯
+                    drawGojuonShape(null, 0); 
+                    sendCommand("P0000"); 
                 }
             }
         });
@@ -675,7 +673,7 @@
             sendCommand('P0000');
             currentDragId = null;
             currentDragZone = 0;
-            drawGojuonShape(0);
+            drawGojuonShape(null, 0);
         }
 
         function drop(e) {
