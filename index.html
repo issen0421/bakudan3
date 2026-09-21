@@ -156,30 +156,32 @@
         .s1-slots.size-hint-active .s1-slot:nth-child(6) { width: 80px; height: 80px; }
 
         .s1-items { 
-            display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 30px 0; padding: 25px 40px; /* はみ出し防止のためpadding増 */
+            display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 30px 0; padding: 25px 40px; 
             background: #f2f2f2; 
             min-height: 80px; /* 六角形の高さを確保 */
             clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%);
+            transition: 0.3s;
         }
-        .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; }
         
+        /* 💡 枠のサイズ指定 (通常時) */
+        .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        
+        /* 💡 5つ目の手がかり解放時の下のプールサイズ変化アニメーション (重なり防止のため枠ごと広げる) */
+        .s1-items.pool-size-hint-active #pool-A { width: 30px; height: 30px; }
+        .s1-items.pool-size-hint-active #pool-B { width: 40px; height: 40px; }
+        .s1-items.pool-size-hint-active #pool-C { width: 50px; height: 50px; }
+        .s1-items.pool-size-hint-active #pool-D { width: 60px; height: 60px; }
+        .s1-items.pool-size-hint-active #pool-E { width: 70px; height: 70px; }
+        .s1-items.pool-size-hint-active #pool-F { width: 80px; height: 80px; }
+
         .s1-item { 
-            width: 50px; height: 50px; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; 
+            width: 100%; height: 100%; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; 
             border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
             flex-shrink: 0; /* 💡 正円を保つために追加 */
         }
-        .s1-item:active { cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
         
-        /* 💡 4つ目の手がかり解放時の下のプールサイズ変化アニメーション */
-        .s1-items.pool-size-hint-active #A.s1-item:not(:active) { width: 30px; height: 30px; } /* 赤 */
-        .s1-items.pool-size-hint-active #B.s1-item:not(:active) { width: 40px; height: 40px; } /* 橙 */
-        .s1-items.pool-size-hint-active #C.s1-item:not(:active) { width: 50px; height: 50px; } /* 黄 */
-        .s1-items.pool-size-hint-active #D.s1-item:not(:active) { width: 60px; height: 60px; } /* 緑 */
-        .s1-items.pool-size-hint-active #E.s1-item:not(:active) { width: 70px; height: 70px; } /* 青 */
-        .s1-items.pool-size-hint-active #F.s1-item:not(:active) { width: 80px; height: 80px; } /* 紫 */
-
-        /* 💡 スロットに入ったら自動で親サイズにフィットさせる */
-        .s1-slot .s1-item { width: 100%; height: 100%; }
+        /* スロットでもプールでも、親のサイズに追従。ただしドラッグ中(:active)は50px固定 */
+        .s1-item:active { width: 50px !important; height: 50px !important; cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
         
         #A.s1-item { background-color: #ec3321; } /* 赤 */
         #B.s1-item { background-color: #ff8b00; } /* 橙 */
@@ -200,7 +202,7 @@
         .s2-status-dot.active { color: #fff; text-shadow: 0 0 8px #fff; }
         
         /* 💡 6つ目の手がかり解放時に表示される数字 */
-        .s2-vol { display: none; color: #58a6ff; font-weight: bold; font-size: 18px; margin-top: -5px; }
+        .s2-vol { display: none; color: #58a6ff; font-weight: bold; font-size: 20px; margin-top: -5px; }
 
         /* --- STEP 3 UI (ポリオミノ盤面パーツ) --- */
         .pieces-container {
@@ -370,17 +372,17 @@
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div>
                     <div class="s2-status-dot" id="dot-0">⚪</div>
-                    <div class="s2-vol" id="vol-0">10L</div>
+                    <div class="s2-vol" id="vol-0">10</div>
                 </div>
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-1" onclick="handleNodeClick(1)"></div>
                     <div class="s2-status-dot" id="dot-1">⚪</div>
-                    <div class="s2-vol" id="vol-1">0L</div>
+                    <div class="s2-vol" id="vol-1">0</div>
                 </div>
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-2" onclick="handleNodeClick(2)"></div>
                     <div class="s2-status-dot" id="dot-2">⚪</div>
-                    <div class="s2-vol" id="vol-2">0L</div>
+                    <div class="s2-vol" id="vol-2">0</div>
                 </div>
             </div>
         </div>
@@ -1018,15 +1020,11 @@
                 
                 sendCommand("P1111"); 
                 setTimeout(() => sendCommand("P0000"), 500); 
-
-                // 🌟 STEP1でデータ4個目を解除した瞬間にプール側のサイズヒントを有効にする
-                if (step === 1 && unlockedAnalysisCount[1] >= 4) {
-                    document.getElementById("s1-item-pool").classList.add("pool-size-hint-active");
-                }
                 
-                // 🌟 STEP1でデータ5個目を解除した瞬間にサイズヒントを有効にする
+                // 🌟 STEP1でデータ5個目を解除した瞬間に上下のサイズヒントを有効にする
                 if (step === 1 && unlockedAnalysisCount[1] >= 5) {
                     document.getElementById("s1-slots-container").classList.add("size-hint-active");
+                    document.getElementById("s1-item-pool").classList.add("pool-size-hint-active");
                 }
 
                 // 🌟 STEP1で全データ（6個）を解除した瞬間に五十音のグリッドを浮かび上がらせる
@@ -1157,7 +1155,7 @@
                 slotDisplay.innerText = "⚫ ⚫"; 
                 for(let i=0; i<3; i++) {
                     const vol = document.getElementById(`vol-${i}`);
-                    if(vol) vol.innerText = s2_volumes[i] + "L";
+                    if(vol) vol.innerText = s2_volumes[i];
 
                     document.getElementById(`node-${i}`).className = "s2-node";
                     if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) document.getElementById(`node-${i}`).classList.add('full');
@@ -1172,7 +1170,7 @@
                 const dot = document.getElementById(`dot-${i}`);
                 const vol = document.getElementById(`vol-${i}`);
                 
-                if(vol) vol.innerText = s2_volumes[i] + "L";
+                if(vol) vol.innerText = s2_volumes[i];
 
                 node.className = "s2-node"; 
                 if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
