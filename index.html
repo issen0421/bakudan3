@@ -2,10 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <!-- 👇 これがスマホ判定用の魔法の1行です！ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HACKER OS - ダッシュボード</title>
-    <!-- 👇 デザインファイルを読み込む -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,6 +20,15 @@
             <div id="intro-text" class="intro-text"></div>
             <div id="intro-indicator" class="tap-indicator">▼ タップして次へ</div>
             <button id="intro-btn" class="modal-btn" onclick="closeIntroModal(event)">作戦を開始する</button>
+        </div>
+    </div>
+
+    <!-- 🌟 ボス裏切りポップアップ (FILE 03 クリア後) -->
+    <div id="betrayal-modal" onclick="nextBetrayal()">
+        <div class="modal-content" onclick="event.stopPropagation(); nextBetrayal();">
+            <div id="betrayal-text" class="intro-text"></div>
+            <div id="betrayal-indicator" class="tap-indicator">▼ タップして次へ</div>
+            <button id="betrayal-btn" class="modal-btn" onclick="closeBetrayalModal(event)">FILE 04 (FINAL PROTOCOL) へ</button>
         </div>
     </div>
 
@@ -121,7 +128,6 @@
         <button class="execute-btn" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block;">判定</button>
         <div id="result-step1" class="result-msg"></div>
 
-        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
             <div class="puzzle-panel" id="puzzle-panel-area">
                 <div class="panel-header">
@@ -337,10 +343,11 @@
     <div class="app-container" id="app-last">
         <h2>FILE 04 (FINAL PROTOCOL)</h2>
         <div id="last-start-screen">
-            <div class="instruction">
-                【警告】<br>
-                STARTを押すと最終シーケンスが起動し、<br>
-                デバイスのモニターに残り時間が表示される。
+            <div class="instruction" style="border-color: #ff7b72; color: #ff7b72;">
+                【緊急ミッション：起爆プロトコルの停止】<br><br>
+                システムが完全にロックされる前に、<br>
+                <span class="highlight" style="color:#fff; font-weight:bold;">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
+                ※残り時間はデバイス側のモニターを確認せよ。
             </div>
             <button class="execute-btn" style="background:#da3633; max-width: 400px; margin: 30px auto;" onclick="startLastStep()">強制オーバーライドを実行 (START)</button>
         </div>
