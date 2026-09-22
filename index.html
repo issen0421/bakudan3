@@ -32,7 +32,7 @@
             z-index: 2000; cursor: pointer; transition: background-color 0.5s ease, padding 0.3s ease;
         }
         
-        /* 💡 AIチュートリアル時の動的配置（対象要素に応じて上か下に避ける） */
+        /* 💡 AIチュートリアル時の動的配置 */
         #intro-modal.ai-mode-bottom {
             align-items: flex-end; padding-bottom: 40px; padding-top: 0;
         }
@@ -66,14 +66,14 @@
         }
         .modal-btn:hover { background: #58a6ff; color: #000; }
 
-        /* 💡 チュートリアル中のハイライト効果 */
+        /* 💡 チュートリアル中のハイライト効果（枠線も光らせてさらに目立たせる） */
         .tutorial-highlight {
             position: relative !important;
             z-index: 2001 !important;
             box-shadow: 0 0 0 3px #58a6ff, 0 0 30px 10px rgba(88, 166, 255, 0.6) !important;
             background-color: #161b22 !important;
             border-radius: 12px;
-            pointer-events: none;
+            pointer-events: none; /* ハイライト中でも背後のタップはメッセージ進行に回す */
             transition: 0.3s;
         }
 
@@ -102,7 +102,8 @@
         .debug-btn:hover { background: #58a6ff; border-color: #58a6ff; color: #000; font-weight: bold; }
         .debug-btn.dev { background: #8a2be2; border-color: #9370db; }
 
-        .app-container { display: none; padding: 30px; position: relative; z-index: 10; }
+        /* 💡 ページ下部に余白を追加し、スクロール時の窮屈さを解消 */
+        .app-container { display: none; padding: 30px 30px 200px 30px; position: relative; z-index: 10; }
         .app-container.active { display: block; }
 
         /* --- 共通 UI --- */
@@ -569,12 +570,12 @@
             { text: "「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に、システムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」", highlight: null },
             { text: "「特殊なルートを通ってきたから警備に見つかる心配もない。時間は十分にあるから焦らず丁寧にな。装置の作り方の手順は箱の中に入れた。」", highlight: null },
             { text: "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けてくれ。それじゃあ頼んだぞ、作戦開始だ！」", highlight: null },
-            // ここからSystem AIによるチュートリアル
-            { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, isAI: true },
-            { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', isAI: true },
-            { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', isAI: true },
-            { text: "[System AI]: その権限を使用し、画面左下の『暗号化ファイル』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', isAI: true },
-            { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', isAI: true }
+            // 💡 aiPosition を使って明示的にポップアップの位置を固定する
+            { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, isAI: true, aiPosition: 'bottom' },
+            { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', isAI: true, aiPosition: 'bottom' },
+            { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', isAI: true, aiPosition: 'bottom' },
+            { text: "[System AI]: その権限を使用し、画面左下の『暗号化ファイル』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', isAI: true, aiPosition: 'top' },
+            { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', isAI: true, aiPosition: 'top' }
         ];
 
         let introIdx = 0;
@@ -602,7 +603,6 @@
             const modal = document.getElementById('intro-modal');
             const content = document.querySelector('.modal-content');
 
-            // ハイライトのリセット
             document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
             modal.classList.remove('ai-mode-top', 'ai-mode-bottom');
 
@@ -612,30 +612,20 @@
                 modal.classList.add('ai-mode');
                 content.classList.add('ai-mode');
                 
-                // ゲーム画面を見せつつハイライト対象を光らせる
                 if (current.highlight) {
                     const targetEl = document.getElementById(current.highlight);
                     targetEl.classList.add('tutorial-highlight');
                     modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; 
-                    
-                    // 💡 対象要素を中心にスムーズスクロール
                     targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    // 💡 現在のスクロール位置に基づいて、ポップアップが被らないよう上下に避ける
-                    setTimeout(() => {
-                        const rect = targetEl.getBoundingClientRect();
-                        if (rect.top < window.innerHeight / 2) {
-                            // 対象が画面の上寄りなら、ポップアップを下に配置
-                            modal.classList.add('ai-mode-bottom');
-                        } else {
-                            // 対象が画面の下寄りなら、ポップアップを上に配置
-                            modal.classList.add('ai-mode-top');
-                        }
-                    }, 50);
-                    
                 } else {
                     modal.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-                    modal.classList.add('ai-mode-bottom'); 
+                }
+
+                // 💡 事前に指定した aiPosition でポップアップ位置を固定し、被りを防ぐ
+                if (current.aiPosition === 'top') {
+                    modal.classList.add('ai-mode-top');
+                } else {
+                    modal.classList.add('ai-mode-bottom');
                 }
             } else {
                 textEl.style.color = '#c9d1d9';
