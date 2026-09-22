@@ -3,17 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>HACKER OS - ダッシュボード</title>
-    <!-- 👇 ここでデザインとシステムを読み込みます -->
+    <!-- 👇 デザインファイルを読み込む -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- 🌟 オープニングポップアップ ＆ AIチュートリアル -->
+    <!-- 🌟 オープニングポップアップ (ボス) -->
     <div id="intro-modal" onclick="nextIntro()">
         <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
             <div id="intro-text" class="intro-text"></div>
             <div id="intro-indicator" class="tap-indicator">▼ タップして次へ</div>
             <button id="intro-btn" class="modal-btn" onclick="closeIntroModal(event)">作戦を開始する</button>
+        </div>
+    </div>
+
+    <!-- 🌟 AIチュートリアル専用ポップアップ -->
+    <div id="ai-modal" onclick="nextAITutorial()">
+        <div class="modal-content ai-mode" onclick="event.stopPropagation(); nextAITutorial();">
+            <div id="ai-text" class="ai-text"></div>
+            <div class="tap-indicator">▼ タップして次へ</div>
         </div>
     </div>
 
@@ -25,10 +33,26 @@
 
     <div class="header">
         <div class="app-tabs">
-            <button class="tab-btn active" id="tab-step1" onclick="switchApp('step1')">STEP1</button>
-            <button class="tab-btn" id="tab-step2" onclick="switchApp('step2')">STEP2</button>
-            <button class="tab-btn" id="tab-step3" onclick="switchApp('step3')">STEP3</button>
-            <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="color: #ff7b72; border-color: #ff7b72;">💣 LAST</button>
+            <!-- 配線1 -> FILE01 -->
+            <button class="tab-icon active" id="tab-wire1" onclick="switchApp('wire1')">💡</button>
+            <div class="tab-line" id="line-1" style="display:none;"></div>
+            <button class="tab-btn" id="tab-step1" onclick="switchApp('step1')" style="display:none;">FILE 01</button>
+            
+            <!-- 配線2 -> FILE02 -->
+            <div class="tab-line" id="line-2" style="display:none;"></div>
+            <button class="tab-icon" id="tab-wire2" onclick="switchApp('wire2')" style="display:none;">🔊</button>
+            <div class="tab-line" id="line-3" style="display:none;"></div>
+            <button class="tab-btn" id="tab-step2" onclick="switchApp('step2')" style="display:none;">FILE 02</button>
+            
+            <!-- 配線3 -> FILE03 -->
+            <div class="tab-line" id="line-4" style="display:none;"></div>
+            <button class="tab-icon" id="tab-wire3" onclick="switchApp('wire3')" style="display:none;">📟</button>
+            <div class="tab-line" id="line-5" style="display:none;"></div>
+            <button class="tab-btn" id="tab-step3" onclick="switchApp('step3')" style="display:none;">FILE 03</button>
+
+            <!-- 独立した FILE04 (爆弾) -->
+            <div style="width: 40px;"></div>
+            <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">FILE 04</button>
         </div>
         <button class="btn-connect" onclick="connectSerial()">🔌 デバイス接続</button>
     </div>
@@ -44,12 +68,22 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 1: STEP1 -->
+    <!-- 配線 1 (ライト) -->
     <!-- ========================================== -->
-    <div class="app-container active" id="app-step1">
-        <h2>STEP1 (論理ソート)</h2>
+    <div class="app-container active" id="app-wire1">
+        <h2>ハードウェア配線 (ライト)</h2>
+        <div class="instruction">指示書に従ってデバイスに「ライト」を配線してください。<br>配線が完了したら次へ進んでください。</div>
+        <div style="width:100%; height:300px; border:2px dashed #444; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:30px; color:#888; background:rgba(0,0,0,0.3);">
+            (※ここにライトの配線画像とテキストが入ります)
+        </div>
+        <button class="execute-btn" onclick="completeWire(1)" style="max-width: 400px; margin: 0 auto; display: block;">配線を完了して次へ</button>
+    </div>
 
-        <!-- 🌟 五十音表 (透明) ＆ SVG図形描画レイヤー -->
+    <!-- ========================================== -->
+    <!-- APP 1: FILE 01 (STEP1) -->
+    <!-- ========================================== -->
+    <div class="app-container" id="app-step1">
+        <h2>FILE 01 (論理ソート)</h2>
         <div class="gojuon-container">
             <div class="gojuon-wrapper" style="position:relative; width: 440px; height: 200px; margin: 0 auto;">
                 <svg id="gojuon-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; overflow:visible;"></svg>
@@ -58,7 +92,6 @@
         </div>
 
         <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s;">
-            <!-- 🌟 まとめ謎 (上の枠) -->
             <div class="s1-slots" id="s1-slots-container">
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -68,7 +101,6 @@
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             </div>
             <br>
-            <!-- 🌟 まとめ謎 (下のプール) -->
             <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
                 <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                 <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
@@ -78,7 +110,6 @@
                 <div class="s1-item-slot item-slot" id="pool-F"><div class="s1-item item" draggable="true" id="F" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
             </div>
         </div>
-
         <button class="execute-btn" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block;">判定</button>
         <div id="result-step1" class="result-msg"></div>
 
@@ -126,12 +157,22 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 2: STEP2 -->
+    <!-- 配線 2 (ブザー) -->
+    <!-- ========================================== -->
+    <div class="app-container" id="app-wire2">
+        <h2>ハードウェア配線 (ブザー)</h2>
+        <div class="instruction">指示書に従ってデバイスに「ブザー」を配線してください。<br>配線が完了したら次へ進んでください。</div>
+        <div style="width:100%; height:300px; border:2px dashed #444; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:30px; color:#888; background:rgba(0,0,0,0.3);">
+            (※ここにブザーの配線画像とテキストが入ります)
+        </div>
+        <button class="execute-btn" onclick="completeWire(2)" style="max-width: 400px; margin: 0 auto; display: block;">配線を完了して次へ (FILE 02)</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- APP 2: FILE 02 (STEP2) -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <h2>STEP2 (データ転送)</h2>
-
-        <!-- 🌟 まとめ謎 (一番上) -->
+        <h2>FILE 02 (データ転送)</h2>
         <div class="s2-ui-wrapper">
             <div class="s2-slot-indicator" id="s2-slot-display">⚪ ⚪</div>
             <div class="s2-container">
@@ -156,7 +197,6 @@
         <button class="execute-btn" onclick="resetStep2()" style="background: #444; max-width: 200px; margin: 0 auto; display: block;">🔄 リセット</button>
         <div id="result-step2" class="result-msg"></div>
 
-        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
             <div class="puzzle-panel">
                 <div class="panel-header">
@@ -200,15 +240,23 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 3: STEP3 -->
+    <!-- 配線 3 (モニター) -->
+    <!-- ========================================== -->
+    <div class="app-container" id="app-wire3">
+        <h2>ハードウェア配線 (モニター)</h2>
+        <div class="instruction">指示書に従ってデバイスに「モニター」を配線してください。<br>配線が完了したら次へ進んでください。</div>
+        <div style="width:100%; height:300px; border:2px dashed #444; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:30px; color:#888; background:rgba(0,0,0,0.3);">
+            (※ここにモニターの配線画像とテキストが入ります)
+        </div>
+        <button class="execute-btn" onclick="completeWire(3)" style="max-width: 400px; margin: 0 auto; display: block;">配線を完了して次へ (FILE 03)</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- APP 3: FILE 03 (STEP3) -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <h2>STEP3 (物理配線)</h2>
-
-        <!-- 🌟 ポリオミノパーツ (一番上) -->
+        <h2>FILE 03 (物理配線)</h2>
         <div id="pieces-container" class="pieces-container"></div>
-
-        <!-- 🌟 まとめ謎 -->
         <div class="puzzle-layout">
             <div class="s3-slots-container">
                 <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -233,7 +281,6 @@
             </div>
         </div>
 
-        <!-- 🧩 横並びエリア -->
         <div class="split-layout">
             <div class="puzzle-panel">
                 <div class="panel-header">
@@ -277,10 +324,10 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 4: LAST STEP (BOMB) -->
+    <!-- APP 4: FILE 04 (LAST STEP) -->
     <!-- ========================================== -->
     <div class="app-container" id="app-last">
-        <h2>FINAL PROTOCOL</h2>
+        <h2>FILE 04 (FINAL PROTOCOL)</h2>
         <div id="last-start-screen">
             <div class="instruction">
                 【警告】<br>
@@ -299,24 +346,20 @@
             
             <div id="last-hint-8" class="last-hint-box">
                 <div class="last-hint-text">傍受データ1 (残り8分)</div>
-                <!-- ここに画像 -->
             </div>
             <div id="last-hint-6" class="last-hint-box">
                 <div class="last-hint-text">傍受データ2 (残り6分)</div>
-                <!-- ここに画像 -->
             </div>
             <div id="last-hint-4" class="last-hint-box">
                 <div class="last-hint-text">傍受データ3 (残り4分)</div>
-                <!-- ここに画像 -->
             </div>
             <div id="last-hint-2" class="last-hint-box">
                 <div class="last-hint-text">最終データ (残り2分)</div>
-                <!-- ここに画像 -->
             </div>
         </div>
     </div>
 
-    <!-- 👇 システム・アニメーションを読み込みます -->
+    <!-- 👇 システムファイルを読み込む -->
     <script src="script.js"></script>
 </body>
 </html>
