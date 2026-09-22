@@ -17,7 +17,7 @@ body {
     background: #21262d; color: #8b949e; border: 2px solid #30363d; 
     width: 45px; height: 45px; border-radius: 50%; font-size: 20px; 
     cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: 0.2s; padding: 0;
+    transition: 0.2s; padding: 0; margin: 0;
 }
 .tab-icon:hover { background: #30363d; color: #c9d1d9; border-color: #8b949e; }
 .tab-icon.active { background: #1f6feb; color: white; border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.6); }
@@ -26,7 +26,7 @@ body {
 .tab-btn { 
     background: #21262d; color: #8b949e; border: 2px solid #30363d; 
     padding: 10px 24px; font-size: 16px; cursor: pointer; border-radius: 25px; 
-    font-family: monospace; font-weight: bold; transition: 0.2s; 
+    font-family: monospace; font-weight: bold; transition: 0.2s; margin: 0;
 }
 .tab-btn:hover { background: #30363d; color: #c9d1d9; border-color: #8b949e; }
 .tab-btn.active { background: #1f6feb; color: white; border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.6); }
@@ -101,7 +101,7 @@ body {
 .debug-btn:hover { background: #58a6ff; border-color: #58a6ff; color: #000; font-weight: bold; }
 
 /* --- アプリコンテナ --- */
-.app-container { display: none; padding: 30px 30px 400px 30px; position: relative; z-index: 10; }
+.app-container { display: none; padding: 30px; position: relative; z-index: 10; }
 .app-container.active { display: block; }
 
 .execute-btn { background: #238636; color: white; font-size: 20px; padding: 15px; width: 100%; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; letter-spacing: 2px; }
@@ -213,3 +213,21 @@ body {
 /* --- LAST STEP UI --- */
 .last-hint-box { background: #161b22; border: 1px solid #ff7b72; padding: 15px; border-radius: 5px; margin: 20px auto; max-width: 500px; display: none; }
 .last-hint-text { color: #ff7b72; font-size: 16px; margin-bottom: 10px; font-weight: bold; }
+
+/* --- 📱 モバイルアクセス拒否画面 --- */
+#mobile-blocker {
+    display: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #0d1117; color: #ff7b72;
+    z-index: 9999; flex-direction: column; align-items: center; justify-content: center;
+    font-family: monospace; letter-spacing: 2px; line-height: 2;
+}
+#mobile-blocker h1 { font-size: 30px; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
+#mobile-blocker p { font-size: 16px; color: #c9d1d9; }
+
+/* 💡 画面幅が768px以下の場合に発動 */
+@media screen and (max-width: 768px) {
+    #mobile-blocker { display: flex; }
+    .header, .app-container, .debug-panel, #intro-modal, #ai-modal { display: none !important; }
+    body { background-image: none; }
+}
