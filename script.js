@@ -28,6 +28,45 @@ function closeIntroModal(e) {
     document.getElementById('intro-modal').style.display = 'none';
 }
 
+// ==========================================
+// 💡 ボスの裏切りイベント (FILE 03 クリア後)
+// ==========================================
+const betrayalStory = [
+    "【 通信を受信中... 】\n\n「……3つのファイルのダウンロードが完了したようだな。ご苦労だった。」",
+    "「悪いな、実はお前が作っていた装置はハッキング装置ではなく、金庫の扉を吹き飛ばすための『爆弾』だったんだ。金庫の中身は俺が全てもらう。」",
+    "「その爆弾には移動検知センサーがついている。金庫室から一歩でも出ようとすれば、その瞬間に即ドカンだ。」",
+    "「逃げ場はないぞ。せいぜいそこで爆弾と一緒に吹き飛べ……！！」\n\n【 通信切断 】"
+];
+
+let betrayalIdx = 0;
+function initBetrayal() {
+    betrayalIdx = 0;
+    document.getElementById('betrayal-modal').style.display = 'flex';
+    document.getElementById('betrayal-text').innerText = betrayalStory[0];
+    document.getElementById('betrayal-btn').style.display = 'none';
+    document.getElementById('betrayal-indicator').style.display = 'block';
+}
+
+function nextBetrayal() {
+    betrayalIdx++;
+    if (betrayalIdx < betrayalStory.length) {
+        document.getElementById('betrayal-text').innerText = betrayalStory[betrayalIdx];
+        if (betrayalIdx === betrayalStory.length - 1) {
+            document.getElementById('betrayal-indicator').style.display = 'none';
+            document.getElementById('betrayal-btn').style.display = 'block';
+        }
+    }
+}
+
+function closeBetrayalModal(e) {
+    e.stopPropagation();
+    document.getElementById('betrayal-modal').style.display = 'none';
+    
+    // 💡 裏切り通信を読み終わると、自動的に最後のFILE 04タブを解放して遷移
+    document.getElementById('tab-last').style.display = 'block';
+    switchApp('last');
+}
+
 // AIチュートリアル（FILE 01に初めて入った時）
 const aiSequence = [
     { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
@@ -580,6 +619,23 @@ function prevAnalysis(step) { if (analysisIdx[step] > 0) { analysisIdx[step]--; 
 function nextAnalysis(step) { const maxIdx = Math.min(5, unlockedAnalysisCount[step]); if (analysisIdx[step] < maxIdx) { analysisIdx[step]++; updateAnalysisCarousel(step); } }
 
 // ==========================================
+// 🚫 リアルハッカー（ソースコード閲覧）対策システム
+// ==========================================
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    if (
+        e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+        (e.ctrlKey && (e.key === 'U' || e.key === 'u')) ||
+        (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
+        (e.metaKey && (e.key === 'U' || e.key === 'u'))
+    ) {
+        e.preventDefault();
+        alert("【SECURITY ALERT】\n不正なシステム干渉を検知しました。\nアクセスログを記録しています...");
+    }
+});
+
+// ==========================================
 // STEP 1 メイン
 // ==========================================
 const s1_answer = ["F", "B", "A", "E", "C", "D"];
@@ -607,7 +663,6 @@ function checkClearStep1() {
     if (isCorrect) {
         res.innerText = "🎉 CLEAR!";
         res.style.color = "#2ea043";
-        // 💡 次の配線タブ（ブザー）を解放
         document.getElementById('line-2').style.display = 'block';
         document.getElementById('line-2').classList.add('active');
         document.getElementById('tab-wire2').style.display = 'block';
@@ -710,7 +765,6 @@ function handleNodeClick(index) {
                     if (s2_volumes[0] === 5 && s2_volumes[1] === 5) {
                         document.getElementById("result-step2").innerText = "🎉 CLEAR!";
                         document.getElementById("result-step2").style.color = "#2ea043";
-                        // 💡 次の配線タブ（モニター）を解放
                         document.getElementById('line-4').style.display = 'block';
                         document.getElementById('line-4').classList.add('active');
                         document.getElementById('tab-wire3').style.display = 'block';
@@ -770,8 +824,8 @@ function executeMainPuzzle() {
         setTimeout(() => {
             res.innerText = "🎉 CLEAR!";
             res.style.color = "#0f0";
-            // 💡 最後のFILE 04タブを解放
-            document.getElementById('tab-last').style.display = 'block';
+            // 💡 ボスの裏切りイベントを起動！
+            initBetrayal();
         }, 500);
     } else {
         res.innerText = "❌";
