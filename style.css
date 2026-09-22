@@ -231,3 +231,19 @@ body {
     .header, .app-container, .debug-panel, #intro-modal, #ai-modal { display: none !important; }
     body { background-image: none; }
 }
+/* --- 🌟 ボス裏切りポップアップ (FILE 03 クリア後) --- */
+#betrayal-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(20, 0, 0, 0.95); display: none; align-items: center; justify-content: center; 
+    z-index: 2500; cursor: pointer; transition: background-color 0.5s ease;
+}
+#betrayal-modal .modal-content {
+    background: #0d1117; border: 2px solid #da3633; border-radius: 8px;
+    padding: 40px; max-width: 650px; width: 90%; text-align: left; 
+    box-shadow: 0 0 30px rgba(218, 54, 51, 0.4);
+    min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;
+}
+#betrayal-modal .intro-text { color: #ff7b72; }
+#betrayal-modal .tap-indicator { color: #da3633; text-align: right; font-size: 14px; animation: blink 1.5s infinite; }
+#betrayal-modal .modal-btn { background: #da3633; color: white; display: none; width: 100%; border: none; padding: 15px; font-size: 18px; cursor: pointer; border-radius: 5px; font-weight: bold; margin-top: 10px; transition: 0.2s; letter-spacing: 2px; }
+#betrayal-modal .modal-btn:hover { background: #ff7b72; color: #000; }
