@@ -102,7 +102,6 @@
         .debug-btn:hover { background: #58a6ff; border-color: #58a6ff; color: #000; font-weight: bold; }
         .debug-btn.dev { background: #8a2be2; border-color: #9370db; }
 
-        /* 💡 不要な下部余白を削除し、通常通りのレイアウトに */
         .app-container { display: none; padding: 30px; position: relative; z-index: 10; }
         .app-container.active { display: block; }
 
@@ -612,6 +611,9 @@
                 modal.classList.add('ai-mode');
                 content.classList.add('ai-mode');
                 
+                // 💡 常に暗くしない (0.1で統一)
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                
                 // 💡 事前に指定した aiPosition でポップアップ位置を固定し、被りを防ぐ
                 if (current.aiPosition === 'top') {
                     modal.classList.add('ai-mode-top');
@@ -622,12 +624,8 @@
                 if (current.highlight) {
                     const targetEl = document.getElementById(current.highlight);
                     targetEl.classList.add('tutorial-highlight');
-                    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; 
-                    
                     // 💡 スクロールはシンプルに要素を中心（または可能な限り画面内）に寄せる
                     targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
                 }
             } else {
                 textEl.style.color = '#c9d1d9';
