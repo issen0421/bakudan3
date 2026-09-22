@@ -28,14 +28,32 @@
         /* --- オープニング & チュートリアル --- */
         #intro-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; 
-            z-index: 2000; cursor: pointer; transition: background-color 0.3s;
+            background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; 
+            z-index: 2000; cursor: pointer; transition: background-color 0.5s ease, padding 0.5s ease;
         }
+        
+        /* 💡 AIチュートリアル時のスタイル（画面下部にスライドし、ゲーム画面を見せる） */
+        #intro-modal.ai-mode {
+            background: rgba(0, 0, 0, 0.1) !important; /* 全体の暗転をほぼ解除 */
+            align-items: flex-end;
+            padding-bottom: 40px;
+        }
+
         .modal-content {
             background: #0d1117; border: 2px solid #58a6ff; border-radius: 8px;
-            padding: 40px; max-width: 650px; text-align: left; box-shadow: 0 0 30px rgba(88, 166, 255, 0.2);
+            padding: 40px; max-width: 650px; width: 90%; text-align: left; box-shadow: 0 0 30px rgba(88, 166, 255, 0.2);
             min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;
+            transition: all 0.5s ease;
         }
+
+        /* 💡 AIチュートリアル時のメッセージウィンドウ（横長に変化） */
+        .modal-content.ai-mode {
+            max-width: 900px;
+            min-height: 120px;
+            padding: 25px 40px;
+            background: rgba(13, 17, 23, 0.95);
+        }
+
         .intro-text { font-size: 18px; color: #c9d1d9; line-height: 1.8; margin-bottom: 20px; white-space: pre-wrap; transition: color 0.3s; }
         .tap-indicator { text-align: right; color: #58a6ff; font-size: 14px; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -47,14 +65,14 @@
         }
         .modal-btn:hover { background: #58a6ff; color: #000; }
 
-        /* 💡 チュートリアル中のハイライト効果 */
+        /* 💡 チュートリアル中のハイライト効果（枠線も光らせてさらに目立たせる） */
         .tutorial-highlight {
             position: relative !important;
             z-index: 2001 !important;
-            box-shadow: 0 0 25px 8px rgba(88, 166, 255, 0.8) !important;
+            box-shadow: 0 0 0 3px #58a6ff, 0 0 30px 10px rgba(88, 166, 255, 0.6) !important;
             background-color: #161b22 !important;
             border-radius: 12px;
-            pointer-events: none; /* ハイライト中でもタップ操作はモーダルに届くように */
+            pointer-events: none; /* ハイライト中でも背後のタップはメッセージ進行に回す */
             transition: 0.3s;
         }
 
@@ -96,10 +114,10 @@
         .split-layout > div { flex: 1; min-width: 340px; max-width: 480px; margin: 0; display: flex; flex-direction: column; }
 
         /* --- 🧩 左右パネル共通 --- */
-        .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; }
-        .analysis-panel { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 20px; justify-content: center; }
+        .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; transition: 0.3s; }
+        .analysis-panel { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 20px; justify-content: center; transition: 0.3s; }
         .panel-header { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin-bottom: 20px; }
-        .status-badge { font-size: 14px; font-weight: bold; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid; }
+        .status-badge { font-size: 14px; font-weight: bold; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid; transition: 0.3s; }
 
         .carousel-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
         .carousel-btn { background: none; border: none; color: #58a6ff; font-size: 30px; cursor: pointer; transition: 0.2s; padding: 0; width: 30px; }
@@ -233,7 +251,7 @@
 </head>
 <body>
 
-    <!-- 🌟 オープニングポップアップ (タップ送り) -->
+    <!-- 🌟 オープニングポップアップ ＆ AIチュートリアル -->
     <div id="intro-modal" onclick="nextIntro()">
         <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
             <div id="intro-text" class="intro-text"></div>
@@ -282,7 +300,7 @@
             </div>
         </div>
 
-        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px;">
+        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s;">
             <!-- 🌟 まとめ謎 (上の枠) -->
             <div class="s1-slots" id="s1-slots-container">
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -580,20 +598,30 @@
             const textEl = document.getElementById('intro-text');
             textEl.innerText = current.text;
             
+            const modal = document.getElementById('intro-modal');
+            const content = document.querySelector('.modal-content');
+
+            // ハイライトのリセット
+            document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+
             if (current.isAI) {
                 textEl.style.color = '#58a6ff';
                 textEl.style.fontFamily = 'monospace';
+                modal.classList.add('ai-mode');
+                content.classList.add('ai-mode');
+                
+                // ゲーム画面を見せつつハイライト対象を光らせる
+                if (current.highlight) {
+                    document.getElementById(current.highlight).classList.add('tutorial-highlight');
+                    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // ハイライト時は少し暗くする
+                } else {
+                    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                }
             } else {
                 textEl.style.color = '#c9d1d9';
-            }
-
-            document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-            
-            if (current.highlight) {
-                document.getElementById(current.highlight).classList.add('tutorial-highlight');
-                document.getElementById('intro-modal').style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-            } else {
-                document.getElementById('intro-modal').style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+                modal.classList.remove('ai-mode');
+                content.classList.remove('ai-mode');
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
             }
         }
 
