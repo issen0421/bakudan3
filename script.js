@@ -1,78 +1,87 @@
 // ==========================================
 // 💡 モーダル・チュートリアル制御
 // ==========================================
-const introSequence = [
-    { text: "「よし、金庫前に着いたか。\n この金庫を開けるために、今からお前たちには\n ハッキング装置を組み立ててもらう。」", highlight: null },
-    { text: "「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に、システムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」", highlight: null },
-    { text: "「特殊なルートを通ってきたから警備に見つかる心配もない。時間は十分にあるから焦らず丁寧にな。装置の作り方の手順は箱の中に入れた。」", highlight: null },
-    { text: "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けてくれ。それじゃあ頼んだぞ、作戦開始だ！」", highlight: null },
-    // 💡 aiPosition を使って明示的にポップアップの位置を固定する
-    { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, isAI: true, aiPosition: 'bottom' },
-    { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', isAI: true, aiPosition: 'bottom' },
-    { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', isAI: true, aiPosition: 'bottom' },
-    { text: "[System AI]: その権限を使用し、画面左下の『暗号化ファイル』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', isAI: true, aiPosition: 'top' },
-    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', isAI: true, aiPosition: 'top' }
+// ボスの台詞（ゲーム開始時）
+const introStory = [
+    "「よし、金庫前に着いたか。\n この金庫を開けるために、今からお前たちには\n ハッキング装置を組み立ててもらう。」",
+    "「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に、システムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」",
+    "「特殊なルートを通ってきたから警備に見つかる心配もない。時間は十分にあるから焦らず丁寧にな。装置の作り方の手順は箱の中に入れた。」",
+    "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けて、ライトの配線を済ませてくれ。作戦開始だ！」"
 ];
 
 let introIdx = 0;
-
 function initIntro() {
-    showIntroText();
+    document.getElementById('intro-text').innerText = introStory[0];
 }
-
 function nextIntro() {
     introIdx++;
-    if (introIdx < introSequence.length) {
-        showIntroText();
-    }
-    if (introIdx === introSequence.length - 1) {
-        document.getElementById('intro-indicator').style.display = 'none';
-        document.getElementById('intro-btn').style.display = 'block';
+    if (introIdx < introStory.length) {
+        document.getElementById('intro-text').innerText = introStory[introIdx];
+        if (introIdx === introStory.length - 1) {
+            document.getElementById('intro-indicator').style.display = 'none';
+            document.getElementById('intro-btn').style.display = 'block';
+        }
     }
 }
-
-function showIntroText() {
-    const current = introSequence[introIdx];
-    const textEl = document.getElementById('intro-text');
-    textEl.innerText = current.text;
-    
-    const modal = document.getElementById('intro-modal');
-    const content = document.querySelector('.modal-content');
-
-    document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
-    modal.classList.remove('ai-mode-top', 'ai-mode-bottom');
-
-    if (current.isAI) {
-        textEl.style.color = '#58a6ff';
-        textEl.style.fontFamily = 'monospace';
-        modal.classList.add('ai-mode');
-        content.classList.add('ai-mode');
-        
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-        
-        // 💡 指定した aiPosition でポップアップ位置を固定
-        if (current.aiPosition === 'top') {
-            modal.classList.add('ai-mode-top');
-        } else {
-            modal.classList.add('ai-mode-bottom');
-        }
-
-        if (current.highlight) {
-            const targetEl = document.getElementById(current.highlight);
-            targetEl.classList.add('tutorial-highlight');
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    } else {
-        textEl.style.color = '#c9d1d9';
-        modal.classList.remove('ai-mode');
-        content.classList.remove('ai-mode');
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-    }
-}
-
 function closeIntroModal(e) {
     e.stopPropagation();
     document.getElementById('intro-modal').style.display = 'none';
+}
+
+// AIチュートリアル（FILE 01に初めて入った時）
+const aiSequence = [
+    { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
+    { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
+    { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
+    { text: "[System AI]: その権限を使用し、画面左下の『暗号化ファイル』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
+    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
+];
+
+let aiIdx = 0;
+let hasSeenAITutorial = false;
+
+function initAITutorial() {
+    document.getElementById('ai-modal').style.display = 'flex';
+    showAIText();
+}
+
+function nextAITutorial() {
+    aiIdx++;
+    if (aiIdx < aiSequence.length) {
+        showAIText();
+    } else {
+        closeAITutorial();
+    }
+}
+
+function showAIText() {
+    const current = aiSequence[aiIdx];
+    const textEl = document.getElementById('ai-text');
+    textEl.innerText = current.text;
+    
+    const modal = document.getElementById('ai-modal');
+    
+    document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
+    modal.classList.remove('ai-mode-top', 'ai-mode-bottom');
+    
+    if (current.aiPosition === 'top') {
+        modal.classList.add('ai-mode-top');
+    } else {
+        modal.classList.add('ai-mode-bottom');
+    }
+
+    if (current.highlight) {
+        const targetEl = document.getElementById(current.highlight);
+        targetEl.classList.add('tutorial-highlight');
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; 
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+    }
+}
+
+function closeAITutorial() {
+    document.getElementById('ai-modal').style.display = 'none';
     document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -89,7 +98,6 @@ function alignBackgroundGrid() {
         document.body.style.backgroundPosition = `${x + 20}px ${y + 20}px`;
     }
 }
-
 window.addEventListener('resize', alignBackgroundGrid);
 
 // ==========================================
@@ -129,10 +137,8 @@ function initGojuon() {
 }
 
 let currentDrawMode = 0; 
-
 function drawGojuonShape(id, mode) {
     const svg = document.getElementById("gojuon-svg");
-    
     if (!id || mode === 0) {
         if (currentDrawMode !== 0) {
             svg.innerHTML = "";
@@ -140,7 +146,6 @@ function drawGojuonShape(id, mode) {
         }
         return;
     }
-    
     if (currentDrawMode === mode && svg.dataset.currentId === id) return;
     svg.innerHTML = "";
     currentDrawMode = mode;
@@ -150,7 +155,6 @@ function drawGojuonShape(id, mode) {
         const data = blockData[id];
         const chars = data.chars4;
         let points = [];
-        
         chars.forEach(char => {
             const cell = document.getElementById("gojuon-" + char);
             if (cell) {
@@ -159,7 +163,6 @@ function drawGojuonShape(id, mode) {
                 points.push(`${x},${y}`);
             }
         });
-        
         if (points.length > 2) {
             const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
             polygon.setAttribute("points", points.join(" "));
@@ -170,14 +173,12 @@ function drawGojuonShape(id, mode) {
             polygon.style.filter = `drop-shadow(0 0 5px ${data.color})`;
             svg.appendChild(polygon);
         }
-
         if (unlockedAnalysisCount[1] >= 4) {
             data.chars4.forEach(char => {
                 const cell = document.getElementById("gojuon-" + char);
                 if (cell) {
                     const x = cell.offsetLeft + cell.offsetWidth / 2;
                     const y = cell.offsetTop + cell.offsetHeight / 2;
-                    
                     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     circle.setAttribute("cx", x);
                     circle.setAttribute("cy", y);
@@ -192,12 +193,8 @@ function drawGojuonShape(id, mode) {
     }
 }
 
-// ==========================================
-// 共通ドラッグ＆ドロップ (ゾーン連動対応)
-// ==========================================
 let currentDragId = null;
 let currentDragZone = 0; 
-
 function allowDrop(e) { 
     e.preventDefault(); 
     if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) {
@@ -205,7 +202,6 @@ function allowDrop(e) {
     }
 }
 function dragLeave(e) { e.target.classList.remove('drag-over'); }
-
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
@@ -214,17 +210,13 @@ function dragItem(e) {
 
 document.addEventListener('dragover', (e) => {
     if (!currentDragId) return;
-    
     const isTopSlot = e.target.closest('.s1-slots');
     const isBottomPool = e.target.closest('.s1-items');
-    
     let newZone = 0;
     if (isBottomPool) newZone = 1;
     else if (isTopSlot) newZone = 2;
-
     if (currentDragZone !== newZone) {
         currentDragZone = newZone;
-        
         if (currentDragZone === 1) {
             drawGojuonShape(currentDragId, 4); 
             sendCommand("P1111"); 
@@ -248,12 +240,10 @@ function dragEndItem(e) {
 
 function drop(e) {
     e.preventDefault(); e.target.classList.remove('drag-over');
-    
     let dropTarget = e.target.classList.contains('item') ? e.target.parentElement : e.target;
     const data = e.dataTransfer.getData("text"); 
     const dragged = document.getElementById(data);
     const sourceEl = dragged.parentElement; 
-
     if (dropTarget.classList.contains('slot')) {
         if (dropTarget.children.length > 0) {
             let existingItem = dropTarget.children[0];
@@ -265,14 +255,39 @@ function drop(e) {
     }
 }
 
+// 💡 タブ切り替えと自動アンロック
+function completeWire(num) {
+    if(num === 1) {
+        document.getElementById('line-1').style.display = 'block';
+        document.getElementById('line-1').classList.add('active');
+        document.getElementById('tab-step1').style.display = 'block';
+        switchApp('step1');
+    } else if(num === 2) {
+        document.getElementById('line-3').style.display = 'block';
+        document.getElementById('line-3').classList.add('active');
+        document.getElementById('tab-step2').style.display = 'block';
+        switchApp('step2');
+    } else if(num === 3) {
+        document.getElementById('line-5').style.display = 'block';
+        document.getElementById('line-5').classList.add('active');
+        document.getElementById('tab-step3').style.display = 'block';
+        switchApp('step3');
+    }
+}
+
 function switchApp(appId) {
     document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn, .tab-icon').forEach(el => el.classList.remove('active'));
     document.getElementById(`app-${appId}`).classList.add('active');
     document.getElementById(`tab-${appId}`).classList.add('active');
     
     if (appId === 'step1') {
         setTimeout(alignBackgroundGrid, 50); 
+        // 💡 FILE01に初めて入った時にAIチュートリアルを起動
+        if (!hasSeenAITutorial) {
+            hasSeenAITutorial = true;
+            setTimeout(initAITutorial, 600);
+        }
     }
 }
 
@@ -286,7 +301,6 @@ const polyPiecesLayout = [
     [['A', 'B', 'C'],['F', '',  'H']],
     [['',  'G'],['K', 'L'],['P', 'Q']]
 ];
-
 const blackCells = new Set(['A','D','E','F','H','I','M','N','O','R','S','T','U','W']);
 
 function initPolyomino() {
@@ -322,14 +336,11 @@ let polyTimer;
 function clickPolyomino(char) {
     let row = getRow(char);
     let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
-    
     if (polyTimer) clearTimeout(polyTimer);
     sendCommand("S" + val + val + val + val);
-    
     document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
     let cell = document.getElementById("poly-" + char);
     if (cell) cell.classList.add("active");
-    
     polyTimer = setTimeout(() => {
         sendCommand("S0000");
         if (cell) cell.classList.remove("active");
@@ -347,7 +358,6 @@ async function connectSerial() {
         const encoder = new TextEncoderStream();
         encoder.readable.pipeTo(port.writable);
         writer = encoder.writable.getWriter();
-        
         readLoop(port.readable);
         alert("デバイスとの接続を確立しました。");
     } catch (err) { alert("接続エラー: " + err); }
@@ -374,40 +384,39 @@ async function readLoop(readableStream) {
 }
 
 async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
-
 function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000"), 1000); }
 function testBuzzer() { sendCommand("B"); }
 function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S0000"), 1000); }
+
+// 💡 開発用全タブ解放
 function devUnlockTabs() { 
-    document.getElementById('tab-step2').style.display = 'block';
-    document.getElementById('tab-step3').style.display = 'block';
-    document.getElementById('tab-last').style.display = 'block';
+    ['line-1','line-2','line-3','line-4','line-5'].forEach(id => {
+        document.getElementById(id).style.display = 'block';
+        document.getElementById(id).classList.add('active');
+    });
+    ['tab-step1','tab-wire2','tab-step2','tab-wire3','tab-step3','tab-last'].forEach(id => {
+        document.getElementById(id).style.display = 'block';
+    });
 }
 
 // ==========================================
 // スクラッチ小謎 ＆ 解析データ 管理システム
 // ==========================================
 const puzzleFiles = ["A", "B", "C", "D", "E", "F"];
-
 let availableAnalysisPoints = { 1: 0, 2: 0, 3: 0 }; 
 let unlockedAnalysisCount = { 1: 0, 2: 0, 3: 0 }; 
 let analysisIdx = { 1: 0, 2: 0, 3: 0 }; 
-
 let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 }; 
 let openPoints = { 1: 0, 2: 0, 3: 0 }; 
-
 let panelsState = { 1: [], 2: [], 3: [] };
 let isSolved = { 1: [], 2: [], 3: [] };
-
 let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
 let validTrials = { 1: 0, 2: 0, 3: 0 };
-
 const puzzleDict = {
     1: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
     2: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
     3: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5}
 };
-
 const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
 function getRow(char) { return QWERTY_TOP.includes(char) ? 1 : QWERTY_MID.includes(char) ? 2 : QWERTY_BOT.includes(char) ? 3 : 0; }
 
@@ -434,7 +443,7 @@ function renderPuzzleGrid(step) {
     const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `FILE ${puzzleFiles[pIdx]}`;
-    placeholder.innerHTML = `STEP${step}<br>小謎 ${puzzleFiles[pIdx]}`;
+    placeholder.innerHTML = `FILE 0${step}<br>暗号化ファイル ${puzzleFiles[pIdx]}`;
     
     if (isSolved[step][pIdx]) {
         grid.style.display = "none";
@@ -454,7 +463,6 @@ function renderPuzzleGrid(step) {
             grid.appendChild(div);
         }
     }
-
     document.getElementById(`btn-prev-puzzle-s${step}`).style.visibility = (pIdx === 0) ? 'hidden' : 'visible';
     document.getElementById(`btn-next-puzzle-s${step}`).style.visibility = (pIdx === 5) ? 'hidden' : 'visible';
 }
@@ -478,13 +486,11 @@ function submitAnswer(step) {
 
     if (input in dict) {
         const pIdx = dict[input]; 
-        
         if (!isSolved[step][pIdx]) {
             isSolved[step][pIdx] = true;
             availableAnalysisPoints[step]++;
             document.getElementById(`analysisPoints-s${step}`).innerText = availableAnalysisPoints[step];
         }
-        
         feedback.style.color = "#0f0";
         feedback.innerText = "DATA DECODED";
         
@@ -513,15 +519,12 @@ function unlockAnalysis(step) {
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 500); 
         
-        // 💡 5つ目で上枠のサイズヒントを有効化（下のプールはサイズ固定のまま）
         if (step === 1 && unlockedAnalysisCount[1] >= 5) {
             document.getElementById("s1-slots-container").classList.add("size-hint-active");
         }
-
         if (step === 1 && unlockedAnalysisCount[1] === 6) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
-
         if (step === 2 && unlockedAnalysisCount[2] === 6) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
@@ -568,31 +571,18 @@ function updateAnalysisCarousel(step) {
         else dots += "⚫";
     }
     document.getElementById(`analysisIndicator-s${step}`).innerText = dots;
-
     document.getElementById(`btn-prev-analysis-s${step}`).style.visibility = (idx === 0) ? 'hidden' : 'visible';
-    
     const maxIdx = Math.min(5, unlockedAnalysisCount[step]);
     document.getElementById(`btn-next-analysis-s${step}`).style.visibility = (idx >= maxIdx) ? 'hidden' : 'visible';
 }
 
-function prevAnalysis(step) { 
-    if (analysisIdx[step] > 0) { 
-        analysisIdx[step]--; updateAnalysisCarousel(step); 
-    } 
-}
-
-function nextAnalysis(step) { 
-    const maxIdx = Math.min(5, unlockedAnalysisCount[step]);
-    if (analysisIdx[step] < maxIdx) { 
-        analysisIdx[step]++; updateAnalysisCarousel(step); 
-    } 
-}
+function prevAnalysis(step) { if (analysisIdx[step] > 0) { analysisIdx[step]--; updateAnalysisCarousel(step); } }
+function nextAnalysis(step) { const maxIdx = Math.min(5, unlockedAnalysisCount[step]); if (analysisIdx[step] < maxIdx) { analysisIdx[step]++; updateAnalysisCarousel(step); } }
 
 // ==========================================
 // STEP 1 メイン
 // ==========================================
 const s1_answer = ["F", "B", "A", "E", "C", "D"];
-
 function checkClearStep1() {
     const slots = document.querySelectorAll('#app-step1 .s1-slot');
     let placedItems = [];
@@ -606,20 +596,21 @@ function checkClearStep1() {
         }
         placedItems.push(slot.children[0].id);
     }
-
     let pattern = placedItems.join("");
     if (!triedPatterns[1].has(pattern)) {
         triedPatterns[1].add(pattern);
         validTrials[1]++;
         if (validTrials[1] % 3 === 0) addPoint(1);
     }
-
     let isCorrect = placedItems.every((val, i) => val === s1_answer[i]);
     const res = document.getElementById("result-step1");
     if (isCorrect) {
         res.innerText = "🎉 CLEAR!";
         res.style.color = "#2ea043";
-        document.getElementById('tab-step2').style.display = 'block';
+        // 💡 次の配線タブ（ブザー）を解放
+        document.getElementById('line-2').style.display = 'block';
+        document.getElementById('line-2').classList.add('active');
+        document.getElementById('tab-wire2').style.display = 'block';
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 3000); 
     } else {
@@ -639,13 +630,11 @@ let s2_isTransferring = false;
 
 function updateNodeColors() {
     const slotDisplay = document.getElementById('s2-slot-display');
-
     if (s2_isTransferring) {
         slotDisplay.innerText = "⚫ ⚫"; 
         for(let i=0; i<3; i++) {
             const vol = document.getElementById(`vol-${i}`);
             if(vol) vol.innerText = s2_volumes[i];
-
             document.getElementById(`node-${i}`).className = "s2-node";
             if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) document.getElementById(`node-${i}`).classList.add('full');
             document.getElementById(`dot-${i}`).className = "s2-status-dot";
@@ -653,17 +642,13 @@ function updateNodeColors() {
         }
         return;
     }
-
     for (let i = 0; i < 3; i++) {
         const node = document.getElementById(`node-${i}`);
         const dot = document.getElementById(`dot-${i}`);
         const vol = document.getElementById(`vol-${i}`);
-        
         if(vol) vol.innerText = s2_volumes[i];
-
         node.className = "s2-node"; 
         if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
-
         if (s2_selectedNode === null) {
             slotDisplay.innerText = "⚪ ⚪";
             if (s2_volumes[i] > 0) {
@@ -689,7 +674,6 @@ function updateNodeColors() {
 
 function handleNodeClick(index) {
     if (s2_isTransferring) return; 
-
     if (s2_selectedNode === null) {
         if (s2_volumes[index] === 0) return; 
         s2_selectedNode = index;
@@ -726,7 +710,10 @@ function handleNodeClick(index) {
                     if (s2_volumes[0] === 5 && s2_volumes[1] === 5) {
                         document.getElementById("result-step2").innerText = "🎉 CLEAR!";
                         document.getElementById("result-step2").style.color = "#2ea043";
-                        document.getElementById('tab-step3').style.display = 'block';
+                        // 💡 次の配線タブ（モニター）を解放
+                        document.getElementById('line-4').style.display = 'block';
+                        document.getElementById('line-4').classList.add('active');
+                        document.getElementById('tab-wire3').style.display = 'block';
                     }
                 }
             }, 400); 
@@ -735,7 +722,6 @@ function handleNodeClick(index) {
         }
     }
 }
-
 function resetStep2() {
     if (s2_isTransferring) return;
     s2_volumes = [10, 0, 0]; s2_selectedNode = null;
@@ -760,7 +746,6 @@ function executeMainPuzzle() {
         }
         placedWords.push(slot.children[0].id);
     }
-
     let pattern = placedWords.join("");
     if (!triedPatterns[3].has(pattern)) {
         triedPatterns[3].add(pattern);
@@ -785,6 +770,7 @@ function executeMainPuzzle() {
         setTimeout(() => {
             res.innerText = "🎉 CLEAR!";
             res.style.color = "#0f0";
+            // 💡 最後のFILE 04タブを解放
             document.getElementById('tab-last').style.display = 'block';
         }, 500);
     } else {
@@ -798,7 +784,6 @@ function executeMainPuzzle() {
 // LAST STEP (BOMB) メイン
 // ==========================================
 let lastTimerInterval;
-
 function startLastStep() {
     document.getElementById('last-start-screen').style.display = 'none';
     document.getElementById('last-active-screen').style.display = 'block';
@@ -808,12 +793,10 @@ function startLastStep() {
     let timeRemaining = 600;
     lastTimerInterval = setInterval(() => {
         timeRemaining--;
-        
         if(timeRemaining === 480) document.getElementById('last-hint-8').style.display = 'block';
         if(timeRemaining === 360) document.getElementById('last-hint-6').style.display = 'block';
         if(timeRemaining === 240) document.getElementById('last-hint-4').style.display = 'block';
         if(timeRemaining === 120) document.getElementById('last-hint-2').style.display = 'block';
-        
         if (timeRemaining <= 0) clearInterval(lastTimerInterval);
     }, 1000);
 }
@@ -824,5 +807,5 @@ window.addEventListener('DOMContentLoaded', () => {
     initPolyomino();
     initPuzzles(); 
     updateNodeColors(); 
-    alignBackgroundGrid();
+    alignBackgroundGrid(); 
 });
