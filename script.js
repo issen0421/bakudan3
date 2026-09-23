@@ -71,9 +71,8 @@ const aiSequence = [
     { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
     { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
-    // 💡 暗号化データに変更
     { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
+    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビプレーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
 
 let aiIdx = 0;
@@ -427,6 +426,18 @@ function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000
 function testBuzzer() { sendCommand("B"); }
 function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S0000"), 1000); }
 
+// 💡 プレイヤー操作用（配線指示書のテストボタン）
+function testWireLight() {
+    sendCommand("P1111"); 
+    setTimeout(() => sendCommand("P0000"), 2500); 
+    document.getElementById('btn-next-wire1').style.display = 'block'; // 次へボタンを表示
+}
+
+function testWireBuzzer() {
+    sendCommand("B"); 
+    document.getElementById('btn-next-wire2').style.display = 'block'; // 次へボタンを表示
+}
+
 // 💡 開発用全タブ解放
 function devUnlockTabs() { 
     ['line-1','line-2','line-3','line-4','line-5'].forEach(id => {
@@ -481,7 +492,6 @@ function renderPuzzleGrid(step) {
     const overlay = document.getElementById(`solvedOverlay-s${step}`);
     const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
     
-    // 💡 FILE → DATA に変更
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[pIdx]}`;
     placeholder.innerHTML = `FILE 0${step}<br>暗号化データ ${puzzleFiles[pIdx]}`;
     
@@ -582,7 +592,7 @@ function updateAnalysisCarousel(step) {
         if (step === 1 && unlockedAnalysisCount[1] === 6 && idx === 5) {
             placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを解除</span>`;
         } else {
-            placeholder.innerHTML = `DECRYPTED: DATA ${pName}`; // 💡 DATAに変更
+            placeholder.innerHTML = `DECRYPTED: DATA ${pName}`;
         }
         placeholder.style.color = "#0f0";
         placeholder.style.borderColor = "#0f0";
