@@ -76,7 +76,9 @@ const aiSequence = [
 let aiIdx = 0;
 let hasSeenAITutorial = false;
 
+// 💡 ヘルプボタンで再起動できるように aiIdx = 0 をセット
 function initAITutorial() {
+    aiIdx = 0; 
     document.getElementById('ai-modal').style.display = 'flex';
     showAIText();
 }
@@ -417,7 +419,6 @@ function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000
 function testBuzzer() { sendCommand("B"); }
 function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S0000"), 1000); }
 
-// 💡 プレイヤー操作用（配線指示書のテストボタン）
 function testWireLight() {
     if(document.getElementById('btn-test-light').disabled) return;
     sendCommand("P1111"); 
@@ -447,13 +448,14 @@ function devUnlockTabs() {
 }
 
 // ==========================================
-// スクラッチ小謎 ＆ 解析データ 管理システム
+// 💡 スクラッチ小謎 ＆ 解析データ 管理システム
 // ==========================================
-const maxPuzzles = { 1: 6, 2: 3, 3: 6 };
+// 💡 STEP3も3つに変更
+const maxPuzzles = { 1: 6, 2: 3, 3: 3 };
 const puzzleFiles = {
     1: ["A", "B", "C", "D", "E", "F"],
     2: ["A", "B", "C"],
-    3: ["A", "B", "C", "D", "E", "F"]
+    3: ["A", "B", "C"]
 };
 
 let availableAnalysisPoints = { 1: 0, 2: 0, 3: 0 }; 
@@ -469,7 +471,7 @@ let validTrials = { 1: 0, 2: 0, 3: 0 };
 const puzzleDict = {
     1: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
     2: {"てすと1":0, "てすと2":1, "てすと3":2},
-    3: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5}
+    3: {"てすと1":0, "てすと2":1, "てすと3":2}
 };
 
 const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
@@ -595,7 +597,15 @@ function updateAnalysisCarousel(step) {
     
     if (idx < unlockedAnalysisCount[step]) {
         if (step === 2) {
-            placeholder.innerHTML = `<img src="FILE2_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
+            // 💡 FILE 2: 手がかり3はテキスト表示、1と2は画像表示
+            if (idx === 2) {
+                placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインプロトコルの<br>データ容量が可視化されました</span>`;
+            } else {
+                placeholder.innerHTML = `<img src="FILE2_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
+            }
+        } else if (step === 3) {
+            // 💡 FILE 3: すべて画像表示
+            placeholder.innerHTML = `<img src="FILE3_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
         } else if (step === 1 && unlockedAnalysisCount[1] === 6 && idx === 5) {
             placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを解除</span>`;
         } else {
@@ -859,7 +869,6 @@ function startLastStep() {
     document.getElementById('last-start-screen').style.display = 'none';
     document.getElementById('last-active-screen').style.display = 'block';
     
-    // 💡 爆弾解除中は配線テスト用のボタンを無効化（ロック）する
     ['btn-test-light', 'btn-test-buzzer', 'btn-test-monitor'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -878,7 +887,9 @@ function startLastStep() {
         if(timeRemaining === 480) document.getElementById('last-hint-8').style.display = 'block';
         if(timeRemaining === 360) document.getElementById('last-hint-6').style.display = 'block';
         if(timeRemaining === 240) document.getElementById('last-hint-4').style.display = 'block';
-        if(timeRemaining === 120) document.getElementById('last-hint-2').style.display = 'block';
+        
+        // 💡 120秒の処理を削除しました
+        
         if (timeRemaining <= 0) clearInterval(lastTimerInterval);
     }, 1000);
 }
