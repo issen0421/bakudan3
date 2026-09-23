@@ -69,7 +69,11 @@
             <div style="width: 40px;"></div>
             <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">FILE 04</button>
         </div>
-        <button class="btn-connect" onclick="connectSerial()">🔌 デバイス接続</button>
+        <!-- 💡 チュートリアルを見返すヘルプボタンを追加 -->
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button class="tab-icon" onclick="initAITutorial()" title="AIナビゲーション" style="margin: 0;">❓</button>
+            <button class="btn-connect" onclick="connectSerial()">🔌 デバイス接続</button>
+        </div>
     </div>
 
     <!-- 🔧 デバッグパネル -->
@@ -90,7 +94,6 @@
         <div class="instruction">指示書に従ってデバイスに「ライト」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <!-- 💡 タイトル変更 -->
             <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
             
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 0: 共通グラウンド(GND)の構築</p>
@@ -219,7 +222,6 @@
         <div class="instruction">指示書に従ってデバイスに「ブザー」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <!-- 💡 タイトル変更 -->
             <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ブザーの配線方法について 】</h3>
             
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: ブザーを配置する</p>
@@ -324,7 +326,6 @@
         <div class="instruction">指示書に従ってデバイスに「モニター」と「バイパスコード」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <!-- 💡 タイトル変更 -->
             <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
             
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: モニターを接続する</p>
@@ -445,12 +446,11 @@
                 <span class="highlight">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
                 ※残り時間はデバイス側のモニターを確認せよ。<br><br>
                 
-                <!-- 💡 スケジュールを明記 -->
+                <!-- 💡 2分時点の表示を削除しました -->
                 <span style="color:#58a6ff; font-size:16px;">※ 以下のスケジュールで、システムが自動で『手がかりデータ』を受信・解析して表示する。<br>
                 ・残り 8:00 ➔ 手がかりデータ1 自動UNLOCK<br>
                 ・残り 6:00 ➔ 手がかりデータ2 自動UNLOCK<br>
                 ・残り 4:00 ➔ 手がかりデータ3 自動UNLOCK<br>
-                ・残り 2:00 ➔ 最終データ 自動UNLOCK
                 </span>
             </div>
             
@@ -465,9 +465,6 @@
             <div id="last-hint-4" class="last-hint-box">
                 <div class="last-hint-text">【自動受信】手がかりデータ3 (残り4分)</div>
                 <img src="FILE4_hint3.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
-            </div>
-            <div id="last-hint-2" class="last-hint-box">
-                <div class="last-hint-text">【自動受信】最終データ (残り2分)</div>
             </div>
         </div>
     </div>
