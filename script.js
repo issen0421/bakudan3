@@ -466,7 +466,6 @@ let isSolved = { 1: [], 2: [], 3: [] };
 let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
 let validTrials = { 1: 0, 2: 0, 3: 0 };
 
-// 💡 用意していただいた解答をセット
 const puzzleDict = {
     1: {"ひめくりかれんだー":0, "みなもとのよりとも":1, "おずのまほうつかい":2},
     2: {"ひかくさんげんそく":0, "てんねんきねんぶつ":1, "いりおもてやまねこ":2},
@@ -500,8 +499,12 @@ function renderPuzzleGrid(step) {
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
-    // 💡 小謎画像をセットする
-    placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px;">`;
+    // 💡 HTMLに<img>を埋め込まず、CSSの「背景画像」としてセットすることで潰れるのを防ぐ！
+    placeholder.innerHTML = "";
+    placeholder.style.backgroundImage = `url('FILE${step}_${puzzleFiles[step][pIdx]}.jpg')`;
+    placeholder.style.backgroundSize = "contain";
+    placeholder.style.backgroundPosition = "center";
+    placeholder.style.backgroundRepeat = "no-repeat";
     
     if (isSolved[step][pIdx]) {
         grid.style.display = "none";
@@ -597,6 +600,9 @@ function updateAnalysisCarousel(step) {
     const pName = puzzleFiles[step][idx];
     const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
     
+    // 一旦背景画像をクリア
+    placeholder.style.backgroundImage = "none";
+    
     if (idx < unlockedAnalysisCount[step]) {
         if (step === 1) {
             if (idx === 0) {
@@ -610,10 +616,19 @@ function updateAnalysisCarousel(step) {
             if (idx === 2) {
                 placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインプロトコルの<br>データ容量が可視化されました</span>`;
             } else {
-                placeholder.innerHTML = `<img src="FILE2_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
+                placeholder.innerHTML = "";
+                // 💡 手がかり画像も背景画像としてセット
+                placeholder.style.backgroundImage = `url('FILE2_hint${idx + 1}.jpg')`;
+                placeholder.style.backgroundSize = "contain";
+                placeholder.style.backgroundPosition = "center";
+                placeholder.style.backgroundRepeat = "no-repeat";
             }
         } else if (step === 3) {
-            placeholder.innerHTML = `<img src="FILE3_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
+            placeholder.innerHTML = "";
+            placeholder.style.backgroundImage = `url('FILE3_hint${idx + 1}.jpg')`;
+            placeholder.style.backgroundSize = "contain";
+            placeholder.style.backgroundPosition = "center";
+            placeholder.style.backgroundRepeat = "no-repeat";
         } else {
             placeholder.innerHTML = `DECRYPTED: DATA ${pName}`;
         }
