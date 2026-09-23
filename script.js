@@ -412,20 +412,25 @@ async function readLoop(readableStream) {
 }
 
 async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
+
 function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000"), 1000); }
 function testBuzzer() { sendCommand("B"); }
 function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S0000"), 1000); }
 
+// 💡 プレイヤー操作用（配線指示書のテストボタン）
 function testWireLight() {
+    if(document.getElementById('btn-test-light').disabled) return;
     sendCommand("P1111"); 
     setTimeout(() => sendCommand("P0000"), 2500); 
     document.getElementById('btn-next-wire1').style.display = 'block';
 }
 function testWireBuzzer() {
+    if(document.getElementById('btn-test-buzzer').disabled) return;
     sendCommand("B"); 
     document.getElementById('btn-next-wire2').style.display = 'block';
 }
 function testWireMonitor() {
+    if(document.getElementById('btn-test-monitor').disabled) return;
     sendCommand("S2222"); 
     setTimeout(() => sendCommand("S0000"), 2500); 
     document.getElementById('btn-next-wire3').style.display = 'block';
@@ -442,9 +447,8 @@ function devUnlockTabs() {
 }
 
 // ==========================================
-// 💡 スクラッチ小謎 ＆ 解析データ 管理システム
+// スクラッチ小謎 ＆ 解析データ 管理システム
 // ==========================================
-// 💡 STEP2は3つに減らす（増減に強い設計）
 const maxPuzzles = { 1: 6, 2: 3, 3: 6 };
 const puzzleFiles = {
     1: ["A", "B", "C", "D", "E", "F"],
@@ -462,7 +466,6 @@ let isSolved = { 1: [], 2: [], 3: [] };
 let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
 let validTrials = { 1: 0, 2: 0, 3: 0 };
 
-// 💡 STEP2の答えを3つに
 const puzzleDict = {
     1: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
     2: {"てすと1":0, "てすと2":1, "てすと3":2},
@@ -577,7 +580,6 @@ function unlockAnalysis(step) {
         if (step === 1 && unlockedAnalysisCount[1] === 6) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
-        // 💡 STEP2は3つ解いたら数字を表示する
         if (step === 2 && unlockedAnalysisCount[2] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
@@ -592,7 +594,6 @@ function updateAnalysisCarousel(step) {
     const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
     
     if (idx < unlockedAnalysisCount[step]) {
-        // 💡 画像表示の分岐
         if (step === 2) {
             placeholder.innerHTML = `<img src="FILE2_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
         } else if (step === 1 && unlockedAnalysisCount[1] === 6 && idx === 5) {
@@ -858,6 +859,17 @@ function startLastStep() {
     document.getElementById('last-start-screen').style.display = 'none';
     document.getElementById('last-active-screen').style.display = 'block';
     
+    // 💡 爆弾解除中は配線テスト用のボタンを無効化（ロック）する
+    ['btn-test-light', 'btn-test-buzzer', 'btn-test-monitor'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            btn.innerText += " (ロック中)";
+        }
+    });
+
     sendCommand("Z"); // 💣Arduino側の爆弾起動コマンド
     
     let timeRemaining = 600;
