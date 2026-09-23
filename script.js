@@ -204,7 +204,6 @@ function drawGojuonShape(id, mode) {
             polygon.style.filter = `drop-shadow(0 0 5px ${data.color})`;
             svg.appendChild(polygon);
         }
-        // 💡 STEP 1のヒント数削減に合わせ、1つ目の手がかり解放で円を描画する
         if (unlockedAnalysisCount[1] >= 1) {
             data.chars4.forEach(char => {
                 const cell = document.getElementById("gojuon-" + char);
@@ -450,7 +449,6 @@ function devUnlockTabs() {
 // ==========================================
 // 💡 スクラッチ小謎 ＆ 解析データ 管理システム
 // ==========================================
-// 💡 すべてのSTEPを3つに変更
 const maxPuzzles = { 1: 3, 2: 3, 3: 3 };
 const puzzleFiles = {
     1: ["A", "B", "C"],
@@ -468,10 +466,11 @@ let isSolved = { 1: [], 2: [], 3: [] };
 let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
 let validTrials = { 1: 0, 2: 0, 3: 0 };
 
+// 💡 用意していただいた解答をセット
 const puzzleDict = {
-    1: {"てすと1":0, "てすと2":1, "てすと3":2},
-    2: {"てすと1":0, "てすと2":1, "てすと3":2},
-    3: {"てすと1":0, "てすと2":1, "てすと3":2}
+    1: {"ひめくりかれんだー":0, "みなもとのよりとも":1, "おずのまほうつかい":2},
+    2: {"ひかくさんげんそく":0, "てんねんきねんぶつ":1, "いりおもてやまねこ":2},
+    3: {"そぷらのりこーだー":0, "ちきゅうおんだんか":1, "もんぶかがくしょう":2}
 };
 
 const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
@@ -500,7 +499,9 @@ function renderPuzzleGrid(step) {
     const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
-    placeholder.innerHTML = `FILE 0${step}<br>暗号化データ ${puzzleFiles[step][pIdx]}`;
+    
+    // 💡 小謎画像をセットする
+    placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px;">`;
     
     if (isSolved[step][pIdx]) {
         grid.style.display = "none";
@@ -576,7 +577,6 @@ function unlockAnalysis(step) {
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 500); 
         
-        // 💡 STEP1のUI解放のタイミングを前倒し（1, 2, 3個目）に変更
         if (step === 1 && unlockedAnalysisCount[1] >= 2) {
             document.getElementById("s1-slots-container").classList.add("size-hint-active");
         }
@@ -584,7 +584,6 @@ function unlockAnalysis(step) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
         
-        // 💡 STEP2は3つ解いたら数字を表示する
         if (step === 2 && unlockedAnalysisCount[2] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
@@ -600,7 +599,6 @@ function updateAnalysisCarousel(step) {
     
     if (idx < unlockedAnalysisCount[step]) {
         if (step === 1) {
-            // 💡 FILE 1: 段階的にシステム更新テキストを表示
             if (idx === 0) {
                 placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">データポイントの<br>接続座標を特定</span>`;
             } else if (idx === 1) {
@@ -609,14 +607,12 @@ function updateAnalysisCarousel(step) {
                 placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを解除</span>`;
             }
         } else if (step === 2) {
-            // 💡 FILE 2: 手がかり3はテキスト表示、1と2は画像表示
             if (idx === 2) {
                 placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインプロトコルの<br>データ容量が可視化されました</span>`;
             } else {
                 placeholder.innerHTML = `<img src="FILE2_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
             }
         } else if (step === 3) {
-            // 💡 FILE 3: すべて画像表示
             placeholder.innerHTML = `<img src="FILE3_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
         } else {
             placeholder.innerHTML = `DECRYPTED: DATA ${pName}`;
@@ -889,7 +885,7 @@ function startLastStep() {
         }
     });
 
-    sendCommand("Z"); // 💣Arduino側の爆弾起動コマンド
+    sendCommand("Z"); 
     
     let timeRemaining = 600;
     lastTimerInterval = setInterval(() => {
