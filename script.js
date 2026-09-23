@@ -64,13 +64,11 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// ==========================================
-// 💡 AIチュートリアル（セリフ修正）
-// ==========================================
+// AIチュートリアル（2分ごとに変更）
 const aiSequence = [
     { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
-    { text: "[System AI]: 解読が困難な場合は、対象のプロトコルを開いて分析（思考）を続けてください。\n1分経過するごとにシステムから『パネル開放権』が1つ付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
+    { text: "[System AI]: 解読が困難な場合は、対象のプロトコルを開いて分析（思考）を続けてください。\n2分経過するごとにシステムから『パネル開放権』が1つ付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
     { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
@@ -226,8 +224,10 @@ function drawGojuonShape(id, mode) {
     }
 }
 
+// 💡 ドロップ処理のバグを修正（スロット以外に落としたら絶対に元の位置に戻る）
 let currentDragId = null;
 let currentDragZone = 0; 
+
 function allowDrop(e) { 
     e.preventDefault(); 
     if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) {
@@ -248,6 +248,7 @@ document.addEventListener('dragover', (e) => {
     let newZone = 0;
     if (isBottomPool) newZone = 1;
     else if (isTopSlot) newZone = 2;
+    
     if (currentDragZone !== newZone) {
         currentDragZone = newZone;
         if (currentDragZone === 1) {
@@ -272,21 +273,49 @@ function dragEndItem(e) {
 }
 
 function drop(e) {
-    e.preventDefault(); e.target.classList.remove('drag-over');
+    e.preventDefault(); 
+    e.target.classList.remove('drag-over');
+    
     let dropTarget = e.target.classList.contains('item') ? e.target.parentElement : e.target;
     const data = e.dataTransfer.getData("text"); 
     const dragged = document.getElementById(data);
-    const sourceEl = dragged.parentElement; 
-    if (dropTarget.classList.contains('slot')) {
+    if (!dragged) return;
+
+    // 上の配置スロットに落とされた場合
+    if (dropTarget.classList.contains('slot') || dropTarget.classList.contains('s1-slot') || dropTarget.classList.contains('s3-slot')) {
         if (dropTarget.children.length > 0) {
+            // すでにアイテムがある場合は、元あったアイテムを初期プールに帰還させる
             let existingItem = dropTarget.children[0];
-            sourceEl.appendChild(existingItem);
+            document.getElementById("pool-" + existingItem.id).appendChild(existingItem);
         }
         dropTarget.appendChild(dragged);
-    } else if (dropTarget.classList.contains('item-slot') || dropTarget.id.startsWith("pool-")) {
-        document.getElementById("pool-" + dragged.id).appendChild(dragged);
+    } 
+    // それ以外（プールエリアの枠外や、他の場所）に落とされた場合はすべて初期位置に帰還
+    else {
+        const pool = document.getElementById("pool-" + dragged.id);
+        if (pool) pool.appendChild(dragged);
     }
 }
+
+// 💡 リセットボタン用の処理
+function resetStep1() {
+    ['A', 'B', 'C', 'D', 'E', 'F'].forEach(id => {
+        const item = document.getElementById(id);
+        const pool = document.getElementById(`pool-${id}`);
+        if(item && pool) pool.appendChild(item);
+    });
+    document.getElementById("result-step1").innerText = ""; 
+}
+
+function resetStep3() {
+    ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].forEach(id => {
+        const item = document.getElementById(id);
+        const pool = document.getElementById(`pool-${id}`);
+        if(item && pool) pool.appendChild(item);
+    });
+    document.getElementById("result-step3").innerText = ""; 
+}
+
 
 function completeWire(num) {
     if(num === 1) {
@@ -307,16 +336,14 @@ function completeWire(num) {
     }
 }
 
-// 💡 タイマー用の現在のアクティブなステップを保持する変数
 let currentActiveStep = null;
-
 function switchApp(appId) {
     document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn, .tab-icon').forEach(el => el.classList.remove('active'));
     document.getElementById(`app-${appId}`).classList.add('active');
     document.getElementById(`tab-${appId}`).classList.add('active');
     
-    // 現在のステップを記録
+    // 現在アクティブなステップ番号を保持（タイマー判定用）
     if (appId === 'step1') currentActiveStep = 1;
     else if (appId === 'step2') currentActiveStep = 2;
     else if (appId === 'step3') currentActiveStep = 3;
@@ -332,18 +359,18 @@ function switchApp(appId) {
 }
 
 // ==========================================
-// 💡 パネル開放権の自動付与タイマー（1分ごと）
+// 💡 パネル開放権の自動付与タイマー（2分 = 120秒ごと）
 // ==========================================
 let stepTimeCounter = { 1: 0, 2: 0, 3: 0 };
 setInterval(() => {
     if (currentActiveStep !== null) {
         stepTimeCounter[currentActiveStep]++;
-        if (stepTimeCounter[currentActiveStep] >= 60) {
+        if (stepTimeCounter[currentActiveStep] >= 120) {
             addPoint(currentActiveStep);
-            stepTimeCounter[currentActiveStep] = 0; // カウンターリセット
+            stepTimeCounter[currentActiveStep] = 0; // カウンターをリセット
         }
     }
-}, 1000); // 1秒に1回チェック
+}, 1000); 
 
 
 // ==========================================
@@ -489,7 +516,6 @@ let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 };
 let openPoints = { 1: 0, 2: 0, 3: 0 }; 
 let panelsState = { 1: [], 2: [], 3: [] };
 let isSolved = { 1: [], 2: [], 3: [] };
-let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
 
 const puzzleDict = {
     1: {"ひめくりかれんだー":0, "みなもとのよりとも":1, "おずのまほうつかい":2},
@@ -624,7 +650,6 @@ function updateAnalysisCarousel(step) {
     const pName = puzzleFiles[step][idx];
     const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
     
-    // 一旦背景画像をクリア
     placeholder.style.backgroundImage = "none";
     
     if (idx < unlockedAnalysisCount[step]) {
@@ -724,10 +749,7 @@ function checkClearStep1() {
         }
         placedItems.push(slot.children[0].id);
     }
-    let pattern = placedItems.join("");
-    if (!triedPatterns[1].has(pattern)) {
-        triedPatterns[1].add(pattern);
-    }
+
     let isCorrect = placedItems.every((val, i) => val === s1_answer[i]);
     const res = document.getElementById("result-step1");
     if (isCorrect) {
@@ -738,6 +760,9 @@ function checkClearStep1() {
         document.getElementById('tab-wire2').style.display = 'block';
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 3000); 
+        
+        // 💡 2秒後に自動で次のタブへ遷移
+        setTimeout(() => switchApp('wire2'), 2000); 
     } else {
         res.innerText = "❌";
         res.style.color = "#ff7b72";
@@ -817,11 +842,6 @@ function handleNodeClick(index) {
             s2_volumes[from] -= transferAmount;
             s2_volumes[to] += transferAmount;
             
-            let pattern = s2_volumes.join(",");
-            if (!triedPatterns[2].has(pattern)) {
-                triedPatterns[2].add(pattern);
-            }
-            
             let beeps = 0; s2_isTransferring = true; updateNodeColors();
             const interval = setInterval(() => {
                 sendCommand("B");
@@ -836,6 +856,9 @@ function handleNodeClick(index) {
                         document.getElementById('line-4').style.display = 'block';
                         document.getElementById('line-4').classList.add('active');
                         document.getElementById('tab-wire3').style.display = 'block';
+                        
+                        // 💡 2秒後に自動で次のタブへ遷移
+                        setTimeout(() => switchApp('wire3'), 2000);
                     }
                 }
             }, 400); 
@@ -867,10 +890,6 @@ function executeMainPuzzle() {
             return; 
         }
         placedWords.push(slot.children[0].id);
-    }
-    let pattern = placedWords.join("");
-    if (!triedPatterns[3].has(pattern)) {
-        triedPatterns[3].add(pattern);
     }
 
     let validJoints = 0;
