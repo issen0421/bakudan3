@@ -149,14 +149,15 @@
             </div>
         </div>
 
-        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 80px;">
+        <!-- 💡 上の余白(margin-top)を元に戻し、スロットの高さ(height)を大きくしました -->
+        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 10px;">
             <div class="s1-slots" id="s1-slots-container">
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             </div>
             <br>
             <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
@@ -357,7 +358,6 @@
     <!-- APP 3: FILE 03 (STEP3) -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <!-- 💡 目標を変更 -->
         <h2>FILE 03 正しい順番で並べろ</h2>
         <div id="pieces-container" class="pieces-container"></div>
         <div class="puzzle-layout">
@@ -379,7 +379,6 @@
                     <div class="s3-item-slot item-slot" id="pool-FRI"><div class="s3-item item" draggable="true" id="FRI" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">💰</div></div>
                     <div class="s3-item-slot item-slot" id="pool-SAT"><div class="s3-item item" draggable="true" id="SAT" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🪐</div></div>
                 </div>
-                <!-- 💡 判定ボタンを初期状態で無効化(灰色)に設定 -->
                 <button class="execute-btn" id="btn-judge-s3" onclick="executeMainPuzzle()" style="background: #444; opacity: 0.5; cursor: not-allowed;" disabled>判定</button>
                 <button class="execute-btn" onclick="resetStep3()" style="background: #444; margin-top: 15px;">🔄 リセット</button>
                 <div id="result-step3" class="result-msg"></div>
