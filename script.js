@@ -62,7 +62,6 @@ function closeBetrayalModal(e) {
     e.stopPropagation();
     document.getElementById('betrayal-modal').style.display = 'none';
     
-    // 💡 裏切り通信を読み終わると、自動的に最後のFILE 04タブを解放して遷移
     document.getElementById('tab-last').style.display = 'block';
     switchApp('last');
 }
@@ -72,7 +71,8 @@ const aiSequence = [
     { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
     { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
-    { text: "[System AI]: その権限を使用し、画面左下の『暗号化ファイル』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
+    // 💡 暗号化データに変更
+    { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
 
@@ -481,8 +481,9 @@ function renderPuzzleGrid(step) {
     const overlay = document.getElementById(`solvedOverlay-s${step}`);
     const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
     
-    document.getElementById(`puzzleIndicator-s${step}`).innerText = `FILE ${puzzleFiles[pIdx]}`;
-    placeholder.innerHTML = `FILE 0${step}<br>暗号化ファイル ${puzzleFiles[pIdx]}`;
+    // 💡 FILE → DATA に変更
+    document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[pIdx]}`;
+    placeholder.innerHTML = `FILE 0${step}<br>暗号化データ ${puzzleFiles[pIdx]}`;
     
     if (isSolved[step][pIdx]) {
         grid.style.display = "none";
@@ -581,7 +582,7 @@ function updateAnalysisCarousel(step) {
         if (step === 1 && unlockedAnalysisCount[1] === 6 && idx === 5) {
             placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを解除</span>`;
         } else {
-            placeholder.innerHTML = `DECRYPTED: ${pName}`;
+            placeholder.innerHTML = `DECRYPTED: DATA ${pName}`; // 💡 DATAに変更
         }
         placeholder.style.color = "#0f0";
         placeholder.style.borderColor = "#0f0";
@@ -824,7 +825,6 @@ function executeMainPuzzle() {
         setTimeout(() => {
             res.innerText = "🎉 CLEAR!";
             res.style.color = "#0f0";
-            // 💡 ボスの裏切りイベントを起動！
             initBetrayal();
         }, 500);
     } else {
