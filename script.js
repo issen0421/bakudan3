@@ -1,7 +1,6 @@
 // ==========================================
 // 💡 モーダル・チュートリアル制御
 // ==========================================
-// ボスの台詞（ゲーム開始時）
 const introStory = [
     "「よし、金庫前に着いたか。\n この金庫を開けるために、今からお前たちには\n ハッキング装置を組み立ててもらう。」",
     "「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に、システムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」",
@@ -61,12 +60,11 @@ function nextBetrayal() {
 function closeBetrayalModal(e) {
     e.stopPropagation();
     document.getElementById('betrayal-modal').style.display = 'none';
-    
     document.getElementById('tab-last').style.display = 'block';
     switchApp('last');
 }
 
-// AIチュートリアル（FILE 01に初めて入った時）
+// AIチュートリアル
 const aiSequence = [
     { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
@@ -96,17 +94,11 @@ function showAIText() {
     const current = aiSequence[aiIdx];
     const textEl = document.getElementById('ai-text');
     textEl.innerText = current.text;
-    
     const modal = document.getElementById('ai-modal');
-    
     document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
     modal.classList.remove('ai-mode-top', 'ai-mode-bottom');
-    
-    if (current.aiPosition === 'top') {
-        modal.classList.add('ai-mode-top');
-    } else {
-        modal.classList.add('ai-mode-bottom');
-    }
+    if (current.aiPosition === 'top') modal.classList.add('ai-mode-top');
+    else modal.classList.add('ai-mode-bottom');
 
     if (current.highlight) {
         const targetEl = document.getElementById(current.highlight);
@@ -293,7 +285,6 @@ function drop(e) {
     }
 }
 
-// 💡 タブ切り替えと自動アンロック
 function completeWire(num) {
     if(num === 1) {
         document.getElementById('line-1').style.display = 'block';
@@ -321,7 +312,6 @@ function switchApp(appId) {
     
     if (appId === 'step1') {
         setTimeout(alignBackgroundGrid, 50); 
-        // 💡 FILE01に初めて入った時にAIチュートリアルを起動
         if (!hasSeenAITutorial) {
             hasSeenAITutorial = true;
             setTimeout(initAITutorial, 600);
@@ -426,25 +416,21 @@ function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000
 function testBuzzer() { sendCommand("B"); }
 function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S0000"), 1000); }
 
-// 💡 プレイヤー操作用（配線指示書のテストボタン）
 function testWireLight() {
     sendCommand("P1111"); 
     setTimeout(() => sendCommand("P0000"), 2500); 
     document.getElementById('btn-next-wire1').style.display = 'block';
 }
-
 function testWireBuzzer() {
     sendCommand("B"); 
     document.getElementById('btn-next-wire2').style.display = 'block';
 }
-
 function testWireMonitor() {
-    sendCommand("S2222"); // モニターに「横線」を表示させるコマンド
+    sendCommand("S2222"); 
     setTimeout(() => sendCommand("S0000"), 2500); 
     document.getElementById('btn-next-wire3').style.display = 'block';
 }
 
-// 💡 開発用全タブ解放
 function devUnlockTabs() { 
     ['line-1','line-2','line-3','line-4','line-5'].forEach(id => {
         document.getElementById(id).style.display = 'block';
@@ -456,9 +442,16 @@ function devUnlockTabs() {
 }
 
 // ==========================================
-// スクラッチ小謎 ＆ 解析データ 管理システム
+// 💡 スクラッチ小謎 ＆ 解析データ 管理システム
 // ==========================================
-const puzzleFiles = ["A", "B", "C", "D", "E", "F"];
+// 💡 STEP2は3つに減らす（増減に強い設計）
+const maxPuzzles = { 1: 6, 2: 3, 3: 6 };
+const puzzleFiles = {
+    1: ["A", "B", "C", "D", "E", "F"],
+    2: ["A", "B", "C"],
+    3: ["A", "B", "C", "D", "E", "F"]
+};
+
 let availableAnalysisPoints = { 1: 0, 2: 0, 3: 0 }; 
 let unlockedAnalysisCount = { 1: 0, 2: 0, 3: 0 }; 
 let analysisIdx = { 1: 0, 2: 0, 3: 0 }; 
@@ -468,17 +461,20 @@ let panelsState = { 1: [], 2: [], 3: [] };
 let isSolved = { 1: [], 2: [], 3: [] };
 let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
 let validTrials = { 1: 0, 2: 0, 3: 0 };
+
+// 💡 STEP2の答えを3つに
 const puzzleDict = {
     1: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
-    2: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5},
+    2: {"てすと1":0, "てすと2":1, "てすと3":2},
     3: {"てすと1":0, "てすと2":1, "てすと3":2, "てすと4":3, "てすと5":4, "てすと6":5}
 };
+
 const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
 function getRow(char) { return QWERTY_TOP.includes(char) ? 1 : QWERTY_MID.includes(char) ? 2 : QWERTY_BOT.includes(char) ? 3 : 0; }
 
 function initPuzzles() {
     for(let s=1; s<=3; s++) {
-        for(let p=0; p<6; p++) {
+        for(let p=0; p<maxPuzzles[s]; p++) {
             panelsState[s].push(new Array(9).fill(false));
             isSolved[s].push(false);
         }
@@ -498,8 +494,8 @@ function renderPuzzleGrid(step) {
     const overlay = document.getElementById(`solvedOverlay-s${step}`);
     const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
     
-    document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[pIdx]}`;
-    placeholder.innerHTML = `FILE 0${step}<br>暗号化データ ${puzzleFiles[pIdx]}`;
+    document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
+    placeholder.innerHTML = `FILE 0${step}<br>暗号化データ ${puzzleFiles[step][pIdx]}`;
     
     if (isSolved[step][pIdx]) {
         grid.style.display = "none";
@@ -520,7 +516,7 @@ function renderPuzzleGrid(step) {
         }
     }
     document.getElementById(`btn-prev-puzzle-s${step}`).style.visibility = (pIdx === 0) ? 'hidden' : 'visible';
-    document.getElementById(`btn-next-puzzle-s${step}`).style.visibility = (pIdx === 5) ? 'hidden' : 'visible';
+    document.getElementById(`btn-next-puzzle-s${step}`).style.visibility = (pIdx === maxPuzzles[step] - 1) ? 'hidden' : 'visible';
 }
 
 function openPanel(step, pIdx, panelIdx) {
@@ -533,7 +529,7 @@ function openPanel(step, pIdx, panelIdx) {
 }
 
 function prevPuzzle(step) { if(currentPuzzleIdx[step] > 0) { currentPuzzleIdx[step]--; renderPuzzleGrid(step); } }
-function nextPuzzle(step) { if(currentPuzzleIdx[step] < 5) { currentPuzzleIdx[step]++; renderPuzzleGrid(step); } }
+function nextPuzzle(step) { if(currentPuzzleIdx[step] < maxPuzzles[step] - 1) { currentPuzzleIdx[step]++; renderPuzzleGrid(step); } }
 
 function submitAnswer(step) {
     const input = document.getElementById(`answerInput-s${step}`).value.trim();
@@ -564,7 +560,7 @@ function submitAnswer(step) {
 }
 
 function unlockAnalysis(step) {
-    if (availableAnalysisPoints[step] > 0 && unlockedAnalysisCount[step] < 6) {
+    if (availableAnalysisPoints[step] > 0 && unlockedAnalysisCount[step] < maxPuzzles[step]) {
         availableAnalysisPoints[step]--;
         unlockedAnalysisCount[step]++;
         document.getElementById(`analysisPoints-s${step}`).innerText = availableAnalysisPoints[step];
@@ -581,7 +577,8 @@ function unlockAnalysis(step) {
         if (step === 1 && unlockedAnalysisCount[1] === 6) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
-        if (step === 2 && unlockedAnalysisCount[2] === 6) {
+        // 💡 STEP2は3つ解いたら数字を表示する
+        if (step === 2 && unlockedAnalysisCount[2] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
             document.getElementById("vol-2").style.display = "block";
@@ -591,11 +588,14 @@ function unlockAnalysis(step) {
 
 function updateAnalysisCarousel(step) {
     const idx = analysisIdx[step];
-    const pName = puzzleFiles[idx];
+    const pName = puzzleFiles[step][idx];
     const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
     
     if (idx < unlockedAnalysisCount[step]) {
-        if (step === 1 && unlockedAnalysisCount[1] === 6 && idx === 5) {
+        // 💡 画像表示の分岐
+        if (step === 2) {
+            placeholder.innerHTML = `<img src="FILE2_hint${idx + 1}.jpg" style="width:100%; height:100%; object-fit:contain; border-radius:3px; padding:5px; box-sizing:border-box;">`;
+        } else if (step === 1 && unlockedAnalysisCount[1] === 6 && idx === 5) {
             placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを解除</span>`;
         } else {
             placeholder.innerHTML = `DECRYPTED: DATA ${pName}`;
@@ -621,19 +621,19 @@ function updateAnalysisCarousel(step) {
     }
     
     let dots = "";
-    for(let i=0; i<6; i++) {
+    for(let i=0; i<maxPuzzles[step]; i++) {
         if (i === idx) dots += "🟢";
         else if (i < unlockedAnalysisCount[step]) dots += "⚪";
         else dots += "⚫";
     }
     document.getElementById(`analysisIndicator-s${step}`).innerText = dots;
     document.getElementById(`btn-prev-analysis-s${step}`).style.visibility = (idx === 0) ? 'hidden' : 'visible';
-    const maxIdx = Math.min(5, unlockedAnalysisCount[step]);
+    const maxIdx = Math.min(maxPuzzles[step] - 1, unlockedAnalysisCount[step]);
     document.getElementById(`btn-next-analysis-s${step}`).style.visibility = (idx >= maxIdx) ? 'hidden' : 'visible';
 }
 
 function prevAnalysis(step) { if (analysisIdx[step] > 0) { analysisIdx[step]--; updateAnalysisCarousel(step); } }
-function nextAnalysis(step) { const maxIdx = Math.min(5, unlockedAnalysisCount[step]); if (analysisIdx[step] < maxIdx) { analysisIdx[step]++; updateAnalysisCarousel(step); } }
+function nextAnalysis(step) { const maxIdx = Math.min(maxPuzzles[step] - 1, unlockedAnalysisCount[step]); if (analysisIdx[step] < maxIdx) { analysisIdx[step]++; updateAnalysisCarousel(step); } }
 
 // ==========================================
 // 🚫 リアルハッカー（ソースコード閲覧）対策システム
