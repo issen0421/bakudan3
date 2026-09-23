@@ -64,11 +64,13 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル
+// ==========================================
+// 💡 AIチュートリアル（セリフ修正）
+// ==========================================
 const aiSequence = [
     { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
-    { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
+    { text: "[System AI]: 解読が困難な場合は、対象のプロトコルを開いて分析（思考）を続けてください。\n1分経過するごとにシステムから『パネル開放権』が1つ付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
     { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
@@ -305,12 +307,21 @@ function completeWire(num) {
     }
 }
 
+// 💡 タイマー用の現在のアクティブなステップを保持する変数
+let currentActiveStep = null;
+
 function switchApp(appId) {
     document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn, .tab-icon').forEach(el => el.classList.remove('active'));
     document.getElementById(`app-${appId}`).classList.add('active');
     document.getElementById(`tab-${appId}`).classList.add('active');
     
+    // 現在のステップを記録
+    if (appId === 'step1') currentActiveStep = 1;
+    else if (appId === 'step2') currentActiveStep = 2;
+    else if (appId === 'step3') currentActiveStep = 3;
+    else currentActiveStep = null;
+
     if (appId === 'step1') {
         setTimeout(alignBackgroundGrid, 50); 
         if (!hasSeenAITutorial) {
@@ -319,6 +330,21 @@ function switchApp(appId) {
         }
     }
 }
+
+// ==========================================
+// 💡 パネル開放権の自動付与タイマー（1分ごと）
+// ==========================================
+let stepTimeCounter = { 1: 0, 2: 0, 3: 0 };
+setInterval(() => {
+    if (currentActiveStep !== null) {
+        stepTimeCounter[currentActiveStep]++;
+        if (stepTimeCounter[currentActiveStep] >= 60) {
+            addPoint(currentActiveStep);
+            stepTimeCounter[currentActiveStep] = 0; // カウンターリセット
+        }
+    }
+}, 1000); // 1秒に1回チェック
+
 
 // ==========================================
 // ポリオミノ盤面生成ロジック (STEP3用)
@@ -464,7 +490,6 @@ let openPoints = { 1: 0, 2: 0, 3: 0 };
 let panelsState = { 1: [], 2: [], 3: [] };
 let isSolved = { 1: [], 2: [], 3: [] };
 let triedPatterns = { 1: new Set(), 2: new Set(), 3: new Set() };
-let validTrials = { 1: 0, 2: 0, 3: 0 };
 
 const puzzleDict = {
     1: {"ひめくりかれんだー":0, "みなもとのよりとも":1, "おずのまほうつかい":2},
@@ -499,7 +524,6 @@ function renderPuzzleGrid(step) {
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
-    // 💡 HTMLに<img>を埋め込まず、CSSの「背景画像」としてセットすることで潰れるのを防ぐ！
     placeholder.innerHTML = "";
     placeholder.style.backgroundImage = `url('FILE${step}_${puzzleFiles[step][pIdx]}.jpg')`;
     placeholder.style.backgroundSize = "contain";
@@ -617,7 +641,6 @@ function updateAnalysisCarousel(step) {
                 placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインプロトコルの<br>データ容量が可視化されました</span>`;
             } else {
                 placeholder.innerHTML = "";
-                // 💡 手がかり画像も背景画像としてセット
                 placeholder.style.backgroundImage = `url('FILE2_hint${idx + 1}.jpg')`;
                 placeholder.style.backgroundSize = "contain";
                 placeholder.style.backgroundPosition = "center";
@@ -704,8 +727,6 @@ function checkClearStep1() {
     let pattern = placedItems.join("");
     if (!triedPatterns[1].has(pattern)) {
         triedPatterns[1].add(pattern);
-        validTrials[1]++;
-        if (validTrials[1] % 3 === 0) addPoint(1);
     }
     let isCorrect = placedItems.every((val, i) => val === s1_answer[i]);
     const res = document.getElementById("result-step1");
@@ -799,8 +820,6 @@ function handleNodeClick(index) {
             let pattern = s2_volumes.join(",");
             if (!triedPatterns[2].has(pattern)) {
                 triedPatterns[2].add(pattern);
-                validTrials[2]++;
-                if (validTrials[2] % 3 === 0) addPoint(2);
             }
             
             let beeps = 0; s2_isTransferring = true; updateNodeColors();
@@ -852,8 +871,6 @@ function executeMainPuzzle() {
     let pattern = placedWords.join("");
     if (!triedPatterns[3].has(pattern)) {
         triedPatterns[3].add(pattern);
-        validTrials[3]++;
-        if (validTrials[3] % 3 === 0) addPoint(3);
     }
 
     let validJoints = 0;
