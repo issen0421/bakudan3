@@ -64,7 +64,7 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル（2分ごとに変更）
+// AIチュートリアル
 const aiSequence = [
     { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
@@ -224,7 +224,7 @@ function drawGojuonShape(id, mode) {
     }
 }
 
-// 💡 ドロップ処理のバグを修正（スロット以外に落としたら絶対に元の位置に戻る）
+// 💡 ドロップ処理と判定ボタンの更新
 let currentDragId = null;
 let currentDragZone = 0; 
 
@@ -281,23 +281,22 @@ function drop(e) {
     const dragged = document.getElementById(data);
     if (!dragged) return;
 
-    // 上の配置スロットに落とされた場合
     if (dropTarget.classList.contains('slot') || dropTarget.classList.contains('s1-slot') || dropTarget.classList.contains('s3-slot')) {
         if (dropTarget.children.length > 0) {
-            // すでにアイテムがある場合は、元あったアイテムを初期プールに帰還させる
             let existingItem = dropTarget.children[0];
             document.getElementById("pool-" + existingItem.id).appendChild(existingItem);
         }
         dropTarget.appendChild(dragged);
     } 
-    // それ以外（プールエリアの枠外や、他の場所）に落とされた場合はすべて初期位置に帰還
     else {
         const pool = document.getElementById("pool-" + dragged.id);
         if (pool) pool.appendChild(dragged);
     }
+    
+    // 💡 STEP3の判定ボタンの状態を更新
+    updateS3JudgeButton();
 }
 
-// 💡 リセットボタン用の処理
 function resetStep1() {
     ['A', 'B', 'C', 'D', 'E', 'F'].forEach(id => {
         const item = document.getElementById(id);
@@ -314,6 +313,31 @@ function resetStep3() {
         if(item && pool) pool.appendChild(item);
     });
     document.getElementById("result-step3").innerText = ""; 
+    // 💡 リセット時にもボタンの状態を更新
+    updateS3JudgeButton();
+}
+
+// 💡 STEP3の判定ボタン（5つ埋まるまで灰色）の制御関数
+function updateS3JudgeButton() {
+    const slots = document.querySelectorAll('#app-step3 .s3-slot');
+    let filledCount = 0;
+    for (let slot of slots) {
+        if (slot.children.length > 0) filledCount++;
+    }
+    const btn = document.getElementById("btn-judge-s3");
+    if (btn) {
+        if (filledCount === 5) {
+            btn.disabled = false;
+            btn.style.background = ""; // execute-btn のデフォルト色に戻る
+            btn.style.cursor = "pointer";
+            btn.style.opacity = "1";
+        } else {
+            btn.disabled = true;
+            btn.style.background = "#444";
+            btn.style.cursor = "not-allowed";
+            btn.style.opacity = "0.5";
+        }
+    }
 }
 
 
@@ -343,7 +367,6 @@ function switchApp(appId) {
     document.getElementById(`app-${appId}`).classList.add('active');
     document.getElementById(`tab-${appId}`).classList.add('active');
     
-    // 現在アクティブなステップ番号を保持（タイマー判定用）
     if (appId === 'step1') currentActiveStep = 1;
     else if (appId === 'step2') currentActiveStep = 2;
     else if (appId === 'step3') currentActiveStep = 3;
@@ -367,7 +390,7 @@ setInterval(() => {
         stepTimeCounter[currentActiveStep]++;
         if (stepTimeCounter[currentActiveStep] >= 120) {
             addPoint(currentActiveStep);
-            stepTimeCounter[currentActiveStep] = 0; // カウンターをリセット
+            stepTimeCounter[currentActiveStep] = 0; 
         }
     }
 }, 1000); 
@@ -761,7 +784,6 @@ function checkClearStep1() {
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 3000); 
         
-        // 💡 2秒後に自動で次のタブへ遷移
         setTimeout(() => switchApp('wire2'), 2000); 
     } else {
         res.innerText = "❌";
@@ -857,7 +879,6 @@ function handleNodeClick(index) {
                         document.getElementById('line-4').classList.add('active');
                         document.getElementById('tab-wire3').style.display = 'block';
                         
-                        // 💡 2秒後に自動で次のタブへ遷移
                         setTimeout(() => switchApp('wire3'), 2000);
                     }
                 }
@@ -875,19 +896,14 @@ function resetStep2() {
 }
 
 // ==========================================
-// STEP 3 メイン
+// 💡 STEP 3 メイン
 // ==========================================
-let ledTimer;
 function executeMainPuzzle() {
     const slots = document.querySelectorAll('#app-step3 .s3-slot');
     let placedWords = [];
     for (let slot of slots) {
         if (slot.children.length === 0) { 
-            const res = document.getElementById("result-step3");
-            res.innerText = "❌"; 
-            res.style.color = "#ff7b72";
-            setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
-            return; 
+            return; // 5つ埋まっていない場合はボタンが無効化されているため、基本ここには到達しません
         }
         placedWords.push(slot.children[0].id);
     }
@@ -897,18 +913,14 @@ function executeMainPuzzle() {
         let w1 = placedWords[i], w2 = placedWords[i+1];
         if (getRow(w1[0]) !== getRow(w2[0]) && getRow(w1[1]) !== getRow(w2[1]) && getRow(w1[2]) !== getRow(w2[2])) validJoints++;
     }
-    if (ledTimer) clearTimeout(ledTimer);
-    sendCommand("L" + validJoints);
-    if (validJoints === 0) sendCommand("B");
     
-    ledTimer = setTimeout(() => sendCommand("L0"), 3000);
+    // 💡 ライトを光らせるヒント処理を削除しました
     
     const res = document.getElementById("result-step3");
     if (validJoints === 4) {
-        clearTimeout(ledTimer);
+        res.innerText = "🎉 CLEAR!";
+        res.style.color = "#0f0";
         setTimeout(() => {
-            res.innerText = "🎉 CLEAR!";
-            res.style.color = "#0f0";
             initBetrayal();
         }, 500);
     } else {
