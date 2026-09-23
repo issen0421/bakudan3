@@ -149,15 +149,16 @@
             </div>
         </div>
 
-        <!-- 💡 上の余白(margin-top)を元に戻し、スロットの高さ(height)を大きくしました -->
-        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 10px;">
-            <div class="s1-slots" id="s1-slots-container">
-                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" style="height: 80px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+        <!-- 💡 五十音表に極力近づけるため margin-top をマイナスに調整 -->
+        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: -10px;">
+            <!-- 💡 丸枠を伸ばさず、グレーの背景枠だけを高さ80pxに広げる -->
+            <div class="s1-slots" id="s1-slots-container" style="min-height: 80px; align-items: center;">
+                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             </div>
             <br>
             <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
