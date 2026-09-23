@@ -72,7 +72,7 @@ const aiSequence = [
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
     { text: "[System AI]: 解読が困難な場合は、プロトコルへの干渉（試行錯誤）を続けてください。\n一定回数操作するとシステムから『パネル開放権』が付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
     { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビプレーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
+    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
 
 let aiIdx = 0;
@@ -430,12 +430,18 @@ function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S00
 function testWireLight() {
     sendCommand("P1111"); 
     setTimeout(() => sendCommand("P0000"), 2500); 
-    document.getElementById('btn-next-wire1').style.display = 'block'; // 次へボタンを表示
+    document.getElementById('btn-next-wire1').style.display = 'block';
 }
 
 function testWireBuzzer() {
     sendCommand("B"); 
-    document.getElementById('btn-next-wire2').style.display = 'block'; // 次へボタンを表示
+    document.getElementById('btn-next-wire2').style.display = 'block';
+}
+
+function testWireMonitor() {
+    sendCommand("S2222"); // モニターに「横線」を表示させるコマンド
+    setTimeout(() => sendCommand("S0000"), 2500); 
+    document.getElementById('btn-next-wire3').style.display = 'block';
 }
 
 // 💡 開発用全タブ解放
