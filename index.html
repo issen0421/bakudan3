@@ -127,7 +127,7 @@
         </div>
 
         <div style="text-align:center; margin-top:20px;">
-            <button class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireLight()">💡 テスト発光を実行</button>
+            <button id="btn-test-light" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireLight()">💡 テスト発光を実行</button>
             <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ 4つのライトがすべて光れば配線成功です。</p>
         </div>
 
@@ -236,7 +236,7 @@
         </div>
 
         <div style="text-align:center; margin-top:20px;">
-            <button class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireBuzzer()">🔊 テスト音を実行</button>
+            <button id="btn-test-buzzer" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireBuzzer()">🔊 テスト音を実行</button>
             <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ 「ピッ」と音が鳴れば配線成功です。</p>
         </div>
 
@@ -342,7 +342,7 @@
         </div>
 
         <div style="text-align:center; margin-top:20px;">
-            <button class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireMonitor()">📟 テスト表示を実行</button>
+            <button id="btn-test-monitor" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireMonitor()">📟 テスト表示を実行</button>
             <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ モニターに記号（横線）が表示されれば配線成功です。</p>
         </div>
 
@@ -440,20 +440,24 @@
                 【最終ミッション】<br>
                 システムが完全にロックされる前に、<br>
                 <span class="highlight">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
-                ※残り時間はデバイス側のモニターを確認せよ。
+                ※残り時間はデバイス側のモニターを確認せよ。<br><br>
+                <span style="color:#58a6ff; font-size:16px;">※ 時間経過とともに、システムが自動で『手がかりデータ』を受信・解析して表示する。</span>
             </div>
             
             <div id="last-hint-8" class="last-hint-box">
-                <div class="last-hint-text">傍受データ1 (残り8分)</div>
+                <div class="last-hint-text">【自動受信】手がかりデータ1 (残り8分)</div>
+                <img src="FILE4_hint1.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
             <div id="last-hint-6" class="last-hint-box">
-                <div class="last-hint-text">傍受データ2 (残り6分)</div>
+                <div class="last-hint-text">【自動受信】手がかりデータ2 (残り6分)</div>
+                <img src="FILE4_hint2.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
             <div id="last-hint-4" class="last-hint-box">
-                <div class="last-hint-text">傍受データ3 (残り4分)</div>
+                <div class="last-hint-text">【自動受信】手がかりデータ3 (残り4分)</div>
+                <img src="FILE4_hint3.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
             <div id="last-hint-2" class="last-hint-box">
-                <div class="last-hint-text">最終データ (残り2分)</div>
+                <div class="last-hint-text">【自動受信】最終手がかりデータ (残り2分)</div>
             </div>
         </div>
     </div>
