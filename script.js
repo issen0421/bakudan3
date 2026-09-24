@@ -369,8 +369,8 @@ function drawGojuonShape(id, mode) {
     }
 }
 
-// 💡 ドラッグの仕様変更
 let currentDragId = null;
+let currentDragZone = 0; 
 
 function allowDrop(e) { 
     e.preventDefault(); 
@@ -382,16 +382,21 @@ function dragLeave(e) { e.target.classList.remove('drag-over'); }
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
+    currentDragZone = 0; 
     
-    // 💡 持った瞬間に図形を描画し、2個のライトを点灯させる
     drawGojuonShape(currentDragId, 4); 
     const ledPatterns = { 'A': 'P0101', 'B': 'P1100', 'C': 'P0101', 'D': 'P0011', 'E': 'P0101', 'F': 'P1010' };
     if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
 }
 
+document.addEventListener('dragover', (e) => {
+    if (!currentDragId) return;
+});
+
 function dragEndItem(e) {
     sendCommand('P0000');
     currentDragId = null;
+    currentDragZone = 0;
     drawGojuonShape(null, 0);
 }
 
@@ -817,7 +822,7 @@ function updateAnalysisCarousel(step) {
             } else if (idx === 1) {
                 placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインスロットの<br>データサイズを可視化</span>`;
             } else if (idx === 2) {
-                placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを解除</span>`;
+                placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを開放</span>`;
             }
         } else if (step === 2) {
             if (idx === 2) {
@@ -844,7 +849,7 @@ function updateAnalysisCarousel(step) {
         placeholder.onclick = null;
     } else {
         if (idx === unlockedAnalysisCount[step] && availableAnalysisPoints[step] > 0) {
-            placeholder.innerHTML = `タップして解放 🔓`;
+            placeholder.innerHTML = `タップして開放 🔓`;
             placeholder.style.color = "#58a6ff";
             placeholder.style.borderColor = "#58a6ff";
             placeholder.style.cursor = "pointer";
