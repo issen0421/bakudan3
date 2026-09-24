@@ -104,7 +104,6 @@ function showAIText() {
     if (current.highlight) {
         const targetEl = document.getElementById(current.highlight);
         targetEl.classList.add('tutorial-highlight');
-        // 💡 背景を完全に透明(transparent)にして画面を暗くしない
         modal.style.backgroundColor = 'rgba(0, 0, 0, 0)'; 
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
@@ -122,9 +121,8 @@ function closeAITutorial() {
 // 💡 エンディング画面遷移
 // ==========================================
 function showEnding(isSuccess) {
-    if(lastTimerInterval) clearInterval(lastTimerInterval); // タイマー停止
+    if(lastTimerInterval) clearInterval(lastTimerInterval); 
 
-    // 他の画面を隠す
     document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
     
     const endingScreen = document.getElementById('ending-screen');
@@ -524,7 +522,6 @@ async function readLoop(readableStream) {
             let lines = buffer.split('\n');
             buffer = lines.pop(); 
             for (let line of lines) {
-                // 💡 エンディング関数の呼び出し（ここで使用されています！）
                 if (line.includes("DEFUSED")) showEnding(true);
                 if (line.includes("EXPLODED")) showEnding(false);
             }
@@ -552,7 +549,6 @@ function testWireBuzzer() {
 }
 function testWireMonitor() {
     if(document.getElementById('btn-test-monitor').disabled) return;
-    // 💡 Arduino側で全点灯処理を追加してもらった '8888' を送信
     sendCommand("S8888"); 
     setTimeout(() => sendCommand("S0000"), 2500); 
     document.getElementById('btn-next-wire3').style.display = 'block';
@@ -611,6 +607,7 @@ function addPoint(step) {
     document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
 }
 
+// 💡 確実に「穴あきパネル」として機能させるための強制スタイリング処理
 function renderPuzzleGrid(step) {
     const pIdx = currentPuzzleIdx[step];
     const grid = document.getElementById(`puzzleGrid-s${step}`);
@@ -619,25 +616,45 @@ function renderPuzzleGrid(step) {
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
-    placeholder.innerHTML = "";
-    placeholder.style.backgroundImage = `url('FILE${step}_${puzzleFiles[step][pIdx]}.jpg')`;
-    placeholder.style.backgroundSize = "contain";
-    placeholder.style.backgroundPosition = "center";
-    placeholder.style.backgroundRepeat = "no-repeat";
+    // 画像を正方形に保ちつつ確実に配置する
+    placeholder.style.backgroundImage = "none";
+    placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; display: block; border-radius: 3px;">`;
     
     if (isSolved[step][pIdx]) {
         grid.style.display = "none";
         overlay.style.display = "flex";
     } else {
         grid.style.display = "grid";
+        
+        // 💡 CSS依存をなくし、JS側で確実に3x3のグリッドと絶対配置を設定
+        grid.parentElement.style.position = "relative"; 
+        grid.style.position = "absolute";
+        grid.style.top = "0";
+        grid.style.left = "0";
+        grid.style.width = "100%";
+        grid.style.height = "100%";
+        grid.style.gridTemplateColumns = "repeat(3, 1fr)";
+        grid.style.gridTemplateRows = "repeat(3, 1fr)";
+        
         overlay.style.display = "none";
         grid.innerHTML = "";
+        
         for(let i=0; i<9; i++) {
             let div = document.createElement("div");
             div.className = "grid-panel";
+            div.style.border = "1px solid #000";
+            div.style.transition = "0.3s";
+            
             if (panelsState[step][pIdx][i]) {
                 div.classList.add("open");
+                // 💡 パネルを開いたら完全に透明化し、クリックを貫通させる
+                div.style.opacity = "0";
+                div.style.pointerEvents = "none";
             } else {
+                // 💡 閉じたパネルは黒で覆い隠す
+                div.style.opacity = "1";
+                div.style.backgroundColor = "#161b22";
+                div.style.cursor = "pointer";
                 div.onclick = () => openPanel(step, pIdx, i);
             }
             grid.appendChild(div);
