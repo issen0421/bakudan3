@@ -82,7 +82,7 @@
         <button class="debug-btn" onclick="testBuzzer()">🔊 ブザー</button>
         <button class="debug-btn" onclick="testMonitor()">📟 モニター</button>
         <span style="margin-left:20px;">👑 開発用:</span>
-        <button class="debug-btn dev" onclick="devUnlockTabs()">全タブ開放</button>
+        <button class="debug-btn dev" onclick="devUnlockTabs()">全タブ解放</button>
     </div>
 
     <!-- ========================================== -->
@@ -156,7 +156,8 @@
         </div>
 
         <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 10px;">
-            <div class="s1-slots" id="s1-slots-container">
+            <!-- 💡 上枠のパディングを調整して少しスリムに -->
+            <div class="s1-slots" id="s1-slots-container" style="padding: 10px; min-height: 70px;">
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -164,8 +165,9 @@
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             </div>
-            <br>
-            <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
+            
+            <!-- 💡 下枠（アイテムプール）のパディングを削って高さを最小限にし、隙間（margin-top）で配置 -->
+            <div class="s1-items" id="s1-item-pool" style="margin-top: 10px; padding: 10px; min-height: 70px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
                 <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                 <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                 <div class="s1-item-slot item-slot" id="pool-C"><div class="s1-item item" draggable="true" id="C" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
