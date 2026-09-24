@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HACKER OS - ダッシュボード</title>
+    <title>CHROMAKEY</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -82,7 +82,7 @@
         <button class="debug-btn" onclick="testBuzzer()">🔊 ブザー</button>
         <button class="debug-btn" onclick="testMonitor()">📟 モニター</button>
         <span style="margin-left:20px;">👑 開発用:</span>
-        <button class="debug-btn dev" onclick="devUnlockTabs()">全タブ解放</button>
+        <button class="debug-btn dev" onclick="devUnlockTabs()">全タブ開放</button>
     </div>
 
     <!-- ========================================== -->
@@ -95,7 +95,13 @@
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
             <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
             
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 0: 共通グラウンド(GND)の構築</p>
+            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP -1: デバイスの接続</p>
+            <p style="color:#c9d1d9;">
+                まず最初に画面右上の「🔌 デバイス接続」を押して、以下の画像のような接続先を選択して接続しよう。<br>
+                <img src="スクリーンショット 2026-09-25 4.31.24.png" style="max-width:100%; width:300px; display:block; margin-top:10px; border-radius:5px; border: 1px solid #444;">
+            </p>
+
+            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 0: 共通グラウンド(GND)の構築</p>
             <p style="color:#c9d1d9;">
                 ブレッドボード（白い基盤）の青い線の列（マイナス列）を使用する。<br>
                 ワイヤーの片方をArduinoの <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピンに挿し、反対側をブレッドボードの <span style="color:#58a6ff; font-weight:bold;">マイナス列の一番上の穴</span> に挿せ。
@@ -149,7 +155,6 @@
             </div>
         </div>
 
-        <!-- 💡 枠の高さ・余白を元のコンパクトなサイズに戻しました -->
         <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 10px;">
             <div class="s1-slots" id="s1-slots-container">
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -199,7 +204,7 @@
             <div class="analysis-panel" id="analysis-panel-area">
                 <div class="panel-header">
                     <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">解放権: <span id="analysisPoints-s1">0</span></div>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s1">0</span></div>
                 </div>
                 <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -302,7 +307,7 @@
             <div class="analysis-panel">
                 <div class="panel-header">
                     <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">解放権: <span id="analysisPoints-s2">0</span></div>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s2">0</span></div>
                 </div>
                 <div id="hintArea-s2" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
@@ -410,7 +415,7 @@
             <div class="analysis-panel">
                 <div class="panel-header">
                     <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">解放権: <span id="analysisPoints-s3">0</span></div>
+                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s3">0</span></div>
                 </div>
                 <div id="hintArea-s3" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                     <div class="carousel-container">
