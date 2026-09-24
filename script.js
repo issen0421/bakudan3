@@ -101,10 +101,10 @@ function showAIText() {
     if (current.aiPosition === 'top') modal.classList.add('ai-mode-top');
     else modal.classList.add('ai-mode-bottom');
 
-    // 💡 画面を暗くしないように背景色を透明(transparent)に設定
     if (current.highlight) {
         const targetEl = document.getElementById(current.highlight);
         targetEl.classList.add('tutorial-highlight');
+        // 💡 背景を完全に透明(transparent)にして画面を暗くしない
         modal.style.backgroundColor = 'rgba(0, 0, 0, 0)'; 
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
@@ -116,6 +116,54 @@ function closeAITutorial() {
     document.getElementById('ai-modal').style.display = 'none';
     document.querySelectorAll('.tutorial-highlight').forEach(el => el.classList.remove('tutorial-highlight'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==========================================
+// 💡 エンディング画面遷移
+// ==========================================
+function showEnding(isSuccess) {
+    if(lastTimerInterval) clearInterval(lastTimerInterval); // タイマー停止
+
+    // 他の画面を隠す
+    document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
+    
+    const endingScreen = document.getElementById('ending-screen');
+    const endingTitle = document.getElementById('ending-title');
+    const endingMsg = document.getElementById('ending-msg');
+
+    endingScreen.style.display = 'flex';
+    endingScreen.style.flexDirection = 'column';
+    endingScreen.style.justifyContent = 'center';
+    endingScreen.style.alignItems = 'center';
+    endingScreen.style.height = '100vh';
+    endingScreen.style.position = 'fixed';
+    endingScreen.style.top = '0';
+    endingScreen.style.left = '0';
+    endingScreen.style.width = '100%';
+    endingScreen.style.backgroundColor = 'rgba(0,0,0,0.95)';
+    endingScreen.style.zIndex = '9999';
+
+    if (isSuccess) {
+        endingTitle.innerText = "MISSION CLEAR";
+        endingTitle.style.color = "#2ea043";
+        endingTitle.style.fontSize = "50px";
+        endingTitle.style.marginBottom = "20px";
+        endingMsg.innerHTML = "起爆プロトコルの停止に成功した。<br>金庫のロックを解除する。";
+        endingMsg.style.color = "#c9d1d9";
+        endingMsg.style.fontSize = "20px";
+        endingMsg.style.lineHeight = "1.8";
+        endingMsg.style.textAlign = "center";
+    } else {
+        endingTitle.innerText = "MISSION FAILED";
+        endingTitle.style.color = "#ff7b72";
+        endingTitle.style.fontSize = "50px";
+        endingTitle.style.marginBottom = "20px";
+        endingMsg.innerHTML = "起爆プロトコルが実行された。<br>通信はここで途絶えている……。";
+        endingMsg.style.color = "#c9d1d9";
+        endingMsg.style.fontSize = "20px";
+        endingMsg.style.lineHeight = "1.8";
+        endingMsg.style.textAlign = "center";
+    }
 }
 
 // ==========================================
@@ -337,7 +385,6 @@ function updateS3JudgeButton() {
     }
 }
 
-
 function completeWire(num) {
     if(num === 1) {
         document.getElementById('line-1').style.display = 'block';
@@ -477,6 +524,7 @@ async function readLoop(readableStream) {
             let lines = buffer.split('\n');
             buffer = lines.pop(); 
             for (let line of lines) {
+                // 💡 エンディング関数の呼び出し（ここで使用されています！）
                 if (line.includes("DEFUSED")) showEnding(true);
                 if (line.includes("EXPLODED")) showEnding(false);
             }
@@ -504,7 +552,8 @@ function testWireBuzzer() {
 }
 function testWireMonitor() {
     if(document.getElementById('btn-test-monitor').disabled) return;
-    sendCommand("S2222"); 
+    // 💡 Arduino側で全点灯処理を追加してもらった '8888' を送信
+    sendCommand("S8888"); 
     setTimeout(() => sendCommand("S0000"), 2500); 
     document.getElementById('btn-next-wire3').style.display = 'block';
 }
