@@ -1,4 +1,41 @@
 // ==========================================
+// 💡 メッセージ表示用のタイピングエフェクトと音声
+// ==========================================
+let isTyping = false;
+let typeInterval;
+const msgAudio = new Audio('メッセージ表示音1.mp3');
+msgAudio.loop = true;
+
+// 1文字ずつ表示し、表示中に音を鳴らす関数
+function typeWriter(elementId, text, onComplete, indicatorId) {
+    if(isTyping) return;
+    isTyping = true;
+    
+    const el = document.getElementById(elementId);
+    const ind = document.getElementById(indicatorId);
+    if(ind) ind.style.visibility = 'hidden';
+    el.innerText = "";
+    
+    let i = 0;
+    
+    // ブラウザの自動再生ブロック対策でエラーを握りつぶす
+    msgAudio.currentTime = 0;
+    msgAudio.play().catch(e => console.log("Audio play blocked (user interaction required)"));
+
+    typeInterval = setInterval(() => {
+        el.innerText += text.charAt(i);
+        i++;
+        if (i >= text.length) {
+            clearInterval(typeInterval);
+            msgAudio.pause();
+            isTyping = false;
+            if(ind) ind.style.visibility = 'visible';
+            if(onComplete) onComplete();
+        }
+    }, 40); // 💡 文字の表示スピード（ミリ秒）
+}
+
+// ==========================================
 // 💡 モーダル・チュートリアル制御
 // ==========================================
 const introStory = [
@@ -8,20 +45,34 @@ const introStory = [
     "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けて、ライトの配線を済ませてくれ。作戦開始だ！」"
 ];
 
-let introIdx = 0;
+let introIdx = -1; // 💡 初回タップ待ちのため-1からスタート
 function initIntro() {
-    document.getElementById('intro-text').innerText = introStory[0];
+    introIdx = -1;
+    document.getElementById('intro-text').innerText = "【 暗号化通信を受信しました 】";
+    document.getElementById('intro-indicator').innerText = "▼ タップして再生";
+    document.getElementById('intro-indicator').style.display = 'block';
+    document.getElementById('intro-btn').style.display = 'none';
 }
+
 function nextIntro() {
+    if(isTyping) return; // 表示中は進めない
+    
+    if(introIdx === -1) {
+        document.getElementById('intro-indicator').innerText = "▼ タップして次へ";
+    }
+
     introIdx++;
     if (introIdx < introStory.length) {
-        document.getElementById('intro-text').innerText = introStory[introIdx];
-        if (introIdx === introStory.length - 1) {
-            document.getElementById('intro-indicator').style.display = 'none';
-            document.getElementById('intro-btn').style.display = 'block';
-        }
+        let isLast = (introIdx === introStory.length - 1);
+        typeWriter('intro-text', introStory[introIdx], () => {
+            if (isLast) {
+                document.getElementById('intro-indicator').style.display = 'none';
+                document.getElementById('intro-btn').style.display = 'block';
+            }
+        }, 'intro-indicator');
     }
 }
+
 function closeIntroModal(e) {
     e.stopPropagation();
     document.getElementById('intro-modal').style.display = 'none';
@@ -41,19 +92,25 @@ let betrayalIdx = 0;
 function initBetrayal() {
     betrayalIdx = 0;
     document.getElementById('betrayal-modal').style.display = 'flex';
-    document.getElementById('betrayal-text').innerText = betrayalStory[0];
     document.getElementById('betrayal-btn').style.display = 'none';
     document.getElementById('betrayal-indicator').style.display = 'block';
+    document.getElementById('betrayal-indicator').innerText = "▼ タップして次へ";
+    
+    // 💡 裏切りイベントの最初もタイピングで表示
+    typeWriter('betrayal-text', betrayalStory[betrayalIdx], null, 'betrayal-indicator');
 }
 
 function nextBetrayal() {
+    if(isTyping) return;
     betrayalIdx++;
     if (betrayalIdx < betrayalStory.length) {
-        document.getElementById('betrayal-text').innerText = betrayalStory[betrayalIdx];
-        if (betrayalIdx === betrayalStory.length - 1) {
-            document.getElementById('betrayal-indicator').style.display = 'none';
-            document.getElementById('betrayal-btn').style.display = 'block';
-        }
+        let isLast = (betrayalIdx === betrayalStory.length - 1);
+        typeWriter('betrayal-text', betrayalStory[betrayalIdx], () => {
+            if (isLast) {
+                document.getElementById('betrayal-indicator').style.display = 'none';
+                document.getElementById('betrayal-btn').style.display = 'block';
+            }
+        }, 'betrayal-indicator');
     }
 }
 
@@ -607,7 +664,6 @@ function addPoint(step) {
     document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
 }
 
-// 💡 確実に「穴あきパネル」として機能させるための強制スタイリング処理
 function renderPuzzleGrid(step) {
     const pIdx = currentPuzzleIdx[step];
     const grid = document.getElementById(`puzzleGrid-s${step}`);
@@ -616,7 +672,6 @@ function renderPuzzleGrid(step) {
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
-    // 画像を正方形に保ちつつ確実に配置する
     placeholder.style.backgroundImage = "none";
     placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; display: block; border-radius: 3px;">`;
     
@@ -626,7 +681,6 @@ function renderPuzzleGrid(step) {
     } else {
         grid.style.display = "grid";
         
-        // 💡 CSS依存をなくし、JS側で確実に3x3のグリッドと絶対配置を設定
         grid.parentElement.style.position = "relative"; 
         grid.style.position = "absolute";
         grid.style.top = "0";
@@ -647,11 +701,9 @@ function renderPuzzleGrid(step) {
             
             if (panelsState[step][pIdx][i]) {
                 div.classList.add("open");
-                // 💡 パネルを開いたら完全に透明化し、クリックを貫通させる
                 div.style.opacity = "0";
                 div.style.pointerEvents = "none";
             } else {
-                // 💡 閉じたパネルは黒で覆い隠す
                 div.style.opacity = "1";
                 div.style.backgroundColor = "#161b22";
                 div.style.cursor = "pointer";
@@ -863,36 +915,32 @@ let s2_volumes = [10, 0, 0];
 let s2_selectedNode = null;
 let s2_isTransferring = false;
 
+// 💡 ⚪⚪の表示を更新する処理を削除しました
 function updateNodeColors() {
-    const slotDisplay = document.getElementById('s2-slot-display');
-    if (s2_isTransferring) {
-        slotDisplay.innerText = "⚫ ⚫"; 
-        for(let i=0; i<3; i++) {
-            const vol = document.getElementById(`vol-${i}`);
-            if(vol) vol.innerText = s2_volumes[i];
-            document.getElementById(`node-${i}`).className = "s2-node";
-            if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) document.getElementById(`node-${i}`).classList.add('full');
-            document.getElementById(`dot-${i}`).className = "s2-status-dot";
-            document.getElementById(`dot-${i}`).innerText = "⚪";
-        }
-        return;
-    }
     for (let i = 0; i < 3; i++) {
         const node = document.getElementById(`node-${i}`);
         const dot = document.getElementById(`dot-${i}`);
         const vol = document.getElementById(`vol-${i}`);
         if(vol) vol.innerText = s2_volumes[i];
+        
+        if (s2_isTransferring) {
+            node.className = "s2-node";
+            if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
+            dot.className = "s2-status-dot";
+            dot.innerText = "⚪";
+            continue;
+        }
+
         node.className = "s2-node"; 
         if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
+        
         if (s2_selectedNode === null) {
-            slotDisplay.innerText = "⚪ ⚪";
             if (s2_volumes[i] > 0) {
                 dot.className = "s2-status-dot active"; dot.innerText = "⚫";
             } else {
                 dot.className = "s2-status-dot"; dot.innerText = "⚪";
             }
         } else {
-            slotDisplay.innerText = "⚫ ⚪";
             if (i === s2_selectedNode) {
                 node.classList.add('selected');
                 dot.className = "s2-status-dot active"; dot.innerText = "⚫";
