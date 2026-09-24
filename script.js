@@ -3,7 +3,7 @@
 // ==========================================
 let isTyping = false;
 let typeInterval;
-const msgAudio = new Audio('メッセージ表示音1.mp3');
+const msgAudio = new Audio('message.mp3');
 msgAudio.loop = true;
 
 // 1文字ずつ表示し、表示中に音を鳴らす関数
