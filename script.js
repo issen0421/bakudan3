@@ -689,6 +689,7 @@ function addPoint(step) {
     document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
 }
 
+// 💡 画像表示の確実化処理（背景色も透明に設定）
 function renderPuzzleGrid(step) {
     const pIdx = currentPuzzleIdx[step];
     const grid = document.getElementById(`puzzleGrid-s${step}`);
@@ -698,6 +699,8 @@ function renderPuzzleGrid(step) {
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
     placeholder.style.backgroundImage = "none";
+    // 💡 親要素の背景色が邪魔しないよう強制的に透明化
+    placeholder.parentElement.style.backgroundColor = "transparent"; 
     placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; display: block; border-radius: 3px;">`;
     
     if (isSolved[step][pIdx]) {
@@ -714,6 +717,8 @@ function renderPuzzleGrid(step) {
         grid.style.height = "100%";
         grid.style.gridTemplateColumns = "repeat(3, 1fr)";
         grid.style.gridTemplateRows = "repeat(3, 1fr)";
+        grid.style.backgroundColor = "transparent"; // 💡 ここも強制透明化
+        grid.style.pointerEvents = "auto";
         
         overlay.style.display = "none";
         grid.innerHTML = "";
