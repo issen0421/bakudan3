@@ -149,9 +149,9 @@
             </div>
         </div>
 
-        <!-- 💡 背景の白い枠部分だけを縦に広げる（min-height: 130px） -->
-        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: -10px;">
-            <div class="s1-slots" id="s1-slots-container" style="min-height: 130px; align-items: center;">
+        <!-- 💡 枠の高さ・余白を元のコンパクトなサイズに戻しました -->
+        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 10px;">
+            <div class="s1-slots" id="s1-slots-container">
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -254,7 +254,6 @@
     <div class="app-container" id="app-step2">
         <h2>FILE 02 5 5 0にしろ</h2>
         <div class="s2-ui-wrapper">
-            <!-- 💡 丸⚪⚪の表示を削除しました -->
             <div class="s2-container">
                 <div class="s2-node-wrapper">
                     <div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div>
