@@ -3,13 +3,41 @@
 // ==========================================
 let isTyping = false;
 let typeInterval;
-const msgAudio = new Audio('message.mp3');
+
+const msgAudio = new Audio('message.mp3'); // 💡 ファイル名を変更しました
 msgAudio.loop = true;
+msgAudio.volume = 0.5;
+
+// ブラウザの「音声ブロック（自動再生制限）」を解除するためのハック処理
+let isAudioUnlocked = false;
+document.addEventListener('click', () => {
+    if (!isAudioUnlocked) {
+        msgAudio.muted = true; 
+        msgAudio.play().then(() => {
+            msgAudio.pause();
+            msgAudio.currentTime = 0;
+            msgAudio.muted = false;
+        }).catch(e => console.log("Audio unlock failed", e));
+        isAudioUnlocked = true;
+    }
+}, { once: true });
+
+// 💡 スキップ機能（全文一括表示）のための状態保存変数
+let currentTypingContent = "";
+let currentTypingElement = "";
+let currentTypingIndicator = "";
+let currentTypingCallback = null;
 
 // 1文字ずつ表示し、表示中に音を鳴らす関数
 function typeWriter(elementId, text, onComplete, indicatorId) {
     if(isTyping) return;
     isTyping = true;
+    
+    // スキップ用に状態を保存
+    currentTypingContent = text;
+    currentTypingElement = elementId;
+    currentTypingIndicator = indicatorId;
+    currentTypingCallback = onComplete;
     
     const el = document.getElementById(elementId);
     const ind = document.getElementById(indicatorId);
@@ -18,21 +46,33 @@ function typeWriter(elementId, text, onComplete, indicatorId) {
     
     let i = 0;
     
-    // ブラウザの自動再生ブロック対策でエラーを握りつぶす
     msgAudio.currentTime = 0;
-    msgAudio.play().catch(e => console.log("Audio play blocked (user interaction required)"));
+    let playPromise = msgAudio.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(e => console.log("音声再生エラー:", e));
+    }
 
     typeInterval = setInterval(() => {
         el.innerText += text.charAt(i);
         i++;
         if (i >= text.length) {
-            clearInterval(typeInterval);
-            msgAudio.pause();
-            isTyping = false;
-            if(ind) ind.style.visibility = 'visible';
-            if(onComplete) onComplete();
+            finishTyping(); // 💡 最後まで表示されたら完了処理へ
         }
-    }, 40); // 💡 文字の表示スピード（ミリ秒）
+    }, 40); // 文字の表示スピード
+}
+
+// 💡 タイピングを強制終了して、全文をパッと表示する関数
+function finishTyping() {
+    clearInterval(typeInterval);
+    const el = document.getElementById(currentTypingElement);
+    const ind = document.getElementById(currentTypingIndicator);
+    
+    el.innerText = currentTypingContent; // 文字をすべて表示
+    msgAudio.pause(); // 音を止める
+    isTyping = false; // タイピング状態を解除
+    
+    if(ind) ind.style.visibility = 'visible';
+    if(currentTypingCallback) currentTypingCallback();
 }
 
 // ==========================================
@@ -45,7 +85,7 @@ const introStory = [
     "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けて、ライトの配線を済ませてくれ。作戦開始だ！」"
 ];
 
-let introIdx = -1; // 💡 初回タップ待ちのため-1からスタート
+let introIdx = -1; // 初回タップ待ち
 function initIntro() {
     introIdx = -1;
     document.getElementById('intro-text').innerText = "【 暗号化通信を受信しました 】";
@@ -55,7 +95,11 @@ function initIntro() {
 }
 
 function nextIntro() {
-    if(isTyping) return; // 表示中は進めない
+    // 💡 タイピング中に画面をタップされたら、全文をパッと出す
+    if (isTyping) {
+        finishTyping();
+        return;
+    }
     
     if(introIdx === -1) {
         document.getElementById('intro-indicator').innerText = "▼ タップして次へ";
@@ -96,12 +140,16 @@ function initBetrayal() {
     document.getElementById('betrayal-indicator').style.display = 'block';
     document.getElementById('betrayal-indicator').innerText = "▼ タップして次へ";
     
-    // 💡 裏切りイベントの最初もタイピングで表示
     typeWriter('betrayal-text', betrayalStory[betrayalIdx], null, 'betrayal-indicator');
 }
 
 function nextBetrayal() {
-    if(isTyping) return;
+    // 💡 タイピング中に画面をタップされたら、全文をパッと出す
+    if (isTyping) {
+        finishTyping();
+        return;
+    }
+
     betrayalIdx++;
     if (betrayalIdx < betrayalStory.length) {
         let isLast = (betrayalIdx === betrayalStory.length - 1);
@@ -915,7 +963,6 @@ let s2_volumes = [10, 0, 0];
 let s2_selectedNode = null;
 let s2_isTransferring = false;
 
-// 💡 ⚪⚪の表示を更新する処理を削除しました
 function updateNodeColors() {
     for (let i = 0; i < 3; i++) {
         const node = document.getElementById(`node-${i}`);
