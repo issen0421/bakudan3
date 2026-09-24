@@ -4,11 +4,10 @@
 let isTyping = false;
 let typeInterval;
 
-const msgAudio = new Audio('message.mp3'); // 💡 ファイル名を変更しました
+const msgAudio = new Audio('message.mp3'); 
 msgAudio.loop = true;
 msgAudio.volume = 0.5;
 
-// ブラウザの「音声ブロック（自動再生制限）」を解除するためのハック処理
 let isAudioUnlocked = false;
 document.addEventListener('click', () => {
     if (!isAudioUnlocked) {
@@ -22,18 +21,15 @@ document.addEventListener('click', () => {
     }
 }, { once: true });
 
-// 💡 スキップ機能（全文一括表示）のための状態保存変数
 let currentTypingContent = "";
 let currentTypingElement = "";
 let currentTypingIndicator = "";
 let currentTypingCallback = null;
 
-// 1文字ずつ表示し、表示中に音を鳴らす関数
 function typeWriter(elementId, text, onComplete, indicatorId) {
     if(isTyping) return;
     isTyping = true;
     
-    // スキップ用に状態を保存
     currentTypingContent = text;
     currentTypingElement = elementId;
     currentTypingIndicator = indicatorId;
@@ -56,20 +52,19 @@ function typeWriter(elementId, text, onComplete, indicatorId) {
         el.innerText += text.charAt(i);
         i++;
         if (i >= text.length) {
-            finishTyping(); // 💡 最後まで表示されたら完了処理へ
+            finishTyping(); 
         }
-    }, 40); // 文字の表示スピード
+    }, 40);
 }
 
-// 💡 タイピングを強制終了して、全文をパッと表示する関数
 function finishTyping() {
     clearInterval(typeInterval);
     const el = document.getElementById(currentTypingElement);
     const ind = document.getElementById(currentTypingIndicator);
     
-    el.innerText = currentTypingContent; // 文字をすべて表示
-    msgAudio.pause(); // 音を止める
-    isTyping = false; // タイピング状態を解除
+    el.innerText = currentTypingContent; 
+    msgAudio.pause(); 
+    isTyping = false; 
     
     if(ind) ind.style.visibility = 'visible';
     if(currentTypingCallback) currentTypingCallback();
@@ -85,7 +80,7 @@ const introStory = [
     "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けて、ライトの配線を済ませてくれ。作戦開始だ！」"
 ];
 
-let introIdx = -1; // 初回タップ待ち
+let introIdx = -1; 
 function initIntro() {
     introIdx = -1;
     document.getElementById('intro-text').innerText = "【 暗号化通信を受信しました 】";
@@ -95,7 +90,6 @@ function initIntro() {
 }
 
 function nextIntro() {
-    // 💡 タイピング中に画面をタップされたら、全文をパッと出す
     if (isTyping) {
         finishTyping();
         return;
@@ -144,7 +138,6 @@ function initBetrayal() {
 }
 
 function nextBetrayal() {
-    // 💡 タイピング中に画面をタップされたら、全文をパッと出す
     if (isTyping) {
         finishTyping();
         return;
@@ -376,8 +369,8 @@ function drawGojuonShape(id, mode) {
     }
 }
 
+// 💡 ドラッグの仕様変更
 let currentDragId = null;
-let currentDragZone = 0; 
 
 function allowDrop(e) { 
     e.preventDefault(); 
@@ -389,37 +382,16 @@ function dragLeave(e) { e.target.classList.remove('drag-over'); }
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
-    currentDragZone = 0; 
-}
-
-document.addEventListener('dragover', (e) => {
-    if (!currentDragId) return;
-    const isTopSlot = e.target.closest('.s1-slots');
-    const isBottomPool = e.target.closest('.s1-items');
-    let newZone = 0;
-    if (isBottomPool) newZone = 1;
-    else if (isTopSlot) newZone = 2;
     
-    if (currentDragZone !== newZone) {
-        currentDragZone = newZone;
-        if (currentDragZone === 1) {
-            drawGojuonShape(currentDragId, 4); 
-            sendCommand("P1111"); 
-        } else if (currentDragZone === 2) {
-            drawGojuonShape(null, 0); 
-            const ledPatterns = { 'A': 'P0101', 'B': 'P1100', 'C': 'P0101', 'D': 'P0011', 'E': 'P0101', 'F': 'P1010' };
-            if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
-        } else {
-            drawGojuonShape(null, 0); 
-            sendCommand("P0000"); 
-        }
-    }
-});
+    // 💡 持った瞬間に図形を描画し、2個のライトを点灯させる
+    drawGojuonShape(currentDragId, 4); 
+    const ledPatterns = { 'A': 'P0101', 'B': 'P1100', 'C': 'P0101', 'D': 'P0011', 'E': 'P0101', 'F': 'P1010' };
+    if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
+}
 
 function dragEndItem(e) {
     sendCommand('P0000');
     currentDragId = null;
-    currentDragZone = 0;
     drawGojuonShape(null, 0);
 }
 
