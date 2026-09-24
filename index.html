@@ -40,8 +40,8 @@
         </div>
     </div>
 
-    <!-- 🌟 エンディング画面 -->
-    <div id="ending-screen">
+    <!-- 🌟 エンディング画面 (💡 初期非表示設定を追加) -->
+    <div id="ending-screen" style="display:none;">
         <div id="ending-title" class="ending-title"></div>
         <div id="ending-msg" class="ending-msg"></div>
     </div>
@@ -149,9 +149,7 @@
             </div>
         </div>
 
-        <!-- 💡 五十音表に極力近づけるため margin-top をマイナスに調整 -->
         <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: -10px;">
-            <!-- 💡 丸枠を伸ばさず、グレーの背景枠だけを高さ80pxに広げる -->
             <div class="s1-slots" id="s1-slots-container" style="min-height: 80px; align-items: center;">
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -336,7 +334,8 @@
                 ・<span style="color:#fff; font-weight:bold;">[CLK]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[7]</span> ピン<br>
                 ・<span style="color:#fff; font-weight:bold;">[DIO]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[8]</span> ピン<br>
                 ・<span style="color:#fff; font-weight:bold;">[GND]</span> と書かれた線 ➔ Arduinoの <span style="color:#58a6ff; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[VCC]</span> と書かれた線 ➔ Arduinoの <span style="color:#ff7b72; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#ff7b72; font-weight:bold;">[5V]</span> ピン
+                <!-- 💡 VCCを5Vに修正 -->
+                ・<span style="color:#fff; font-weight:bold;">[5V]</span> と書かれた線 ➔ Arduinoの <span style="color:#ff7b72; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#ff7b72; font-weight:bold;">[5V]</span> ピン
             </p>
 
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: システム安定化用バイパスを構築する</p>
@@ -349,7 +348,7 @@
 
         <div style="text-align:center; margin-top:20px;">
             <button id="btn-test-monitor" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireMonitor()">📟 テスト表示を実行</button>
-            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ モニターに記号（横線）が表示されれば配線成功です。</p>
+            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ モニターに記号（8888）が表示されれば配線成功です。</p>
         </div>
 
         <button class="execute-btn" id="btn-next-wire3" onclick="completeWire(3)" style="max-width: 400px; margin: 30px auto 0; display: none;">表示された (FILE 03 へ)</button>
