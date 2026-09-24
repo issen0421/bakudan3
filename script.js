@@ -101,13 +101,14 @@ function showAIText() {
     if (current.aiPosition === 'top') modal.classList.add('ai-mode-top');
     else modal.classList.add('ai-mode-bottom');
 
+    // 💡 画面を暗くしないように背景色を透明(transparent)に設定
     if (current.highlight) {
         const targetEl = document.getElementById(current.highlight);
         targetEl.classList.add('tutorial-highlight');
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; 
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0)'; 
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0)';
     }
 }
 
@@ -224,7 +225,6 @@ function drawGojuonShape(id, mode) {
     }
 }
 
-// 💡 ドロップ処理と判定ボタンの更新
 let currentDragId = null;
 let currentDragZone = 0; 
 
@@ -293,7 +293,6 @@ function drop(e) {
         if (pool) pool.appendChild(dragged);
     }
     
-    // 💡 STEP3の判定ボタンの状態を更新
     updateS3JudgeButton();
 }
 
@@ -313,11 +312,9 @@ function resetStep3() {
         if(item && pool) pool.appendChild(item);
     });
     document.getElementById("result-step3").innerText = ""; 
-    // 💡 リセット時にもボタンの状態を更新
     updateS3JudgeButton();
 }
 
-// 💡 STEP3の判定ボタン（5つ埋まるまで灰色）の制御関数
 function updateS3JudgeButton() {
     const slots = document.querySelectorAll('#app-step3 .s3-slot');
     let filledCount = 0;
@@ -328,7 +325,7 @@ function updateS3JudgeButton() {
     if (btn) {
         if (filledCount === 5) {
             btn.disabled = false;
-            btn.style.background = ""; // execute-btn のデフォルト色に戻る
+            btn.style.background = ""; 
             btn.style.cursor = "pointer";
             btn.style.opacity = "1";
         } else {
@@ -903,7 +900,7 @@ function executeMainPuzzle() {
     let placedWords = [];
     for (let slot of slots) {
         if (slot.children.length === 0) { 
-            return; // 5つ埋まっていない場合はボタンが無効化されているため、基本ここには到達しません
+            return; 
         }
         placedWords.push(slot.children[0].id);
     }
@@ -913,8 +910,6 @@ function executeMainPuzzle() {
         let w1 = placedWords[i], w2 = placedWords[i+1];
         if (getRow(w1[0]) !== getRow(w2[0]) && getRow(w1[1]) !== getRow(w2[1]) && getRow(w1[2]) !== getRow(w2[2])) validJoints++;
     }
-    
-    // 💡 ライトを光らせるヒント処理を削除しました
     
     const res = document.getElementById("result-step3");
     if (validJoints === 4) {
