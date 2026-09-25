@@ -421,7 +421,7 @@ function drop(e) {
         if (pool) pool.appendChild(dragged);
     }
     
-    updateS3JudgeButton();
+    updateS2JudgeButton();
 }
 
 function resetStep1() {
@@ -433,18 +433,86 @@ function resetStep1() {
     document.getElementById("result-step1").innerText = ""; 
 }
 
-function resetStep3() {
+const s1_answer = ["F", "B", "A", "E", "C", "D"];
+function checkClearStep1() {
+    const slots = document.querySelectorAll('#app-step1 .s1-slot');
+    let placedItems = [];
+    for (let slot of slots) {
+        if (slot.children.length === 0) {
+            const res = document.getElementById("result-step1");
+            res.innerText = "❌";
+            res.style.color = "#ff7b72";
+            setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
+            return;
+        }
+        placedItems.push(slot.children[0].id);
+    }
+
+    let isCorrect = placedItems.every((val, i) => val === s1_answer[i]);
+    const res = document.getElementById("result-step1");
+    if (isCorrect) {
+        res.innerText = "🎉 CLEAR!";
+        res.style.color = "#2ea043";
+        document.getElementById('line-2').style.display = 'block';
+        document.getElementById('line-2').classList.add('active');
+        document.getElementById('tab-wire2').style.display = 'block';
+        sendCommand("P1111"); 
+        setTimeout(() => sendCommand("P0000"), 3000); 
+        
+        setTimeout(() => switchApp('wire2'), 2000); 
+    } else {
+        res.innerText = "❌";
+        res.style.color = "#ff7b72";
+        setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
+    }
+}
+
+// ==========================================
+// 💡 STEP 2 (新): 曜日並べ替えパズル
+// ==========================================
+function executeStep2Puzzle() {
+    const slots = document.querySelectorAll('#app-step2 .s3-slot');
+    let placedWords = [];
+    for (let slot of slots) {
+        if (slot.children.length === 0) { 
+            return; 
+        }
+        placedWords.push(slot.children[0].id);
+    }
+
+    let validJoints = 0;
+    for (let i = 0; i < 4; i++) {
+        let w1 = placedWords[i], w2 = placedWords[i+1];
+        if (getRow(w1[0]) !== getRow(w2[0]) && getRow(w1[1]) !== getRow(w2[1]) && getRow(w1[2]) !== getRow(w2[2])) validJoints++;
+    }
+    
+    const res = document.getElementById("result-step2");
+    if (validJoints === 4) {
+        res.innerText = "🎉 CLEAR!";
+        res.style.color = "#0f0";
+        document.getElementById('line-4').style.display = 'block';
+        document.getElementById('line-4').classList.add('active');
+        document.getElementById('tab-wire3').style.display = 'block';
+        setTimeout(() => switchApp('wire3'), 2000);
+    } else {
+        res.innerText = "❌";
+        res.style.color = "#ff7b72";
+        setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
+    }
+}
+
+function resetStep2Puzzle() {
     ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].forEach(id => {
         const item = document.getElementById(id);
         const pool = document.getElementById(`pool-${id}`);
         if(item && pool) pool.appendChild(item);
     });
-    document.getElementById("result-step3").innerText = ""; 
-    updateS3JudgeButton();
+    document.getElementById("result-step2").innerText = ""; 
+    updateS2JudgeButton();
 }
 
-function updateS3JudgeButton() {
-    const slots = document.querySelectorAll('#app-step3 .s3-slot');
+function updateS2JudgeButton() {
+    const slots = document.querySelectorAll('#app-step2 .s3-slot');
     let filledCount = 0;
     for (let slot of slots) {
         if (slot.children.length > 0) filledCount++;
@@ -465,6 +533,123 @@ function updateS3JudgeButton() {
     }
 }
 
+// ==========================================
+// 💡 STEP 3 (新): 神ギミック・水差しパズル（10, 3, 7）
+// ==========================================
+const S3_CAPACITIES = [10, 3, 7]; // 💡 容量を 10, 3, 7 に変更
+let s3_volumes = [10, 0, 0];
+let s3_selectedNode = null;
+let s3_isTransferring = false;
+let s3_moves = 9; // 💡 残り手数
+
+function updateS3NodeColors() {
+    for (let i = 0; i < 3; i++) {
+        const node = document.getElementById(`node-${i}`);
+        const vol = document.getElementById(`vol-${i}`);
+        if(vol) vol.innerText = s3_volumes[i];
+        
+        if (s3_isTransferring) {
+            node.className = "s2-node";
+            if(s3_volumes[i] === S3_CAPACITIES[i] && S3_CAPACITIES[i] > 0) node.classList.add('full');
+            continue;
+        }
+
+        node.className = "s2-node"; 
+        if (s3_volumes[i] === S3_CAPACITIES[i] && S3_CAPACITIES[i] > 0) node.classList.add('full');
+        
+        if (s3_selectedNode !== null && i === s3_selectedNode) {
+            node.classList.add('selected');
+        }
+    }
+}
+
+function handleS3NodeClick(index) {
+    if (s3_isTransferring || s3_moves <= 0) return; 
+    
+    if (s3_selectedNode === null) {
+        if (s3_volumes[index] === 0) return; 
+        s3_selectedNode = index;
+        updateS3NodeColors();
+    } else {
+        if (s3_selectedNode === index) { 
+            s3_selectedNode = null;
+            updateS3NodeColors();
+            return;
+        }
+        let from = s3_selectedNode; let to = index;
+        s3_selectedNode = null;
+
+        let transferAmount = Math.min(s3_volumes[from], S3_CAPACITIES[to] - s3_volumes[to]);
+        if (transferAmount > 0) {
+            s3_volumes[from] -= transferAmount;
+            s3_volumes[to] += transferAmount;
+            
+            s3_moves--;
+            // 💡 モニターに残り手数を送信
+            let moveStr = ("0" + s3_moves).slice(-2);
+            sendCommand("N-" + moveStr + " ");
+            
+            let beeps = 0; s3_isTransferring = true; updateS3NodeColors();
+            const interval = setInterval(() => {
+                sendCommand("B");
+                beeps++;
+                if (beeps >= transferAmount) {
+                    clearInterval(interval);
+                    s3_isTransferring = false;
+                    updateS3NodeColors();
+                    
+                    // 💡 9手目に到達したら判定
+                    if (s3_moves <= 0) {
+                        checkS3Clear();
+                    }
+                }
+            }, 400); 
+        } else {
+            updateS3NodeColors();
+        }
+    }
+}
+
+function checkS3Clear() {
+    // 💡 (5, 0, 5) ならクリア
+    if (s3_volumes[0] === 5 && s3_volumes[1] === 0 && s3_volumes[2] === 5) {
+        sendCommand("N505 ");
+        document.getElementById("result-step3").innerText = "🎉 CLEAR!";
+        document.getElementById("result-step3").style.color = "#2ea043";
+        setTimeout(() => {
+            initBetrayal();
+        }, 2000);
+    } else {
+        sendCommand("NErr ");
+        document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発動失敗)";
+        document.getElementById("result-step3").style.color = "#ff7b72";
+        
+        let errBeep = 0;
+        let errInt = setInterval(() => {
+            sendCommand("B");
+            errBeep++;
+            if(errBeep >= 4) clearInterval(errInt);
+        }, 150);
+
+        setTimeout(() => { 
+            resetStep3Puzzle(); 
+        }, 2000);
+    }
+}
+
+function resetStep3Puzzle() {
+    if (s3_isTransferring) return;
+    s3_volumes = [10, 0, 0]; 
+    s3_selectedNode = null;
+    s3_moves = 9;
+    updateS3NodeColors();
+    document.getElementById("result-step3").innerText = ""; 
+    sendCommand("N-09 ");
+}
+
+// ==========================================
+// 💡 アプリ遷移とタイマー処理
+// ==========================================
 function completeWire(num) {
     if(num === 1) {
         document.getElementById('line-1').style.display = 'block';
@@ -503,11 +688,13 @@ function switchApp(appId) {
             setTimeout(initAITutorial, 600);
         }
     }
+    
+    // 💡 FILE 03 (水差し) を開いた瞬間に、モニターに [ - 0 9 ] を表示させる
+    if (appId === 'step3') {
+        setTimeout(() => sendCommand("N-09 "), 500);
+    }
 }
 
-// ==========================================
-// 💡 パネル開放権の自動付与タイマー（2分 = 120秒ごと）
-// ==========================================
 let stepTimeCounter = { 1: 0, 2: 0, 3: 0 };
 setInterval(() => {
     if (currentActiveStep !== null) {
@@ -519,9 +706,8 @@ setInterval(() => {
     }
 }, 1000); 
 
-
 // ==========================================
-// ポリオミノ盤面生成ロジック (STEP3用)
+// 💡 ポリオミノ盤面生成ロジック
 // ==========================================
 const polyPiecesLayout = [
     [['',  '',  'R', ''],['U', 'V', 'W', 'X']],
@@ -577,7 +763,7 @@ function clickPolyomino(char) {
 }
 
 // ==========================================
-// シリアル通信 & ハードウェアテスト
+// 💡 シリアル通信 & ハードウェアテスト
 // ==========================================
 let port; let writer;
 async function connectSerial() {
@@ -616,7 +802,7 @@ async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
 
 function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000"), 1000); }
 function testBuzzer() { sendCommand("B"); }
-function testMonitor() { sendCommand("S1231"); setTimeout(() => sendCommand("S0000"), 1000); }
+function testMonitor() { sendCommand("N8888"); setTimeout(() => sendCommand("N    "), 1000); }
 
 function testWireLight() {
     if(document.getElementById('btn-test-light').disabled) return;
@@ -627,13 +813,13 @@ function testWireLight() {
 function testWireBuzzer() {
     if(document.getElementById('btn-test-buzzer').disabled) return;
     sendCommand("B"); 
-    document.getElementById('btn-next-wire2').style.display = 'block';
+    document.getElementById('btn-next-wire3').style.display = 'block';
 }
 function testWireMonitor() {
     if(document.getElementById('btn-test-monitor').disabled) return;
-    sendCommand("S8888"); 
-    setTimeout(() => sendCommand("S0000"), 2500); 
-    document.getElementById('btn-next-wire3').style.display = 'block';
+    sendCommand("N8888"); 
+    setTimeout(() => sendCommand("N    "), 2500); 
+    document.getElementById('btn-next-wire2').style.display = 'block';
 }
 
 function devUnlockTabs() { 
@@ -689,7 +875,6 @@ function addPoint(step) {
     document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
 }
 
-// 💡 画像表示の確実化処理（背景色も透明に設定）
 function renderPuzzleGrid(step) {
     const pIdx = currentPuzzleIdx[step];
     const grid = document.getElementById(`puzzleGrid-s${step}`);
@@ -699,7 +884,6 @@ function renderPuzzleGrid(step) {
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
     placeholder.style.backgroundImage = "none";
-    // 💡 親要素の背景色が邪魔しないよう強制的に透明化
     placeholder.parentElement.style.backgroundColor = "transparent"; 
     placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; display: block; border-radius: 3px;">`;
     
@@ -717,7 +901,7 @@ function renderPuzzleGrid(step) {
         grid.style.height = "100%";
         grid.style.gridTemplateColumns = "repeat(3, 1fr)";
         grid.style.gridTemplateRows = "repeat(3, 1fr)";
-        grid.style.backgroundColor = "transparent"; // 💡 ここも強制透明化
+        grid.style.backgroundColor = "transparent";
         grid.style.pointerEvents = "auto";
         
         overlay.style.display = "none";
@@ -805,7 +989,8 @@ function unlockAnalysis(step) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
         
-        if (step === 2 && unlockedAnalysisCount[2] === 3) {
+        // 💡 FILE 03 (水差し) の数字解放
+        if (step === 3 && unlockedAnalysisCount[3] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
             document.getElementById("vol-2").style.display = "block";
@@ -830,21 +1015,21 @@ function updateAnalysisCarousel(step) {
                 placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを開放</span>`;
             }
         } else if (step === 2) {
+            placeholder.innerHTML = "";
+            placeholder.style.backgroundImage = `url('FILE2_hint${idx + 1}.jpg')`;
+            placeholder.style.backgroundSize = "contain";
+            placeholder.style.backgroundPosition = "center";
+            placeholder.style.backgroundRepeat = "no-repeat";
+        } else if (step === 3) {
             if (idx === 2) {
                 placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインプロトコルの<br>データ容量が可視化されました</span>`;
             } else {
                 placeholder.innerHTML = "";
-                placeholder.style.backgroundImage = `url('FILE2_hint${idx + 1}.jpg')`;
+                placeholder.style.backgroundImage = `url('FILE3_hint${idx + 1}.jpg')`;
                 placeholder.style.backgroundSize = "contain";
                 placeholder.style.backgroundPosition = "center";
                 placeholder.style.backgroundRepeat = "no-repeat";
             }
-        } else if (step === 3) {
-            placeholder.innerHTML = "";
-            placeholder.style.backgroundImage = `url('FILE3_hint${idx + 1}.jpg')`;
-            placeholder.style.backgroundSize = "contain";
-            placeholder.style.backgroundPosition = "center";
-            placeholder.style.backgroundRepeat = "no-repeat";
         } else {
             placeholder.innerHTML = `DECRYPTED: DATA ${pName}`;
         }
@@ -901,174 +1086,6 @@ document.addEventListener('keydown', e => {
 });
 
 // ==========================================
-// STEP 1 メイン
-// ==========================================
-const s1_answer = ["F", "B", "A", "E", "C", "D"];
-function checkClearStep1() {
-    const slots = document.querySelectorAll('#app-step1 .s1-slot');
-    let placedItems = [];
-    for (let slot of slots) {
-        if (slot.children.length === 0) {
-            const res = document.getElementById("result-step1");
-            res.innerText = "❌";
-            res.style.color = "#ff7b72";
-            setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
-            return;
-        }
-        placedItems.push(slot.children[0].id);
-    }
-
-    let isCorrect = placedItems.every((val, i) => val === s1_answer[i]);
-    const res = document.getElementById("result-step1");
-    if (isCorrect) {
-        res.innerText = "🎉 CLEAR!";
-        res.style.color = "#2ea043";
-        document.getElementById('line-2').style.display = 'block';
-        document.getElementById('line-2').classList.add('active');
-        document.getElementById('tab-wire2').style.display = 'block';
-        sendCommand("P1111"); 
-        setTimeout(() => sendCommand("P0000"), 3000); 
-        
-        setTimeout(() => switchApp('wire2'), 2000); 
-    } else {
-        res.innerText = "❌";
-        res.style.color = "#ff7b72";
-        setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
-    }
-}
-
-// ==========================================
-// STEP 2 メイン 
-// ==========================================
-const S2_CAPACITIES = [10, 7, 3];
-let s2_volumes = [10, 0, 0];
-let s2_selectedNode = null;
-let s2_isTransferring = false;
-
-function updateNodeColors() {
-    for (let i = 0; i < 3; i++) {
-        const node = document.getElementById(`node-${i}`);
-        const dot = document.getElementById(`dot-${i}`);
-        const vol = document.getElementById(`vol-${i}`);
-        if(vol) vol.innerText = s2_volumes[i];
-        
-        if (s2_isTransferring) {
-            node.className = "s2-node";
-            if(s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
-            dot.className = "s2-status-dot";
-            dot.innerText = "⚪";
-            continue;
-        }
-
-        node.className = "s2-node"; 
-        if (s2_volumes[i] === S2_CAPACITIES[i] && S2_CAPACITIES[i] > 0) node.classList.add('full');
-        
-        if (s2_selectedNode === null) {
-            if (s2_volumes[i] > 0) {
-                dot.className = "s2-status-dot active"; dot.innerText = "⚫";
-            } else {
-                dot.className = "s2-status-dot"; dot.innerText = "⚪";
-            }
-        } else {
-            if (i === s2_selectedNode) {
-                node.classList.add('selected');
-                dot.className = "s2-status-dot active"; dot.innerText = "⚫";
-            } else {
-                if (S2_CAPACITIES[i] - s2_volumes[i] > 0) {
-                    dot.className = "s2-status-dot active"; dot.innerText = "⚫";
-                } else {
-                    dot.className = "s2-status-dot"; dot.innerText = "⚪";
-                }
-            }
-        }
-    }
-}
-
-function handleNodeClick(index) {
-    if (s2_isTransferring) return; 
-    if (s2_selectedNode === null) {
-        if (s2_volumes[index] === 0) return; 
-        s2_selectedNode = index;
-        updateNodeColors();
-    } else {
-        if (s2_selectedNode === index) { 
-            s2_selectedNode = null;
-            updateNodeColors();
-            return;
-        }
-        let from = s2_selectedNode; let to = index;
-        s2_selectedNode = null;
-
-        let transferAmount = Math.min(s2_volumes[from], S2_CAPACITIES[to] - s2_volumes[to]);
-        if (transferAmount > 0) {
-            s2_volumes[from] -= transferAmount;
-            s2_volumes[to] += transferAmount;
-            
-            let beeps = 0; s2_isTransferring = true; updateNodeColors();
-            const interval = setInterval(() => {
-                sendCommand("B");
-                beeps++;
-                if (beeps >= transferAmount) {
-                    clearInterval(interval);
-                    s2_isTransferring = false;
-                    updateNodeColors();
-                    if (s2_volumes[0] === 5 && s2_volumes[1] === 5) {
-                        document.getElementById("result-step2").innerText = "🎉 CLEAR!";
-                        document.getElementById("result-step2").style.color = "#2ea043";
-                        document.getElementById('line-4').style.display = 'block';
-                        document.getElementById('line-4').classList.add('active');
-                        document.getElementById('tab-wire3').style.display = 'block';
-                        
-                        setTimeout(() => switchApp('wire3'), 2000);
-                    }
-                }
-            }, 400); 
-        } else {
-            updateNodeColors();
-        }
-    }
-}
-function resetStep2() {
-    if (s2_isTransferring) return;
-    s2_volumes = [10, 0, 0]; s2_selectedNode = null;
-    updateNodeColors();
-    document.getElementById("result-step2").innerText = ""; 
-}
-
-// ==========================================
-// 💡 STEP 3 メイン
-// ==========================================
-function executeMainPuzzle() {
-    const slots = document.querySelectorAll('#app-step3 .s3-slot');
-    let placedWords = [];
-    for (let slot of slots) {
-        if (slot.children.length === 0) { 
-            return; 
-        }
-        placedWords.push(slot.children[0].id);
-    }
-
-    let validJoints = 0;
-    for (let i = 0; i < 4; i++) {
-        let w1 = placedWords[i], w2 = placedWords[i+1];
-        if (getRow(w1[0]) !== getRow(w2[0]) && getRow(w1[1]) !== getRow(w2[1]) && getRow(w1[2]) !== getRow(w2[2])) validJoints++;
-    }
-    
-    const res = document.getElementById("result-step3");
-    if (validJoints === 4) {
-        res.innerText = "🎉 CLEAR!";
-        res.style.color = "#0f0";
-        setTimeout(() => {
-            initBetrayal();
-        }, 500);
-    } else {
-        res.innerText = "❌";
-        res.style.color = "#ff7b72";
-        setTimeout(() => { if(res.innerText === "❌") res.innerText = ""; }, 2000);
-    }
-}
-
-// ==========================================
 // LAST STEP (BOMB) メイン
 // ==========================================
 let lastTimerInterval;
@@ -1103,6 +1120,6 @@ window.addEventListener('DOMContentLoaded', () => {
     initGojuon();
     initPolyomino();
     initPuzzles(); 
-    updateNodeColors(); 
+    updateS3NodeColors(); 
     alignBackgroundGrid(); 
 });
