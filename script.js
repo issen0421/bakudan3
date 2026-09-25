@@ -168,7 +168,7 @@ const aiSequence = [
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
     { text: "[System AI]: 解読が困難な場合は、対象のプロトコルを開いて分析（思考）を続けてください。\n2分経過するごとにシステムから『パネル開放権』が1つ付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
     { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
+    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビ बुन्देलーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
 
 let aiIdx = 0;
@@ -468,7 +468,7 @@ function checkClearStep1() {
 }
 
 // ==========================================
-// 💡 STEP 2 (新): 曜日並べ替えパズル
+// 💡 STEP 2: 曜日並べ替えパズル
 // ==========================================
 function executeStep2Puzzle() {
     const slots = document.querySelectorAll('#app-step2 .s3-slot');
@@ -534,7 +534,7 @@ function updateS2JudgeButton() {
 }
 
 // ==========================================
-// 💡 STEP 3 (新): 神ギミック・水差しパズル（10, 3, 7）
+// 💡 STEP 3: 神ギミック・水差しパズル（10, 3, 7）
 // ==========================================
 const S3_CAPACITIES = [10, 3, 7]; 
 let s3_volumes = [10, 0, 0];
@@ -585,7 +585,6 @@ function handleS3NodeClick(index) {
             s3_volumes[to] += transferAmount;
             
             s3_moves--;
-            // 💡 空白が削除されないように、アンダーバーで埋めて5文字をキープ
             let moveStr = ("0" + s3_moves).slice(-2);
             sendCommand("N_-" + moveStr);
             
@@ -611,14 +610,20 @@ function handleS3NodeClick(index) {
 
 function checkS3Clear() {
     if (s3_volumes[0] === 5 && s3_volumes[1] === 0 && s3_volumes[2] === 5) {
-        sendCommand("N_505"); // 💡 5文字キープ
+        sendCommand("N_505"); 
         document.getElementById("result-step3").innerText = "🎉 CLEAR!";
         document.getElementById("result-step3").style.color = "#2ea043";
         setTimeout(() => {
             initBetrayal();
         }, 2000);
     } else {
-        sendCommand("NErr_"); // 💡 5文字キープ
+        // 💡 失敗時、現在のそれぞれの容量をモニターにそのまま表示する
+        let resStr = s3_volumes[0].toString() + s3_volumes[1].toString() + s3_volumes[2].toString();
+        // 万が一 10,0,0 だった場合は "1000" (4文字)になるのでそのまま、3桁(例:631)なら先頭に_をつけて4文字にする
+        if (resStr.length === 3) resStr = "_" + resStr;
+        
+        sendCommand("N" + resStr); 
+
         document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発動失敗)";
         document.getElementById("result-step3").style.color = "#ff7b72";
         
@@ -642,7 +647,7 @@ function resetStep3Puzzle() {
     s3_moves = 9;
     updateS3NodeColors();
     document.getElementById("result-step3").innerText = ""; 
-    sendCommand("N_-09"); // 💡 5文字キープ
+    sendCommand("N_-09"); 
 }
 
 // ==========================================
@@ -688,7 +693,7 @@ function switchApp(appId) {
     }
     
     if (appId === 'step3') {
-        setTimeout(() => sendCommand("N_-09"), 500); // 💡 5文字キープ
+        setTimeout(() => sendCommand("N_-09"), 500); 
     }
 }
 
@@ -799,7 +804,6 @@ async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
 
 function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000"), 1000); }
 function testBuzzer() { sendCommand("B"); }
-// 💡 スペースの代わりにアンダーバーを使って5文字キープ
 function testMonitor() { sendCommand("N8888"); setTimeout(() => sendCommand("N____"), 1000); }
 
 function testWireLight() {
@@ -816,7 +820,7 @@ function testWireBuzzer() {
 function testWireMonitor() {
     if(document.getElementById('btn-test-monitor').disabled) return;
     sendCommand("N8888"); 
-    setTimeout(() => sendCommand("N____"), 2500); // 💡 スペースの代わりにアンダーバーを使用
+    setTimeout(() => sendCommand("N____"), 2500); 
     document.getElementById('btn-next-wire2').style.display = 'block';
 }
 
