@@ -14,7 +14,7 @@
         <p>セキュリティプロトコル違反。<br>このシステムはモバイル端末からのアクセスを許可していません。<br>指定のPC端末から再接続してください。</p>
     </div>
 
-    <!-- 🌟 オープニングポップアップ (ボス) -->
+    <!-- 🌟 オープニングポップアップ -->
     <div id="intro-modal" onclick="nextIntro()">
         <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
             <div id="intro-text" class="intro-text"></div>
@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <!-- 🌟 ボス裏切りポップアップ (FILE 03 クリア後) -->
+    <!-- 🌟 ボス裏切りポップアップ -->
     <div id="betrayal-modal" onclick="nextBetrayal()">
         <div class="modal-content" onclick="event.stopPropagation(); nextBetrayal();">
             <div id="betrayal-text" class="intro-text"></div>
@@ -53,15 +53,15 @@
             <div class="tab-line" id="line-1" style="display:none;"></div>
             <button class="tab-btn" id="tab-step1" onclick="switchApp('step1')" style="display:none;">FILE 01</button>
             
-            <!-- 配線2 -> FILE02 -->
+            <!-- 配線2 -> FILE02 (モニターに変更) -->
             <div class="tab-line" id="line-2" style="display:none;"></div>
-            <button class="tab-icon" id="tab-wire2" onclick="switchApp('wire2')" style="display:none;">🔊</button>
+            <button class="tab-icon" id="tab-wire2" onclick="switchApp('wire2')" style="display:none;">📟</button>
             <div class="tab-line" id="line-3" style="display:none;"></div>
             <button class="tab-btn" id="tab-step2" onclick="switchApp('step2')" style="display:none;">FILE 02</button>
             
-            <!-- 配線3 -> FILE03 -->
+            <!-- 配線3 -> FILE03 (ブザーに変更) -->
             <div class="tab-line" id="line-4" style="display:none;"></div>
-            <button class="tab-icon" id="tab-wire3" onclick="switchApp('wire3')" style="display:none;">📟</button>
+            <button class="tab-icon" id="tab-wire3" onclick="switchApp('wire3')" style="display:none;">🔊</button>
             <div class="tab-line" id="line-5" style="display:none;"></div>
             <button class="tab-btn" id="tab-step3" onclick="switchApp('step3')" style="display:none;">FILE 03</button>
 
@@ -82,7 +82,7 @@
         <button class="debug-btn" onclick="testBuzzer()">🔊 ブザー</button>
         <button class="debug-btn" onclick="testMonitor()">📟 モニター</button>
         <span style="margin-left:20px;">👑 開発用:</span>
-        <button class="debug-btn dev" onclick="devUnlockTabs()">全タブ解放</button>
+        <button class="debug-btn dev" onclick="devUnlockTabs()">全タブ開放</button>
     </div>
 
     <!-- ========================================== -->
@@ -102,11 +102,11 @@
             </p>
 
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 0: 共通グラウンド(GND)の構築</p>
+            <!-- 既存の指示書内容 -->
             <p style="color:#c9d1d9;">
                 ブレッドボード（白い基盤）の青い線の列（マイナス列）を使用する。<br>
                 ワイヤーの片方をArduinoの <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピンに挿し、反対側をブレッドボードの <span style="color:#58a6ff; font-weight:bold;">マイナス列の一番上の穴</span> に挿せ。
             </p>
-
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 1: ライトを配置する</p>
             <p style="color:#c9d1d9;">4つのライトをすべてブレッドボードに挿していく。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -115,7 +115,6 @@
                 【3番目】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e20]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e19]</span> に挿す<br>
                 【一番右】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e15]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e14]</span> に挿す
             </p>
-
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: 抵抗器を配置する</p>
             <p style="color:#c9d1d9;">4つの抵抗器（細い部品）をコの字に曲げ、ライトのマイナス側からマイナス列へ繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -124,7 +123,6 @@
                 【3番目用】 片方を <span style="color:#fff; font-weight:bold;">[c20]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す<br>
                 【一番右用】 片方を <span style="color:#fff; font-weight:bold;">[c15]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す
             </p>
-
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 3: コードを接続する</p>
             <p style="color:#c9d1d9;">Arduinoの <span style="color:#fdd900; font-weight:bold;">[DIGITAL]</span> ピンと、ライトのプラス側をコードで繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -156,7 +154,6 @@
         </div>
 
         <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 10px;">
-            <!-- 💡 上枠のパディングを調整して少しスリムに -->
             <div class="s1-slots" id="s1-slots-container" style="padding: 10px; min-height: 70px;">
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -165,8 +162,7 @@
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
             </div>
-            
-            <!-- 💡 下枠（アイテムプール）のパディングを削って高さを最小限にし、隙間（margin-top）で配置 -->
+            <br>
             <div class="s1-items" id="s1-item-pool" style="margin-top: 10px; padding: 10px; min-height: 70px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
                 <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                 <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
@@ -223,65 +219,68 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 配線 2 (ブザー) -->
+    <!-- 配線 2 (モニター) 💡 FILE 02用に変更 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-wire2">
-        <h2>ハードウェア配線 (ブザー)</h2>
-        <div class="instruction">指示書に従ってデバイスに「ブザー」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
+        <h2>ハードウェア配線 (モニター)</h2>
+        <div class="instruction">指示書に従ってデバイスに「モニター」と「バイパスコード」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ブザーの配線方法について 】</h3>
-            
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: ブザーを配置する</p>
-            <p style="color:#c9d1d9;">ブザーは極性（プラスマイナスの向き）を間違えると鳴らないので注意して挿せ。</p>
+            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
+            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: モニターを接続する</p>
+            <p style="color:#c9d1d9;">モニターの裏側から出ている4本の線を、それぞれ直接Arduinoとブレッドボードに接続せよ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・<span style="color:#ff7b72; font-weight:bold;">長い足（＋）</span> を <span style="color:#fff; font-weight:bold;">[e7]</span> に挿す<br>
-                ・<span style="color:#58a6ff; font-weight:bold;">短い足（－）</span> を <span style="color:#fff; font-weight:bold;">[e10]</span> に挿す
+                ・<span style="color:#fff; font-weight:bold;">[CLK]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[7]</span> ピン<br>
+                ・<span style="color:#fff; font-weight:bold;">[DIO]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[8]</span> ピン<br>
+                ・<span style="color:#fff; font-weight:bold;">[GND]</span> と書かれた線 ➔ Arduinoの <span style="color:#58a6ff; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピン<br>
+                ・<span style="color:#fff; font-weight:bold;">[5V]</span> と書かれた線 ➔ Arduinoの <span style="color:#ff7b72; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#ff7b72; font-weight:bold;">[5V]</span> ピン
             </p>
-
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: コードを接続する</p>
-            <p style="color:#c9d1d9;">Arduinoとブレッドボードを2本のワイヤーで繋ぐ。</p>
+            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: システム安定化用バイパスを構築する</p>
+            <p style="color:#c9d1d9;">最後に、システムを安定させるための重要なバイパスコードを1本繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                【プラス側】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[6]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a7]</span> を繋ぐ<br>
-                【マイナス側】 片方をブレッドボード <span style="color:#fff; font-weight:bold;">[a10]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に繋ぐ
+                ・ワイヤーの片方を Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[9]</span> ピンに挿す<br>
+                ・もう片方をブレッドボードの <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> に挿す
             </p>
         </div>
 
         <div style="text-align:center; margin-top:20px;">
-            <button id="btn-test-buzzer" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireBuzzer()">🔊 テスト音を実行</button>
-            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ 「ピッ」と音が鳴れば配線成功です。</p>
+            <button id="btn-test-monitor" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireMonitor()">📟 テスト表示を実行</button>
+            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ モニターに記号（8888）が表示されれば配線成功です。</p>
         </div>
 
-        <button class="execute-btn" id="btn-next-wire2" onclick="completeWire(2)" style="max-width: 400px; margin: 30px auto 0; display: none;">音が鳴った (FILE 02 へ)</button>
+        <button class="execute-btn" id="btn-next-wire2" onclick="completeWire(2)" style="max-width: 400px; margin: 30px auto 0; display: none;">表示された (FILE 02 へ)</button>
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 2: FILE 02 (STEP2) -->
+    <!-- APP 2: FILE 02 (STEP2 曜日並べ替え) 💡 FILE 02用に変更 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <h2>FILE 02 5 5 0にしろ</h2>
-        <div class="s2-ui-wrapper">
-            <div class="s2-container">
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-0" onclick="handleNodeClick(0)"></div>
-                    <div class="s2-status-dot" id="dot-0">⚪</div>
-                    <div class="s2-vol" id="vol-0">10</div>
+        <h2>FILE 02 正しい順番で並べろ</h2>
+        <div id="pieces-container" class="pieces-container"></div>
+        <div class="puzzle-layout">
+            <div class="s3-slots-container">
+                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+            </div>
+
+            <div class="s3-side-panel">
+                <div class="s3-items" id="s3-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
+                    <div class="s3-item-slot item-slot" id="pool-SUN"><div class="s3-item item" draggable="true" id="SUN" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">☀️</div></div>
+                    <div class="s3-item-slot item-slot" id="pool-MON"><div class="s3-item item" draggable="true" id="MON" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🌙</div></div>
+                    <div class="s3-item-slot item-slot" id="pool-TUE"><div class="s3-item item" draggable="true" id="TUE" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🔥</div></div>
+                    <div class="s3-item-slot item-slot" id="pool-WED"><div class="s3-item item" draggable="true" id="WED" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">💧</div></div>
+                    <div class="s3-item-slot item-slot" id="pool-THU"><div class="s3-item item" draggable="true" id="THU" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🌳</div></div>
+                    <div class="s3-item-slot item-slot" id="pool-FRI"><div class="s3-item item" draggable="true" id="FRI" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">💰</div></div>
+                    <div class="s3-item-slot item-slot" id="pool-SAT"><div class="s3-item item" draggable="true" id="SAT" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🪐</div></div>
                 </div>
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-1" onclick="handleNodeClick(1)"></div>
-                    <div class="s2-status-dot" id="dot-1">⚪</div>
-                    <div class="s2-vol" id="vol-1">0</div>
-                </div>
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-2" onclick="handleNodeClick(2)"></div>
-                    <div class="s2-status-dot" id="dot-2">⚪</div>
-                    <div class="s2-vol" id="vol-2">0</div>
-                </div>
+                <button class="execute-btn" id="btn-judge-s3" onclick="executeStep2Puzzle()" style="background: #444; opacity: 0.5; cursor: not-allowed;" disabled>判定</button>
+                <button class="execute-btn" onclick="resetStep2Puzzle()" style="background: #444; margin-top: 15px;">🔄 リセット</button>
+                <div id="result-step2" class="result-msg"></div>
             </div>
         </div>
-
-        <button class="execute-btn" onclick="resetStep2()" style="background: #444; max-width: 200px; margin: 0 auto; display: block;">🔄 リセット</button>
-        <div id="result-step2" class="result-msg"></div>
 
         <div class="split-layout">
             <div class="puzzle-panel">
@@ -305,7 +304,7 @@
                     <div class="feedback" id="terminalFeedback-s2"></div>
                 </div>
             </div>
-            
+
             <div class="analysis-panel">
                 <div class="panel-header">
                     <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
@@ -326,70 +325,60 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 配線 3 (モニター) -->
+    <!-- 配線 3 (ブザー) 💡 FILE 03用に変更 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-wire3">
-        <h2>ハードウェア配線 (モニター)</h2>
-        <div class="instruction">指示書に従ってデバイスに「モニター」と「バイパスコード」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
+        <h2>ハードウェア配線 (ブザー)</h2>
+        <div class="instruction">指示書に従ってデバイスに「ブザー」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
-            
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: モニターを接続する</p>
-            <p style="color:#c9d1d9;">モニターの裏側から出ている4本の線を、それぞれ直接Arduinoとブレッドボードに接続せよ。</p>
+            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ブザーの配線方法について 】</h3>
+            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: ブザーを配置する</p>
+            <p style="color:#c9d1d9;">ブザーは極性（プラスマイナスの向き）を間違えると鳴らないので注意して挿せ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・<span style="color:#fff; font-weight:bold;">[CLK]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[7]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[DIO]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[8]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[GND]</span> と書かれた線 ➔ Arduinoの <span style="color:#58a6ff; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[5V]</span> と書かれた線 ➔ Arduinoの <span style="color:#ff7b72; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#ff7b72; font-weight:bold;">[5V]</span> ピン
+                ・<span style="color:#ff7b72; font-weight:bold;">長い足（＋）</span> を <span style="color:#fff; font-weight:bold;">[e7]</span> に挿す<br>
+                ・<span style="color:#58a6ff; font-weight:bold;">短い足（－）</span> を <span style="color:#fff; font-weight:bold;">[e10]</span> に挿す
             </p>
-
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: システム安定化用バイパスを構築する</p>
-            <p style="color:#c9d1d9;">最後に、システムを安定させるための重要なバイパスコードを1本繋ぐ。</p>
+            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: コードを接続する</p>
+            <p style="color:#c9d1d9;">Arduinoとブレッドボードを2本のワイヤーで繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・ワイヤーの片方を Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[9]</span> ピンに挿す<br>
-                ・もう片方をブレッドボードの <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> に挿す
+                【プラス側】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[6]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a7]</span> を繋ぐ<br>
+                【マイナス側】 片方をブレッドボード <span style="color:#fff; font-weight:bold;">[a10]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に繋ぐ
             </p>
         </div>
 
         <div style="text-align:center; margin-top:20px;">
-            <button id="btn-test-monitor" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireMonitor()">📟 テスト表示を実行</button>
-            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ モニターに記号（8888）が表示されれば配線成功です。</p>
+            <button id="btn-test-buzzer" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireBuzzer()">🔊 テスト音を実行</button>
+            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ 「ピッ」と音が鳴れば配線成功です。</p>
         </div>
 
-        <button class="execute-btn" id="btn-next-wire3" onclick="completeWire(3)" style="max-width: 400px; margin: 30px auto 0; display: none;">表示された (FILE 03 へ)</button>
+        <button class="execute-btn" id="btn-next-wire3" onclick="completeWire(3)" style="max-width: 400px; margin: 30px auto 0; display: none;">音が鳴った (FILE 03 へ)</button>
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 3: FILE 03 (STEP3) -->
+    <!-- APP 3: FILE 03 (STEP3 水差しパズル) 💡 神ギミック仕様に変更 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <h2>FILE 03 正しい順番で並べろ</h2>
-        <div id="pieces-container" class="pieces-container"></div>
-        <div class="puzzle-layout">
-            <div class="s3-slots-container">
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-            </div>
-
-            <div class="s3-side-panel">
-                <div class="s3-items" id="s3-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
-                    <div class="s3-item-slot item-slot" id="pool-SUN"><div class="s3-item item" draggable="true" id="SUN" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">☀️</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-MON"><div class="s3-item item" draggable="true" id="MON" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🌙</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-TUE"><div class="s3-item item" draggable="true" id="TUE" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🔥</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-WED"><div class="s3-item item" draggable="true" id="WED" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">💧</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-THU"><div class="s3-item item" draggable="true" id="THU" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🌳</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-FRI"><div class="s3-item item" draggable="true" id="FRI" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">💰</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-SAT"><div class="s3-item item" draggable="true" id="SAT" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🪐</div></div>
+        <h2>FILE 03 システムに緊急事態を誤認させ、フェイルセーフを起動せよ</h2>
+        <div class="s2-ui-wrapper">
+            <div class="s2-container">
+                <div class="s2-node-wrapper">
+                    <div class="s2-node" id="node-0" onclick="handleS3NodeClick(0)"></div>
+                    <div class="s2-vol" id="vol-0" style="display:none;">10</div>
                 </div>
-                <button class="execute-btn" id="btn-judge-s3" onclick="executeMainPuzzle()" style="background: #444; opacity: 0.5; cursor: not-allowed;" disabled>判定</button>
-                <button class="execute-btn" onclick="resetStep3()" style="background: #444; margin-top: 15px;">🔄 リセット</button>
-                <div id="result-step3" class="result-msg"></div>
+                <div class="s2-node-wrapper">
+                    <div class="s2-node" id="node-1" onclick="handleS3NodeClick(1)"></div>
+                    <div class="s2-vol" id="vol-1" style="display:none;">0</div>
+                </div>
+                <div class="s2-node-wrapper">
+                    <div class="s2-node" id="node-2" onclick="handleS3NodeClick(2)"></div>
+                    <div class="s2-vol" id="vol-2" style="display:none;">0</div>
+                </div>
             </div>
         </div>
+
+        <button class="execute-btn" onclick="resetStep3Puzzle()" style="background: #444; max-width: 200px; margin: 0 auto; display: block;">🔄 リセット</button>
+        <div id="result-step3" class="result-msg"></div>
 
         <div class="split-layout">
             <div class="puzzle-panel">
@@ -413,7 +402,7 @@
                     <div class="feedback" id="terminalFeedback-s3"></div>
                 </div>
             </div>
-
+            
             <div class="analysis-panel">
                 <div class="panel-header">
                     <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
