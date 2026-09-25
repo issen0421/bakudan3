@@ -536,11 +536,11 @@ function updateS2JudgeButton() {
 // ==========================================
 // 💡 STEP 3 (新): 神ギミック・水差しパズル（10, 3, 7）
 // ==========================================
-const S3_CAPACITIES = [10, 3, 7]; // 💡 容量を 10, 3, 7 に変更
+const S3_CAPACITIES = [10, 3, 7]; 
 let s3_volumes = [10, 0, 0];
 let s3_selectedNode = null;
 let s3_isTransferring = false;
-let s3_moves = 9; // 💡 残り手数
+let s3_moves = 9; 
 
 function updateS3NodeColors() {
     for (let i = 0; i < 3; i++) {
@@ -585,9 +585,9 @@ function handleS3NodeClick(index) {
             s3_volumes[to] += transferAmount;
             
             s3_moves--;
-            // 💡 モニターに残り手数を送信
+            // 💡 空白が削除されないように、アンダーバーで埋めて5文字をキープ
             let moveStr = ("0" + s3_moves).slice(-2);
-            sendCommand("N-" + moveStr + " ");
+            sendCommand("N_-" + moveStr);
             
             let beeps = 0; s3_isTransferring = true; updateS3NodeColors();
             const interval = setInterval(() => {
@@ -598,7 +598,6 @@ function handleS3NodeClick(index) {
                     s3_isTransferring = false;
                     updateS3NodeColors();
                     
-                    // 💡 9手目に到達したら判定
                     if (s3_moves <= 0) {
                         checkS3Clear();
                     }
@@ -611,16 +610,15 @@ function handleS3NodeClick(index) {
 }
 
 function checkS3Clear() {
-    // 💡 (5, 0, 5) ならクリア
     if (s3_volumes[0] === 5 && s3_volumes[1] === 0 && s3_volumes[2] === 5) {
-        sendCommand("N505 ");
+        sendCommand("N_505"); // 💡 5文字キープ
         document.getElementById("result-step3").innerText = "🎉 CLEAR!";
         document.getElementById("result-step3").style.color = "#2ea043";
         setTimeout(() => {
             initBetrayal();
         }, 2000);
     } else {
-        sendCommand("NErr ");
+        sendCommand("NErr_"); // 💡 5文字キープ
         document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発動失敗)";
         document.getElementById("result-step3").style.color = "#ff7b72";
         
@@ -644,7 +642,7 @@ function resetStep3Puzzle() {
     s3_moves = 9;
     updateS3NodeColors();
     document.getElementById("result-step3").innerText = ""; 
-    sendCommand("N-09 ");
+    sendCommand("N_-09"); // 💡 5文字キープ
 }
 
 // ==========================================
@@ -689,9 +687,8 @@ function switchApp(appId) {
         }
     }
     
-    // 💡 FILE 03 (水差し) を開いた瞬間に、モニターに [ - 0 9 ] を表示させる
     if (appId === 'step3') {
-        setTimeout(() => sendCommand("N-09 "), 500);
+        setTimeout(() => sendCommand("N_-09"), 500); // 💡 5文字キープ
     }
 }
 
@@ -802,7 +799,8 @@ async function sendCommand(cmd) { if (writer) await writer.write(cmd + "\n"); }
 
 function testLight() { sendCommand("P1111"); setTimeout(() => sendCommand("P0000"), 1000); }
 function testBuzzer() { sendCommand("B"); }
-function testMonitor() { sendCommand("N8888"); setTimeout(() => sendCommand("N    "), 1000); }
+// 💡 スペースの代わりにアンダーバーを使って5文字キープ
+function testMonitor() { sendCommand("N8888"); setTimeout(() => sendCommand("N____"), 1000); }
 
 function testWireLight() {
     if(document.getElementById('btn-test-light').disabled) return;
@@ -818,7 +816,7 @@ function testWireBuzzer() {
 function testWireMonitor() {
     if(document.getElementById('btn-test-monitor').disabled) return;
     sendCommand("N8888"); 
-    setTimeout(() => sendCommand("N    "), 2500); 
+    setTimeout(() => sendCommand("N____"), 2500); // 💡 スペースの代わりにアンダーバーを使用
     document.getElementById('btn-next-wire2').style.display = 'block';
 }
 
@@ -989,7 +987,6 @@ function unlockAnalysis(step) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
         
-        // 💡 FILE 03 (水差し) の数字解放
         if (step === 3 && unlockedAnalysisCount[3] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
