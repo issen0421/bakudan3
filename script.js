@@ -1,4 +1,32 @@
 // ==========================================
+// 💡 ダミー銀行HP ＆ ログイン処理
+// ==========================================
+function checkBankLogin() {
+    const pass = document.getElementById('staff-pass').value;
+    if (pass === "OVERRIDE") {
+        document.getElementById('login-err').style.display = 'none';
+        
+        // グリッチエフェクト（バグったような演出）
+        const bankPage = document.getElementById('dummy-bank-page');
+        const modal = document.getElementById('bank-login-modal');
+        modal.style.display = 'none';
+        
+        bankPage.style.backgroundColor = "#000";
+        bankPage.style.color = "#0f0";
+        bankPage.innerHTML = "<h1 style='margin-top:20vh; font-family:monospace;'>ACCESS GRANTED...<br>SYSTEM OVERRIDE INITIATED.</h1>";
+        
+        // 少しチラつかせてからCHROMAKEYを起動
+        setTimeout(() => { bankPage.style.opacity = "0"; }, 1500);
+        setTimeout(() => { 
+            bankPage.style.display = "none"; 
+            initIntro(); // 💡 ここでついにゲーム本編がスタート！
+        }, 2000);
+    } else {
+        document.getElementById('login-err').style.display = 'block';
+    }
+}
+
+// ==========================================
 // 💡 メッセージ表示用のタイピングエフェクトと音声
 // ==========================================
 let isTyping = false;
@@ -74,16 +102,17 @@ function finishTyping() {
 // 💡 モーダル・チュートリアル制御
 // ==========================================
 const introStory = [
-    "【SYSTEM BOOT】CHROMAKEY OS へようこそ。\nシステムは正常に起動しました。",
-    "【SYSTEM】ターゲットは〇〇銀行の地下メイン金庫。\n当金庫は外部ネットワークから完全に物理遮断されており、遠隔からのハッキングは不可能です。",
-    "【SYSTEM】これより、お前自身が金庫のパネルに直接アクセスし、『物理ハッキング端末』を構築して直結させます。\n必要な部品と指示書は、事前に用意したツールボックス内にあります。",
-    "【SYSTEM】焦る必要はありません。警備の巡回ルートは回避済みです。指示通りに配線し、金庫のセキュリティ層（LAYER）を順に突破してください。\nまずは封筒①を開け、通信を可視化するインターフェースを構築せよ。ミッションを開始します。"
+    "【SYSTEM BOOT】CHROMAKEY OS 起動完了。\nターゲットは〇〇銀行の地下メイン金庫です。",
+    "【SYSTEM】この金庫は外部ネットワークから完全に切り離されており、遠隔操作はできません。\nあなたが直接、金庫のパネルに『ハッキング装置』を組み立てる必要があります。",
+    "【SYSTEM】ツールボックス内の部品と指示書を使ってください。警備システムは一時的に止めてあります。\n焦らず、指示通りに配線し、セキュリティ（LAYER）を突破してください。",
+    "【SYSTEM】まずは封筒①を開け、システムに侵入するためのライトを組み立てましょう。\nミッションを開始します。"
 ];
 
 let introIdx = -1; 
 function initIntro() {
     introIdx = -1;
-    document.getElementById('intro-text').innerText = "【 暗号化通信を受信しました 】";
+    document.getElementById('intro-modal').style.display = 'flex';
+    document.getElementById('intro-text').innerText = "【 接続を確立しました 】";
     document.getElementById('intro-indicator').innerText = "▼ タップして再生";
     document.getElementById('intro-indicator').style.display = 'block';
     document.getElementById('intro-btn').style.display = 'none';
@@ -120,10 +149,10 @@ function closeIntroModal(e) {
 // 💡 トラップ発動イベント (LAYER 03 クリア後)
 // ==========================================
 const betrayalStory = [
-    "【WARNING】異常な逆電流を検知。ハッキングが銀行側に捕捉されました。",
-    "【WARNING】金庫室の扉が物理ロックされました。銀行の『最終防衛プロトコル』が作動しています。\n接続中のバイパスコード（9番）より、致死量の高圧電流が逆流中。",
-    "【WARNING】端末の耐久限界（大爆発）まで、残り 10:00。\nただちに物理切断してください。",
-    "【ALERT】※警告※\n現在の帯域で切断を実行した場合、システムの『不正切断検知』により即時起爆します。"
+    "【WARNING】異常な電流を検知。ハッキングが銀行側にバレました。",
+    "【WARNING】金庫室が封鎖されました。銀行の『最終防衛プログラム』が作動しています。\n接続した9番のコードから、致死量の高圧電流が逆流しています。",
+    "【WARNING】このままでは10分後に装置が大爆発します。ただちにコードを抜いてください。",
+    "【ALERT】※警告※\n今すぐ適当にコードを抜くと、センサーが反応して即座に爆発します！"
 ];
 
 let betrayalIdx = 0;
@@ -162,13 +191,13 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル
+// AIチュートリアル (わかりやすい言葉に修正)
 const aiSequence = [
-    { text: "[System AI]: ハッキング支援ナビゲーションを起動します。\n基本的な進行手順をご説明します。", highlight: null, aiPosition: 'bottom' },
-    { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
-    { text: "[System AI]: 解読が困難な場合は、対象のプロトコルを開いて分析（思考）を続けてください。\n2分経過するごとにシステムから『パネル開放権』が1つ付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
-    { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
+    { text: "【システムAI】\nナビゲーションを起動します。基本的な進め方をご説明します。", highlight: null, aiPosition: 'bottom' },
+    { text: "【システムAI】\n金庫のセキュリティは、プログラムの自動突破を防ぐため『人間の直感』が必要なロックがかかっています。\nそのため、システムがロックを『パズル』の形に変換してここに表示します。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
+    { text: "【システムAI】\n時間が経つと、システムが情報を解析し『パネル開放権』を獲得します。\nそれを使って、左下のパネルを開けてください。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
+    { text: "【システムAI】\n開いた画像（小謎）を見て、あなたの頭脳で答えを入力してください。\nあなたが正解を入力するたびに、システムが奥の構造を解析できるようになります。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
+    { text: "【システムAI】\n解析が進むと、パズルを解くための『手がかりデータ』がここに表示されます。\n人間とシステムの力を合わせて、ロックを解除してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
 
 let aiIdx = 0;
@@ -244,7 +273,7 @@ function showEnding(isSuccess) {
         endingTitle.style.color = "#2ea043";
         endingTitle.style.fontSize = "50px";
         endingTitle.style.marginBottom = "20px";
-        endingMsg.innerHTML = "防衛プロトコルの停止に成功しました。<br>金庫のロックを解除します。";
+        endingMsg.innerHTML = "防衛プログラムの停止に成功しました。<br>金庫のロックを解除します。";
         endingMsg.style.color = "#c9d1d9";
         endingMsg.style.fontSize = "20px";
         endingMsg.style.lineHeight = "1.8";
@@ -254,7 +283,7 @@ function showEnding(isSuccess) {
         endingTitle.style.color = "#ff7b72";
         endingTitle.style.fontSize = "50px";
         endingTitle.style.marginBottom = "20px";
-        endingMsg.innerHTML = "防衛プロトコルが実行されました。<br>通信はここで途絶えています……。";
+        endingMsg.innerHTML = "防衛プログラムが実行されました。<br>通信はここで途絶えています……。";
         endingMsg.style.color = "#c9d1d9";
         endingMsg.style.fontSize = "20px";
         endingMsg.style.lineHeight = "1.8";
@@ -1004,11 +1033,11 @@ function updateAnalysisCarousel(step) {
     if (idx < unlockedAnalysisCount[step]) {
         if (step === 1) {
             if (idx === 0) {
-                placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">データポイントの<br>接続座標を特定</span>`;
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">接続するポイントを特定しました</span>`;
             } else if (idx === 1) {
-                placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインスロットの<br>データサイズを可視化</span>`;
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">データのサイズを可視化しました</span>`;
             } else if (idx === 2) {
-                placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">ダッシュボードの<br>不可視レイヤーを開放</span>`;
+                placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">画面上の見えないロックを解除しました</span>`;
             }
         } else if (step === 2) {
             placeholder.innerHTML = "";
@@ -1018,7 +1047,7 @@ function updateAnalysisCarousel(step) {
             placeholder.style.backgroundRepeat = "no-repeat";
         } else if (step === 3) {
             if (idx === 2) {
-                placeholder.innerHTML = `【システム更新】<br><span style="font-size:14px;color:#c9d1d9;">メインプロトコルの<br>データ容量が可視化されました</span>`;
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">操作する容量のサイズが判明しました</span>`;
             } else {
                 placeholder.innerHTML = "";
                 placeholder.style.backgroundImage = `url('FILE3_hint${idx + 1}.jpg')`;
@@ -1035,7 +1064,7 @@ function updateAnalysisCarousel(step) {
         placeholder.onclick = null;
     } else {
         if (idx === unlockedAnalysisCount[step] && availableAnalysisPoints[step] > 0) {
-            placeholder.innerHTML = `タップして開放 🔓`;
+            placeholder.innerHTML = `タップして手がかりを表示 🔓`;
             placeholder.style.color = "#58a6ff";
             placeholder.style.borderColor = "#58a6ff";
             placeholder.style.cursor = "pointer";
@@ -1111,8 +1140,8 @@ function startLastStep() {
     }, 1000);
 }
 
+// 💡 画面読み込み時は何もしない。銀行のログイン後に initIntro() が呼ばれる。
 window.addEventListener('DOMContentLoaded', () => { 
-    initIntro();
     initGojuon();
     initPolyomino();
     initPuzzles(); 
