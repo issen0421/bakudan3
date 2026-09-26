@@ -476,7 +476,31 @@ function drop(e) {
         if (pool) pool.appendChild(dragged);
     }
     
+    updateS1JudgeButton(); // 💡 LAYER 1のボタン更新
     updateS2JudgeButton();
+}
+
+// 💡 LAYER 1 の判定ボタンの有効/無効を切り替える関数
+function updateS1JudgeButton() {
+    const slots = document.querySelectorAll('#app-step1 .s1-slot');
+    let filledCount = 0;
+    for (let slot of slots) {
+        if (slot.children.length > 0) filledCount++;
+    }
+    const btn = document.getElementById("btn-judge-s1");
+    if (btn) {
+        if (filledCount === 6) {
+            btn.disabled = false;
+            btn.style.background = ""; 
+            btn.style.cursor = "pointer";
+            btn.style.opacity = "1";
+        } else {
+            btn.disabled = true;
+            btn.style.background = "#444";
+            btn.style.cursor = "not-allowed";
+            btn.style.opacity = "0.5";
+        }
+    }
 }
 
 function resetStep1() {
@@ -486,6 +510,7 @@ function resetStep1() {
         if(item && pool) pool.appendChild(item);
     });
     document.getElementById("result-step1").innerText = ""; 
+    updateS1JudgeButton(); // 💡 リセット時にもボタンを無効化
 }
 
 const s1_answer = ["F", "B", "A", "E", "C", "D"];
@@ -641,7 +666,9 @@ function handleS3NodeClick(index) {
             
             s3_moves--;
             let moveStr = ("0" + s3_moves).slice(-2);
-            sendCommand("N_-" + moveStr);
+            
+            // 💡 マイナス表示を削除し、純粋な数字（09〜01）だけを送る
+            sendCommand("N__" + moveStr);
             
             let beeps = 0; s3_isTransferring = true; updateS3NodeColors();
             const interval = setInterval(() => {
@@ -670,7 +697,7 @@ function checkS3Clear() {
         document.getElementById("result-step3").style.color = "#2ea043";
         setTimeout(() => {
             initBetrayal();
-        }, 2000);
+        }, 4000); // 💡 正解の数字「505」を4秒間長く表示する
     } else {
         let resStr = s3_volumes[0].toString() + s3_volumes[1].toString() + s3_volumes[2].toString();
         if (resStr.length === 3) resStr = "_" + resStr;
@@ -680,16 +707,11 @@ function checkS3Clear() {
         document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発動失敗)";
         document.getElementById("result-step3").style.color = "#ff7b72";
         
-        let errBeep = 0;
-        let errInt = setInterval(() => {
-            sendCommand("B");
-            errBeep++;
-            if(errBeep >= 4) clearInterval(errInt);
-        }, 150);
+        // 💡 0回になった時のピー（エラーブザー）を削除しました
 
         setTimeout(() => { 
             resetStep3Puzzle(); 
-        }, 2000);
+        }, 5000); // 💡 失敗した時の数字を5秒間長く表示してからリセットする
     }
 }
 
@@ -700,7 +722,9 @@ function resetStep3Puzzle() {
     s3_moves = 9;
     updateS3NodeColors();
     document.getElementById("result-step3").innerText = ""; 
-    sendCommand("N_-09"); 
+    
+    // 💡 マイナス表示を削除
+    sendCommand("N__09"); 
 }
 
 // ==========================================
@@ -746,7 +770,8 @@ function switchApp(appId) {
     }
     
     if (appId === 'step3') {
-        setTimeout(() => sendCommand("N_-09"), 500); 
+        // 💡 ここもマイナス表示を削除
+        setTimeout(() => sendCommand("N__09"), 500); 
     }
 }
 
