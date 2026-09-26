@@ -3,10 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CHROMAKEY</title>
+    <title>東京グローバル銀行 | TOKYO GLOBAL BANK</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* 銀行HP専用のスタイル */
+        #dummy-bank-page {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; z-index: 99999; color: #333; font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-y: auto; text-align: center; transition: all 0.5s;
+        }
+        .bank-header { background: #004080; color: #fff; padding: 20px; font-size: 24px; font-weight: bold; text-align: left; }
+        .bank-content { padding: 60px 20px; max-width: 800px; margin: 0 auto; }
+        .bank-content h1 { color: #004080; font-size: 32px; margin-bottom: 20px; }
+        .bank-content p { font-size: 16px; line-height: 1.8; color: #555; }
+        .bank-footer { margin-top: 100px; padding: 30px; border-top: 1px solid #ddd; font-size: 14px; background: #f9f9f9; }
+        .bank-footer a { color: #888; text-decoration: none; cursor: pointer; }
+        
+        #bank-login-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100000;
+        }
+        .login-box { background: #fff; padding: 30px; border-radius: 8px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .login-box h3 { margin-top: 0; color: #004080; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .login-box button { background: #004080; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    </style>
 </head>
 <body>
+
+    <!-- 🏦 ダミー銀行HP -->
+    <div id="dummy-bank-page">
+        <div class="bank-header">TOKYO GLOBAL BANK</div>
+        <div class="bank-content">
+            <h1>お客様の資産を、より強固に。</h1>
+            <p>当行の地下メイン金庫は、最新の独立型セキュリティシステムを導入しています。<br>外部ネットワークからのアクセスを完全に遮断し、あらゆる脅威からお守りします。</p>
+            <div style="background:#e0e0e0; width:100%; max-width:400px; height:250px; margin:40px auto; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#888;">
+                [ Bank Image ]
+            </div>
+        </div>
+        <div class="bank-footer">
+            <a onclick="document.getElementById('bank-login-modal').style.display='flex'">▶ 行員専用ポータル (Staff Only)</a>
+        </div>
+    </div>
+
+    <!-- 🔑 ログインモーダル -->
+    <div id="bank-login-modal">
+        <div class="login-box">
+            <h3>システム・ログイン</h3>
+            <input type="password" id="staff-pass" placeholder="Password">
+            <button onclick="checkBankLogin()">ログイン</button>
+            <p id="login-err" style="color:red; font-size:12px; display:none; margin-top:10px;">パスワードが間違っています。</p>
+        </div>
+    </div>
+
 
     <!-- 📱 モバイルアクセス拒否画面 -->
     <div id="mobile-blocker">
@@ -18,7 +67,7 @@
     <div id="intro-modal" onclick="nextIntro()">
         <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
             <div id="intro-text" class="intro-text"></div>
-            <div id="intro-indicator" class="tap-indicator" style="visibility: visible;">▼ タップして再生</div>
+            <div id="intro-indicator" class="tap-indicator" style="visibility: visible;">▼ タップして次へ</div>
             <button id="intro-btn" class="modal-btn" onclick="closeIntroModal(event)" style="display: none;">ハッキングを開始する</button>
         </div>
     </div>
@@ -28,7 +77,7 @@
         <div class="modal-content" onclick="event.stopPropagation(); nextBetrayal();" style="border: 2px solid #ff7b72;">
             <div id="betrayal-text" class="intro-text" style="color: #ff7b72;"></div>
             <div id="betrayal-indicator" class="tap-indicator" style="visibility: visible;">▼ タップして次へ</div>
-            <button id="betrayal-btn" class="modal-btn" onclick="closeBetrayalModal(event)" style="display: none; background: #da3633;">強制オーバーライドへ</button>
+            <button id="betrayal-btn" class="modal-btn" onclick="closeBetrayalModal(event)" style="display: none; background: #da3633;">緊急解除モードへ</button>
         </div>
     </div>
 
@@ -48,18 +97,15 @@
 
     <div class="header">
         <div class="app-tabs">
-            <!-- 配線1 -> LAYER 01 -->
             <button class="tab-icon active" id="tab-wire1" onclick="switchApp('wire1')">💡</button>
             <div class="tab-line" id="line-1" style="display:none;"></div>
             <button class="tab-btn" id="tab-step1" onclick="switchApp('step1')" style="display:none;">LAYER 01</button>
             
-            <!-- 配線2 -> LAYER 02 -->
             <div class="tab-line" id="line-2" style="display:none;"></div>
             <button class="tab-icon" id="tab-wire2" onclick="switchApp('wire2')" style="display:none;">📟</button>
             <div class="tab-line" id="line-3" style="display:none;"></div>
             <button class="tab-btn" id="tab-step2" onclick="switchApp('step2')" style="display:none;">LAYER 02</button>
             
-            <!-- 配線3 -> LAYER 03 -->
             <div class="tab-line" id="line-4" style="display:none;"></div>
             <button class="tab-icon" id="tab-wire3" onclick="switchApp('wire3')" style="display:none;">🔊</button>
             <div class="tab-line" id="line-5" style="display:none;"></div>
@@ -147,7 +193,7 @@
     <!-- APP 1: LAYER 01 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step1">
-        <h2>LAYER 01 通信ポートの同期を開始せよ</h2>
+        <h2>LAYER 01 システムに侵入するため、通信の形を合わせろ</h2>
         <div class="gojuon-container">
             <div class="gojuon-wrapper" style="position:relative; width: 440px; height: 200px; margin: 0 auto;">
                 <svg id="gojuon-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; overflow:visible;"></svg>
@@ -189,7 +235,7 @@
                     <div class="image-wrapper">
                         <div class="img-placeholder" id="puzzlePlaceholder-s1">小謎</div>
                         <div class="grid-overlay" id="puzzleGrid-s1"></div>
-                        <div class="solved-overlay" id="solvedOverlay-s1">DECODED</div>
+                        <div class="solved-overlay" id="solvedOverlay-s1">解読完了</div>
                     </div>
                     <button class="carousel-btn" id="btn-next-puzzle-s1" onclick="nextPuzzle(1)">▶</button>
                 </div>
@@ -257,7 +303,7 @@
     <!-- APP 2: LAYER 02 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <h2>LAYER 02 認証スケジュールを改ざんせよ</h2>
+        <h2>LAYER 02 銀行のスケジュール監視をバグらせろ</h2>
         <div id="pieces-container" class="pieces-container"></div>
         <div class="puzzle-layout">
             <div class="s3-slots-container">
@@ -295,7 +341,7 @@
                     <div class="image-wrapper">
                         <div class="img-placeholder" id="puzzlePlaceholder-s2">小謎</div>
                         <div class="grid-overlay" id="puzzleGrid-s2"></div>
-                        <div class="solved-overlay" id="solvedOverlay-s2">DECODED</div>
+                        <div class="solved-overlay" id="solvedOverlay-s2">解読完了</div>
                     </div>
                     <button class="carousel-btn" id="btn-next-puzzle-s2" onclick="nextPuzzle(2)">▶</button>
                 </div>
@@ -361,7 +407,7 @@
     <!-- APP 3: LAYER 03 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <h2>LAYER 03 緊急事態を誤認させ、フェイルセーフを起動せよ</h2>
+        <h2>LAYER 03 内部の容量を操作して「緊急開錠システム」を作動させろ</h2>
         <div class="s2-ui-wrapper">
             <div class="s2-container">
                 <div class="s2-node-wrapper">
@@ -393,7 +439,7 @@
                     <div class="image-wrapper">
                         <div class="img-placeholder" id="puzzlePlaceholder-s3">小謎</div>
                         <div class="grid-overlay" id="puzzleGrid-s3"></div>
-                        <div class="solved-overlay" id="solvedOverlay-s3">DECODED</div>
+                        <div class="solved-overlay" id="solvedOverlay-s3">解読完了</div>
                     </div>
                     <button class="carousel-btn" id="btn-next-puzzle-s3" onclick="nextPuzzle(3)">▶</button>
                 </div>
@@ -428,38 +474,38 @@
     <!-- APP 4: LAST STEP -->
     <!-- ========================================== -->
     <div class="app-container" id="app-last">
-        <h2 style="color: #ff7b72;">[ ! ] 最終防衛プロトコル停止</h2>
+        <h2 style="color: #ff7b72;">[ ! ] 最終防衛プログラム 停止作業</h2>
         <div id="last-start-screen">
             <div class="instruction" style="border-color: #ff7b72; color: #ff7b72;">
-                【WARNING】異常な逆電流を検知。<br><br>
-                デバイスのシステム限界（大爆発）まで残りわずか。<br>
-                <span class="highlight" style="color:#fff; font-weight:bold;">CHROMAKEY OSが自動デコードするマニュアルに従い、特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
-                ※残り時間はデバイス側のモニターを確認せよ。
+                【警告】金庫のロックが封鎖されました。<br><br>
+                デバイスが爆発する限界時間まで残りわずかです。<br>
+                <span class="highlight" style="color:#fff; font-weight:bold;">OSが少しずつ復元するマニュアルの画像を見て、安全なタイミングで特定のコードを引き抜いてください。</span><br>
+                ※残り時間は手元のモニターを確認してください。
             </div>
-            <button class="execute-btn" style="background:#da3633; max-width: 400px; margin: 30px auto;" onclick="startLastStep()">強制オーバーライドを実行 (START)</button>
+            <button class="execute-btn" style="background:#da3633; max-width: 400px; margin: 30px auto;" onclick="startLastStep()">強制解除を試みる (START)</button>
         </div>
         <div id="last-active-screen" style="display:none;">
             <div class="instruction">
-                【WARNING】システム限界まで残りわずか。<br>
-                <span class="highlight">OSがデコードするマニュアルに従い、特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
-                ※残り時間はデバイス側のモニターを確認せよ。<br><br>
+                【警告】爆発限界まで残りわずか。<br>
+                <span class="highlight">OSが復元したマニュアルの指示に従い、安全なタイミングでコードを引き抜いてください。</span><br>
+                ※残り時間は手元のモニターを確認してください。<br><br>
                 
                 <span style="color:#58a6ff; font-size:16px;">
-                【SYSTEM】銀行のローカルサーバーから『緊急パージマニュアル』の断片データを抽出。<br>
-                【SYSTEM】現在全力でデコード（解読）処理中……<br>
+                【システム】銀行のサーバーから保守員用の『緊急停止マニュアル』を発見しました。<br>
+                【システム】暗号化されているため、現在全力で復元処理を行っています……<br>
                 </span>
             </div>
             
             <div id="last-hint-8" class="last-hint-box">
-                <div class="last-hint-text">【SYSTEM】デコード完了（残り8分）：マニュアル断片 1</div>
+                <div class="last-hint-text">【システム】復元完了（残り8分）：マニュアル画像 1</div>
                 <img src="FILE4_hint1.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
             <div id="last-hint-6" class="last-hint-box">
-                <div class="last-hint-text">【SYSTEM】デコード完了（残り6分）：マニュアル断片 2</div>
+                <div class="last-hint-text">【システム】復元完了（残り6分）：マニュアル画像 2</div>
                 <img src="FILE4_hint2.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
             <div id="last-hint-4" class="last-hint-box">
-                <div class="last-hint-text">【SYSTEM】デコード完了（残り4分）：マニュアル断片 3</div>
+                <div class="last-hint-text">【システム】復元完了（残り4分）：マニュアル画像 3</div>
                 <img src="FILE4_hint3.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
         </div>
