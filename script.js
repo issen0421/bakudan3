@@ -2,9 +2,9 @@
 // 💡 行員ポータルからのCHROMAKEY起動処理
 // ==========================================
 const bossStory = [
-    "「よし、行員用ページにアクセスできたな。」",
-    "「だが、そこから金庫のシステムには直接触れない。\n今から送るプログラムを走らせるための『ハッキング端末』が必要だ。」",
-    "「箱に入っている基板（デバイス）をPCに接続しろ。」"
+    "「よし、行員用ページに潜入できたな。これで金庫の開閉システムへ繋がる通信経路は確保できた。」",
+    "「だが、ここから先のセキュリティは普通の操作じゃ突破できない。専用のハッキングAI『CHROMAKEY』の力が必要だ。」",
+    "「箱に入っている基板をPCに接続しろ。そこからAIを起動して、内部ネットワークに侵入させる。」"
 ];
 
 let bossIdx = -1;
@@ -33,18 +33,16 @@ function nextBossMsg() {
         typeWriter('boss-text', bossStory[bossIdx], () => {
             if (isLast) {
                 document.getElementById('boss-indicator').style.visibility = 'hidden';
-                document.getElementById('boss-connect-area').style.display = 'block'; // 💡 最後にデバイス接続ボタンを出す
+                document.getElementById('boss-connect-area').style.display = 'block';
             }
         }, 'boss-indicator');
     }
 }
 
-// 💡 接続成功時に呼ばれ、CHROMAKEYを起動させる関数
 function startChromakey() {
     document.getElementById('boss-modal').style.display = 'none';
     const portalPage = document.getElementById('dummy-portal-page');
     
-    // グリッチエフェクト
     portalPage.style.backgroundColor = "#000";
     portalPage.style.color = "#0f0";
     portalPage.innerHTML = "<h1 style='margin-top:20vh; font-family:monospace;'>DEVICE CONNECTED.<br>CHROMAKEY OS BOOTING...</h1>";
@@ -52,7 +50,7 @@ function startChromakey() {
     setTimeout(() => { portalPage.style.opacity = "0"; }, 1500);
     setTimeout(() => { 
         portalPage.style.display = "none"; 
-        initIntro(); // 💡 CHROMAKEYの初期メッセージへ
+        initIntro(); 
     }, 2000);
 }
 
@@ -130,13 +128,12 @@ function finishTyping() {
 }
 
 // ==========================================
-// 💡 CHROMAKEY 初期メッセージ (抽出〜起動)
+// 💡 CHROMAKEY 初期メッセージ
 // ==========================================
 const introStory = [
-    "【SYSTEM】デバイスの接続を確認。\nCHROMAKEY OS を起動します。",
-    "【SYSTEM】行員ポータル内のデータから、金庫のセキュリティ層へのアクセスパスを抽出中……",
-    "【SYSTEM】抽出完了。セキュリティ層（LAYER 01〜03）を可視化しました。\nしかし、これらの層はプログラムの自動突破を防ぐロックがかかっています。",
-    "【SYSTEM】これより手動ハッキングモードに移行します。\n画面の指示に従い、あなたの思考能力でロックを解除してください。\nまずは封筒①を開け、LAYER 01の通信ポート同期を開始せよ。"
+    "【CHROMAKEY】……起動完了。私はハッキングAI『CHROMAKEY』。これよりサポートを開始します。",
+    "【CHROMAKEY】行員ポータルのデータから、金庫開閉システムへのアクセスルートを抽出しました。ターゲットまでに3層のセキュリティ（LAYER 01〜03）が存在します。",
+    "【CHROMAKEY】対象の防壁は、人間の思考パターンを要求する仕組みです。私の解析能力と、あなたの『ひらめき』を同期して突破しましょう。まずは封筒①を開けてください。"
 ];
 
 let introIdx = -1; 
@@ -181,9 +178,9 @@ function closeIntroModal(e) {
 // ==========================================
 const betrayalStory = [
     "【WARNING】異常な電流を検知。ハッキングが銀行側にバレました。",
-    "【WARNING】金庫室が封鎖されました。銀行の『最終防衛プログラム』が作動しています。\n接続した9番のコードから、致死量の高圧電流が逆流しています。",
+    "【WARNING】金庫室が封鎖されました。銀行の『最終防衛プログラム』が作動しています。接続した9番のコードから、致死量の高圧電流が逆流しています。",
     "【WARNING】このままでは10分後に装置が大爆発します。ただちにコードを抜いてください。",
-    "【ALERT】※警告※\n今すぐ適当にコードを抜くと、センサーが反応して即座に爆発します！"
+    "【ALERT】※警告※ 今すぐ適当にコードを抜くと、センサーが反応して即座に爆発します！"
 ];
 
 let betrayalIdx = 0;
@@ -222,13 +219,14 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル (わかりやすい言葉に修正)
+// AIチュートリアル
 const aiSequence = [
-    { text: "【システムAI】\nナビゲーションを起動します。基本的な進め方をご説明します。", highlight: null, aiPosition: 'bottom' },
-    { text: "【システムAI】\n金庫のセキュリティは、プログラムの自動突破を防ぐため『人間の直感』が必要なロックがかかっています。\nそのため、システムがロックを『パズル』の形に変換してここに表示します。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
-    { text: "【システムAI】\n時間が経つと、システムが情報を解析し『パネル開放権』を獲得します。\nそれを使って、左下のパネルを開けてください。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
-    { text: "【システムAI】\n開いた画像（小謎）を見て、あなたの頭脳で答えを入力してください。\nあなたが正解を入力するたびに、システムが奥の構造を解析できるようになります。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "【システムAI】\n解析が進むと、パズルを解くための『手がかりデータ』がここに表示されます。\n人間とシステムの力を合わせて、ロックを解除してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
+    { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内の3つのデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
+    { text: "【CHROMAKEY】\nあなたの最終目標は、画面中央の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
+    { text: "【CHROMAKEY】\nすぐに内部構造に気づいて突破できれば問題ありませんが、もし行き詰まった場合は、左下の『暗号化データ』を解読してください。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
+    { text: "【CHROMAKEY】\nあなたが暗号を解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかりデータ』を右下に表示します。", highlight: 'analysis-panel-area', aiPosition: 'top' },
+    { text: "【CHROMAKEY】\nただし、左下の暗号化データは強固なプロテクトにより、最初は9枚のパネルで隠されています。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
+    { text: "【CHROMAKEY】\n私は裏でこのプロテクトの解除を進めており、約2分に1枚のペースでパネルをめくる権限をお渡しできます。少しずつパネルをめくって暗号の全貌を推測し、答えを導き出してください。", highlight: 'puzzle-points-area', aiPosition: 'bottom' }
 ];
 
 let aiIdx = 0;
@@ -832,7 +830,6 @@ async function connectSerial() {
         writer = encoder.writable.getWriter();
         readLoop(port.readable);
         
-        // 💡 接続が成功したら、CHROMAKEYを起動させる！
         startChromakey();
 
     } catch (err) { alert("接続エラー: " + err); }
@@ -1071,7 +1068,7 @@ function updateAnalysisCarousel(step) {
             } else if (idx === 1) {
                 placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">データのサイズを可視化しました</span>`;
             } else if (idx === 2) {
-                placeholder.innerHTML = `ALL DECODED<br><span style="font-size:14px;color:#c9d1d9;">画面上の見えないロックを解除しました</span>`;
+                placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">画面上の見えないロックを解除しました</span>`;
             }
         } else if (step === 2) {
             placeholder.innerHTML = "";
