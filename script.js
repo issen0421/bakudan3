@@ -1,25 +1,6 @@
 // ==========================================
-// 💡 ダミー銀行HP ＆ 行員ポータルからのCHROMAKEY起動処理
+// 💡 行員ポータルからのCHROMAKEY起動処理
 // ==========================================
-function checkBankLogin() {
-    const pass = document.getElementById('staff-pass').value;
-    if (pass === "OVERRIDE") {
-        document.getElementById('login-err').style.display = 'none';
-        
-        // ログイン画面と表のHPを消し、行員ポータルを表示
-        document.getElementById('bank-login-modal').style.display = 'none';
-        document.getElementById('dummy-bank-page').style.display = 'none';
-        document.getElementById('dummy-portal-page').style.display = 'block';
-        
-        // 少し待ってからボスからの通信が入る
-        setTimeout(() => {
-            initBossCommunication();
-        }, 1500);
-    } else {
-        document.getElementById('login-err').style.display = 'block';
-    }
-}
-
 const bossStory = [
     "「よし、行員用ページにアクセスできたな。」",
     "「だが、そこから金庫のシステムには直接触れない。\n今から送るプログラムを走らせるための『ハッキング端末』が必要だ。」",
@@ -241,7 +222,7 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル
+// AIチュートリアル (わかりやすい言葉に修正)
 const aiSequence = [
     { text: "【システムAI】\nナビゲーションを起動します。基本的な進め方をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "【システムAI】\n金庫のセキュリティは、プログラムの自動突破を防ぐため『人間の直感』が必要なロックがかかっています。\nそのため、システムがロックを『パズル』の形に変換してここに表示します。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
@@ -1193,11 +1174,16 @@ function startLastStep() {
     }, 1000);
 }
 
-// 💡 画面読み込み時は何もしない。銀行のログイン後に進行する。
+// 💡 画面読み込み時は何もしない。銀行のログイン後に initBossCommunication() が呼ばれる。
 window.addEventListener('DOMContentLoaded', () => { 
-    initGojuon();
-    initPolyomino();
-    initPuzzles(); 
-    updateS3NodeColors(); 
-    alignBackgroundGrid(); 
+    if (document.getElementById('dummy-portal-page')) {
+        initGojuon();
+        initPolyomino();
+        initPuzzles(); 
+        updateS3NodeColors(); 
+        alignBackgroundGrid(); 
+        
+        // テスト・開発用（game.htmlを直接開いた場合すぐにボス通信開始）
+        setTimeout(() => { initBossCommunication(); }, 500);
+    }
 });
