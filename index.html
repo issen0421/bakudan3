@@ -19,7 +19,7 @@
         /* 🏦 ヒーローバナー */
         .bank-hero { background: linear-gradient(135deg, #004080 0%, #0073e6 100%); color: #fff; padding: 80px 40px; text-align: center; }
         .bank-hero h1 { font-size: 40px; margin-bottom: 20px; }
-        .bank-hero p { font-size: 18px; opacity: 0.9; }
+        .bank-hero p { font-size: 18px; opacity: 0.9; line-height: 1.8; }
 
         /* 🏦 クイックメニュー */
         .bank-quick-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1000px; margin: -30px auto 40px; padding: 0 20px; }
@@ -73,7 +73,7 @@
     </div>
 
     <div class="bank-hero">
-        <h1>未来をひらく、強固な信頼。</h1>
+        <h1>お客様の資産を、より強固に。</h1>
         <p>当行の地下メイン金庫は、外部ネットワークから物理的に遮断された<br>最新の独立型セキュリティシステムで、お客様の資産をあらゆる脅威からお守りします。</p>
     </div>
 
@@ -100,7 +100,6 @@
         </div>
         <p>© TOKYO GLOBAL BANK All Rights Reserved.</p>
         
-        <!-- 💡 ここが本命のリンク -->
         <div class="staff-portal-link">
             <a onclick="openLogin()">▶ 行員専用業務ポータル (Staff Portal)</a>
         </div>
@@ -110,7 +109,7 @@
     <div id="boss-alert" onclick="this.style.display='none'">
         <div class="boss-alert-box" onclick="event.stopPropagation()">
             <h3>【 通信着信：ボス 】</h3>
-            <p>「おい、何関係ないボタン押して遊んでるんだ。<br><br>そんな表のページを見ていても金庫室には入れないぞ。ページの一番下にあるフッターから<b>『行員専用ポータル』</b>の入り口を探して、そこから潜入しろ。」</p>
+            <p>おい、何関係ないボタン押して遊んでるんだ。<br><br>ページの一番下にある「行員専用ポータル」を押して、パスワード「TGBadmin99」で、さっさとシステムに潜り込め。</p>
             <button onclick="document.getElementById('boss-alert').style.display='none'">閉じる</button>
         </div>
     </div>
@@ -141,17 +140,16 @@
 
         function checkBankLogin() {
             const pass = document.getElementById('staff-pass').value;
-            if (pass === "OVERRIDE") {
+            if (pass === "TGBadmin99") { // 💡 パスワード反映
                 document.getElementById('login-err').style.display = 'none';
                 document.getElementById('login-modal').style.display = 'none';
                 
-                // 画面をバグらせて、game.html に遷移
                 const glitch = document.getElementById('glitch-screen');
                 glitch.style.display = 'flex';
                 
                 setTimeout(() => { glitch.style.opacity = "0"; }, 1500);
                 setTimeout(() => { 
-                    window.location.href = "game.html"; // 💡 ゲーム本編へ移動
+                    window.location.href = "game.html";
                 }, 2000);
             } else {
                 document.getElementById('login-err').style.display = 'block';
