@@ -1,30 +1,80 @@
 // ==========================================
-// 💡 ダミー銀行HP ＆ ログイン処理
+// 💡 ダミー銀行HP ＆ 行員ポータルからのCHROMAKEY起動処理
 // ==========================================
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
     if (pass === "OVERRIDE") {
         document.getElementById('login-err').style.display = 'none';
         
-        // グリッチエフェクト（バグったような演出）
-        const bankPage = document.getElementById('dummy-bank-page');
-        const modal = document.getElementById('bank-login-modal');
-        modal.style.display = 'none';
+        // ログイン画面と表のHPを消し、行員ポータルを表示
+        document.getElementById('bank-login-modal').style.display = 'none';
+        document.getElementById('dummy-bank-page').style.display = 'none';
+        document.getElementById('dummy-portal-page').style.display = 'block';
         
-        bankPage.style.backgroundColor = "#000";
-        bankPage.style.color = "#0f0";
-        bankPage.innerHTML = "<h1 style='margin-top:20vh; font-family:monospace;'>ACCESS GRANTED...<br>SYSTEM OVERRIDE INITIATED.</h1>";
-        
-        // 少しチラつかせてからCHROMAKEYを起動
-        setTimeout(() => { bankPage.style.opacity = "0"; }, 1500);
-        setTimeout(() => { 
-            bankPage.style.display = "none"; 
-            initIntro(); // 💡 ここでついにゲーム本編がスタート！
-        }, 2000);
+        // 少し待ってからボスからの通信が入る
+        setTimeout(() => {
+            initBossCommunication();
+        }, 1500);
     } else {
         document.getElementById('login-err').style.display = 'block';
     }
 }
+
+const bossStory = [
+    "「よし、行員用ページにアクセスできたな。」",
+    "「だが、そこから金庫のシステムには直接触れない。\n今から送るプログラムを走らせるための『ハッキング端末』が必要だ。」",
+    "「箱に入っている基板（デバイス）をPCに接続しろ。」"
+];
+
+let bossIdx = -1;
+function initBossCommunication() {
+    bossIdx = -1;
+    document.getElementById('boss-modal').style.display = 'flex';
+    document.getElementById('boss-text').innerText = "【 通信を受信しました 】";
+    document.getElementById('boss-indicator').innerText = "▼ タップして再生";
+    document.getElementById('boss-indicator').style.visibility = 'visible';
+    document.getElementById('boss-connect-area').style.display = 'none';
+}
+
+function nextBossMsg() {
+    if (isTyping) {
+        finishTyping();
+        return;
+    }
+    
+    if(bossIdx === -1) {
+        document.getElementById('boss-indicator').innerText = "▼ タップして次へ";
+    }
+
+    bossIdx++;
+    if (bossIdx < bossStory.length) {
+        let isLast = (bossIdx === bossStory.length - 1);
+        typeWriter('boss-text', bossStory[bossIdx], () => {
+            if (isLast) {
+                document.getElementById('boss-indicator').style.visibility = 'hidden';
+                document.getElementById('boss-connect-area').style.display = 'block'; // 💡 最後にデバイス接続ボタンを出す
+            }
+        }, 'boss-indicator');
+    }
+}
+
+// 💡 接続成功時に呼ばれ、CHROMAKEYを起動させる関数
+function startChromakey() {
+    document.getElementById('boss-modal').style.display = 'none';
+    const portalPage = document.getElementById('dummy-portal-page');
+    
+    // グリッチエフェクト
+    portalPage.style.backgroundColor = "#000";
+    portalPage.style.color = "#0f0";
+    portalPage.innerHTML = "<h1 style='margin-top:20vh; font-family:monospace;'>DEVICE CONNECTED.<br>CHROMAKEY OS BOOTING...</h1>";
+    
+    setTimeout(() => { portalPage.style.opacity = "0"; }, 1500);
+    setTimeout(() => { 
+        portalPage.style.display = "none"; 
+        initIntro(); // 💡 CHROMAKEYの初期メッセージへ
+    }, 2000);
+}
+
 
 // ==========================================
 // 💡 メッセージ表示用のタイピングエフェクトと音声
@@ -99,20 +149,20 @@ function finishTyping() {
 }
 
 // ==========================================
-// 💡 モーダル・チュートリアル制御
+// 💡 CHROMAKEY 初期メッセージ (抽出〜起動)
 // ==========================================
 const introStory = [
-    "【SYSTEM BOOT】CHROMAKEY OS 起動完了。\nターゲットは〇〇銀行の地下メイン金庫です。",
-    "【SYSTEM】この金庫は外部ネットワークから完全に切り離されており、遠隔操作はできません。\nあなたが直接、金庫のパネルに『ハッキング装置』を組み立てる必要があります。",
-    "【SYSTEM】ツールボックス内の部品と指示書を使ってください。警備システムは一時的に止めてあります。\n焦らず、指示通りに配線し、セキュリティ（LAYER）を突破してください。",
-    "【SYSTEM】まずは封筒①を開け、システムに侵入するためのライトを組み立てましょう。\nミッションを開始します。"
+    "【SYSTEM】デバイスの接続を確認。\nCHROMAKEY OS を起動します。",
+    "【SYSTEM】行員ポータル内のデータから、金庫のセキュリティ層へのアクセスパスを抽出中……",
+    "【SYSTEM】抽出完了。セキュリティ層（LAYER 01〜03）を可視化しました。\nしかし、これらの層はプログラムの自動突破を防ぐロックがかかっています。",
+    "【SYSTEM】これより手動ハッキングモードに移行します。\n画面の指示に従い、あなたの思考能力でロックを解除してください。\nまずは封筒①を開け、LAYER 01の通信ポート同期を開始せよ。"
 ];
 
 let introIdx = -1; 
 function initIntro() {
     introIdx = -1;
     document.getElementById('intro-modal').style.display = 'flex';
-    document.getElementById('intro-text').innerText = "【 接続を確立しました 】";
+    document.getElementById('intro-text').innerText = "【 CHROMAKEY OS 起動 】";
     document.getElementById('intro-indicator').innerText = "▼ タップして再生";
     document.getElementById('intro-indicator').style.display = 'block';
     document.getElementById('intro-btn').style.display = 'none';
@@ -191,7 +241,7 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル (わかりやすい言葉に修正)
+// AIチュートリアル
 const aiSequence = [
     { text: "【システムAI】\nナビゲーションを起動します。基本的な進め方をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "【システムAI】\n金庫のセキュリティは、プログラムの自動突破を防ぐため『人間の直感』が必要なロックがかかっています。\nそのため、システムがロックを『パズル』の形に変換してここに表示します。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
@@ -800,7 +850,10 @@ async function connectSerial() {
         encoder.readable.pipeTo(port.writable);
         writer = encoder.writable.getWriter();
         readLoop(port.readable);
-        alert("デバイスとの接続を確立しました。");
+        
+        // 💡 接続が成功したら、CHROMAKEYを起動させる！
+        startChromakey();
+
     } catch (err) { alert("接続エラー: " + err); }
 }
 
@@ -1140,7 +1193,7 @@ function startLastStep() {
     }, 1000);
 }
 
-// 💡 画面読み込み時は何もしない。銀行のログイン後に initIntro() が呼ばれる。
+// 💡 画面読み込み時は何もしない。銀行のログイン後に進行する。
 window.addEventListener('DOMContentLoaded', () => { 
     initGojuon();
     initPolyomino();
