@@ -47,7 +47,7 @@
         #login-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 10000; }
         .login-box { background: #fff; padding: 40px; border-radius: 8px; width: 300px; text-align: center; }
         .login-box h3 { margin-top: 0; color: #004080; margin-bottom: 20px; }
-        .login-box input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .login-box input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         .login-box button { background: #004080; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         /* グリッチエフェクト画面 */
@@ -118,7 +118,13 @@
     <div id="login-modal">
         <div class="login-box">
             <h3>行員システム・ログイン</h3>
-            <input type="password" id="staff-pass" placeholder="Password">
+            
+            <!-- 💡 パスワード入力欄に目玉マークを追加 -->
+            <div style="position: relative; margin-bottom: 20px;">
+                <input type="password" id="staff-pass" placeholder="Password" style="margin-bottom: 0; padding-right: 40px;">
+                <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;" title="パスワードを表示">👁️</span>
+            </div>
+
             <button onclick="checkBankLogin()">ログイン</button>
             <p id="login-err" style="color:red; font-size:12px; display:none; margin-top:10px;">パスワードが間違っています。</p>
         </div>
@@ -138,9 +144,19 @@
             document.getElementById('login-modal').style.display = 'flex';
         }
 
+        // 💡 パスワードの表示・非表示を切り替える処理
+        function togglePassword() {
+            const passInput = document.getElementById('staff-pass');
+            if (passInput.type === "password") {
+                passInput.type = "text";
+            } else {
+                passInput.type = "password";
+            }
+        }
+
         function checkBankLogin() {
             const pass = document.getElementById('staff-pass').value;
-            if (pass === "TGBadmin99") { // 💡 パスワード反映
+            if (pass === "TGBadmin99") {
                 document.getElementById('login-err').style.display = 'none';
                 document.getElementById('login-modal').style.display = 'none';
                 
