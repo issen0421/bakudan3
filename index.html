@@ -19,16 +19,16 @@
         <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
             <div id="intro-text" class="intro-text"></div>
             <div id="intro-indicator" class="tap-indicator" style="visibility: visible;">▼ タップして再生</div>
-            <button id="intro-btn" class="modal-btn" onclick="closeIntroModal(event)" style="display: none;">作戦を開始する</button>
+            <button id="intro-btn" class="modal-btn" onclick="closeIntroModal(event)" style="display: none;">ハッキングを開始する</button>
         </div>
     </div>
 
-    <!-- 🌟 ボス裏切りポップアップ -->
+    <!-- 🌟 トラップ発動ポップアップ (LAYER 03 クリア後) -->
     <div id="betrayal-modal" onclick="nextBetrayal()">
-        <div class="modal-content" onclick="event.stopPropagation(); nextBetrayal();">
-            <div id="betrayal-text" class="intro-text"></div>
+        <div class="modal-content" onclick="event.stopPropagation(); nextBetrayal();" style="border: 2px solid #ff7b72;">
+            <div id="betrayal-text" class="intro-text" style="color: #ff7b72;"></div>
             <div id="betrayal-indicator" class="tap-indicator" style="visibility: visible;">▼ タップして次へ</div>
-            <button id="betrayal-btn" class="modal-btn" onclick="closeBetrayalModal(event)" style="display: none;">FILE 04 (FINAL PROTOCOL) へ</button>
+            <button id="betrayal-btn" class="modal-btn" onclick="closeBetrayalModal(event)" style="display: none; background: #da3633;">強制オーバーライドへ</button>
         </div>
     </div>
 
@@ -48,26 +48,26 @@
 
     <div class="header">
         <div class="app-tabs">
-            <!-- 配線1 -> FILE01 -->
+            <!-- 配線1 -> LAYER 01 -->
             <button class="tab-icon active" id="tab-wire1" onclick="switchApp('wire1')">💡</button>
             <div class="tab-line" id="line-1" style="display:none;"></div>
-            <button class="tab-btn" id="tab-step1" onclick="switchApp('step1')" style="display:none;">FILE 01</button>
+            <button class="tab-btn" id="tab-step1" onclick="switchApp('step1')" style="display:none;">LAYER 01</button>
             
-            <!-- 配線2 -> FILE02 (モニターに変更) -->
+            <!-- 配線2 -> LAYER 02 -->
             <div class="tab-line" id="line-2" style="display:none;"></div>
             <button class="tab-icon" id="tab-wire2" onclick="switchApp('wire2')" style="display:none;">📟</button>
             <div class="tab-line" id="line-3" style="display:none;"></div>
-            <button class="tab-btn" id="tab-step2" onclick="switchApp('step2')" style="display:none;">FILE 02</button>
+            <button class="tab-btn" id="tab-step2" onclick="switchApp('step2')" style="display:none;">LAYER 02</button>
             
-            <!-- 配線3 -> FILE03 (ブザーに変更) -->
+            <!-- 配線3 -> LAYER 03 -->
             <div class="tab-line" id="line-4" style="display:none;"></div>
             <button class="tab-icon" id="tab-wire3" onclick="switchApp('wire3')" style="display:none;">🔊</button>
             <div class="tab-line" id="line-5" style="display:none;"></div>
-            <button class="tab-btn" id="tab-step3" onclick="switchApp('step3')" style="display:none;">FILE 03</button>
+            <button class="tab-btn" id="tab-step3" onclick="switchApp('step3')" style="display:none;">LAYER 03</button>
 
-            <!-- 独立した FILE04 (爆弾) -->
+            <!-- 独立した LAST STEP -->
             <div style="width: 40px;"></div>
-            <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">FILE 04</button>
+            <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">[ ! ] WARNING</button>
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
             <button class="tab-icon" onclick="initAITutorial()" title="AIナビゲーション" style="margin: 0;">❓</button>
@@ -102,11 +102,11 @@
             </p>
 
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 0: 共通グラウンド(GND)の構築</p>
-            <!-- 既存の指示書内容 -->
             <p style="color:#c9d1d9;">
                 ブレッドボード（白い基盤）の青い線の列（マイナス列）を使用する。<br>
                 ワイヤーの片方をArduinoの <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピンに挿し、反対側をブレッドボードの <span style="color:#58a6ff; font-weight:bold;">マイナス列の一番上の穴</span> に挿せ。
             </p>
+
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 1: ライトを配置する</p>
             <p style="color:#c9d1d9;">4つのライトをすべてブレッドボードに挿していく。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -115,6 +115,7 @@
                 【3番目】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e20]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e19]</span> に挿す<br>
                 【一番右】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e15]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e14]</span> に挿す
             </p>
+
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: 抵抗器を配置する</p>
             <p style="color:#c9d1d9;">4つの抵抗器（細い部品）をコの字に曲げ、ライトのマイナス側からマイナス列へ繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -123,6 +124,7 @@
                 【3番目用】 片方を <span style="color:#fff; font-weight:bold;">[c20]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す<br>
                 【一番右用】 片方を <span style="color:#fff; font-weight:bold;">[c15]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す
             </p>
+
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 3: コードを接続する</p>
             <p style="color:#c9d1d9;">Arduinoの <span style="color:#fdd900; font-weight:bold;">[DIGITAL]</span> ピンと、ライトのプラス側をコードで繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -142,10 +144,10 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 1: FILE 01 (STEP1) -->
+    <!-- APP 1: LAYER 01 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step1">
-        <h2>FILE 01 正しい順番で並べろ</h2>
+        <h2>LAYER 01 通信ポートの同期を開始せよ</h2>
         <div class="gojuon-container">
             <div class="gojuon-wrapper" style="position:relative; width: 440px; height: 200px; margin: 0 auto;">
                 <svg id="gojuon-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; overflow:visible;"></svg>
@@ -219,7 +221,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 配線 2 (モニター) 💡 FILE 02用に変更 -->
+    <!-- 配線 2 (モニター) -->
     <!-- ========================================== -->
     <div class="app-container" id="app-wire2">
         <h2>ハードウェア配線 (モニター)</h2>
@@ -248,14 +250,14 @@
             <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ モニターに記号（8888）が表示されれば配線成功です。</p>
         </div>
 
-        <button class="execute-btn" id="btn-next-wire2" onclick="completeWire(2)" style="max-width: 400px; margin: 30px auto 0; display: none;">表示された (FILE 02 へ)</button>
+        <button class="execute-btn" id="btn-next-wire2" onclick="completeWire(2)" style="max-width: 400px; margin: 30px auto 0; display: none;">表示された (LAYER 02 へ)</button>
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 2: FILE 02 (STEP2 曜日並べ替え) 💡 FILE 02用に変更 -->
+    <!-- APP 2: LAYER 02 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <h2>FILE 02 正しい順番で並べろ</h2>
+        <h2>LAYER 02 認証スケジュールを改ざんせよ</h2>
         <div id="pieces-container" class="pieces-container"></div>
         <div class="puzzle-layout">
             <div class="s3-slots-container">
@@ -325,7 +327,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 配線 3 (ブザー) 💡 FILE 03用に変更 -->
+    <!-- 配線 3 (ブザー) -->
     <!-- ========================================== -->
     <div class="app-container" id="app-wire3">
         <h2>ハードウェア配線 (ブザー)</h2>
@@ -352,14 +354,14 @@
             <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ 「ピッ」と音が鳴れば配線成功です。</p>
         </div>
 
-        <button class="execute-btn" id="btn-next-wire3" onclick="completeWire(3)" style="max-width: 400px; margin: 30px auto 0; display: none;">音が鳴った (FILE 03 へ)</button>
+        <button class="execute-btn" id="btn-next-wire3" onclick="completeWire(3)" style="max-width: 400px; margin: 30px auto 0; display: none;">音が鳴った (LAYER 03 へ)</button>
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 3: FILE 03 (STEP3 水差しパズル) 💡 神ギミック仕様に変更 -->
+    <!-- APP 3: LAYER 03 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <h2>FILE 03 システムに緊急事態を誤認させ、フェイルセーフを起動せよ</h2>
+        <h2>LAYER 03 緊急事態を誤認させ、フェイルセーフを起動せよ</h2>
         <div class="s2-ui-wrapper">
             <div class="s2-container">
                 <div class="s2-node-wrapper">
@@ -423,43 +425,41 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- APP 4: FILE 04 (LAST STEP) -->
+    <!-- APP 4: LAST STEP -->
     <!-- ========================================== -->
     <div class="app-container" id="app-last">
-        <h2>FILE 04 存在しないライトが光るタイミングで9番のコードを切れ</h2>
+        <h2 style="color: #ff7b72;">[ ! ] 最終防衛プロトコル停止</h2>
         <div id="last-start-screen">
             <div class="instruction" style="border-color: #ff7b72; color: #ff7b72;">
-                【緊急ミッション：起爆プロトコルの停止】<br><br>
-                システムが完全にロックされる前に、<br>
-                <span class="highlight" style="color:#fff; font-weight:bold;">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
+                【WARNING】異常な逆電流を検知。<br><br>
+                デバイスのシステム限界（大爆発）まで残りわずか。<br>
+                <span class="highlight" style="color:#fff; font-weight:bold;">CHROMAKEY OSが自動デコードするマニュアルに従い、特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
                 ※残り時間はデバイス側のモニターを確認せよ。
             </div>
             <button class="execute-btn" style="background:#da3633; max-width: 400px; margin: 30px auto;" onclick="startLastStep()">強制オーバーライドを実行 (START)</button>
         </div>
         <div id="last-active-screen" style="display:none;">
             <div class="instruction">
-                【最終ミッション】<br>
-                システムが完全にロックされる前に、<br>
-                <span class="highlight">デバイスの特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
+                【WARNING】システム限界まで残りわずか。<br>
+                <span class="highlight">OSがデコードするマニュアルに従い、特定の配線を物理的に切断（抜去）</span>して起爆を止めろ。<br>
                 ※残り時間はデバイス側のモニターを確認せよ。<br><br>
                 
-                <span style="color:#58a6ff; font-size:16px;">※ 以下のスケジュールで、システムが自動で『手がかりデータ』を受信・解析して表示する。<br>
-                ・残り 8:00 ➔ 手がかりデータ1 自動UNLOCK<br>
-                ・残り 6:00 ➔ 手がかりデータ2 自動UNLOCK<br>
-                ・残り 4:00 ➔ 手がかりデータ3 自動UNLOCK<br>
+                <span style="color:#58a6ff; font-size:16px;">
+                【SYSTEM】銀行のローカルサーバーから『緊急パージマニュアル』の断片データを抽出。<br>
+                【SYSTEM】現在全力でデコード（解読）処理中……<br>
                 </span>
             </div>
             
             <div id="last-hint-8" class="last-hint-box">
-                <div class="last-hint-text">【自動受信】手がかりデータ1 (残り8分)</div>
+                <div class="last-hint-text">【SYSTEM】デコード完了（残り8分）：マニュアル断片 1</div>
                 <img src="FILE4_hint1.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
             <div id="last-hint-6" class="last-hint-box">
-                <div class="last-hint-text">【自動受信】手がかりデータ2 (残り6分)</div>
+                <div class="last-hint-text">【SYSTEM】デコード完了（残り6分）：マニュアル断片 2</div>
                 <img src="FILE4_hint2.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
             <div id="last-hint-4" class="last-hint-box">
-                <div class="last-hint-text">【自動受信】手がかりデータ3 (残り4分)</div>
+                <div class="last-hint-text">【SYSTEM】デコード完了（残り4分）：マニュアル断片 3</div>
                 <img src="FILE4_hint3.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
         </div>
