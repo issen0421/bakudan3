@@ -74,10 +74,10 @@ function finishTyping() {
 // 💡 モーダル・チュートリアル制御
 // ==========================================
 const introStory = [
-    "「よし、金庫前に着いたか。\n この金庫を開けるために、今からお前たちには\n ハッキング装置を組み立ててもらう。」",
-    "「どうやらこの金庫には最新のセキュリティシステムが導入されているらしく、簡単には開かないようでな…そこでお前たちの出番だ。今開けた箱の中に、システムをハッキングする装置の部品を入れた。指示書通りに組み立てれば、きっと開けられるだろう。」",
-    "「特殊なルートを通ってきたから警備に見つかる心配もない。時間は十分にあるから焦らず丁寧にな。装置の作り方の手順は箱の中に入れた。」",
-    "「装置を完成させるためには3つのファイルをダウンロードする必要がある。外に内容が漏れないようパスワードがかけられているから、謎を解いて導いてくれ。\n\n まずは封筒①を開けて、ライトの配線を済ませてくれ。作戦開始だ！」"
+    "【SYSTEM BOOT】CHROMAKEY OS へようこそ。\nシステムは正常に起動しました。",
+    "【SYSTEM】ターゲットは〇〇銀行の地下メイン金庫。\n当金庫は外部ネットワークから完全に物理遮断されており、遠隔からのハッキングは不可能です。",
+    "【SYSTEM】これより、お前自身が金庫のパネルに直接アクセスし、『物理ハッキング端末』を構築して直結させます。\n必要な部品と指示書は、事前に用意したツールボックス内にあります。",
+    "【SYSTEM】焦る必要はありません。警備の巡回ルートは回避済みです。指示通りに配線し、金庫のセキュリティ層（LAYER）を順に突破してください。\nまずは封筒①を開け、通信を可視化するインターフェースを構築せよ。ミッションを開始します。"
 ];
 
 let introIdx = -1; 
@@ -117,13 +117,13 @@ function closeIntroModal(e) {
 }
 
 // ==========================================
-// 💡 ボスの裏切りイベント (FILE 03 クリア後)
+// 💡 トラップ発動イベント (LAYER 03 クリア後)
 // ==========================================
 const betrayalStory = [
-    "【 通信を受信中... 】\n\n「……3つのファイルのダウンロードが完了したようだな。ご苦労だった。」",
-    "「悪いな、実はお前が作っていた装置はハッキング装置ではなく、金庫の扉を吹き飛ばすための『爆弾』だったんだ。金庫の中身は俺が全てもらう。」",
-    "「その爆弾には移動検知センサーがついている。金庫室から一歩でも出ようとすれば、その瞬間に即ドカンだ。」",
-    "「逃げ場はないぞ。せいぜいそこで爆弾と一緒に吹き飛べ……！！」\n\n【 通信切断 】"
+    "【WARNING】異常な逆電流を検知。ハッキングが銀行側に捕捉されました。",
+    "【WARNING】金庫室の扉が物理ロックされました。銀行の『最終防衛プロトコル』が作動しています。\n接続中のバイパスコード（9番）より、致死量の高圧電流が逆流中。",
+    "【WARNING】端末の耐久限界（大爆発）まで、残り 10:00。\nただちに物理切断してください。",
+    "【ALERT】※警告※\n現在の帯域で切断を実行した場合、システムの『不正切断検知』により即時起爆します。"
 ];
 
 let betrayalIdx = 0;
@@ -168,7 +168,7 @@ const aiSequence = [
     { text: "[System AI]: まずは画面中央の『メインプロトコル』を操作してください。\n初期状態では難解なセキュリティが設定されています。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
     { text: "[System AI]: 解読が困難な場合は、対象のプロトコルを開いて分析（思考）を続けてください。\n2分経過するごとにシステムから『パネル開放権』が1つ付与されます。", highlight: 'puzzle-points-area', aiPosition: 'bottom' },
     { text: "[System AI]: その権限を使用し、画面左下の『暗号化データ』のパネルを開放・解読してください。\n正解するとロック解除の『手がかりデータ』を入手できます。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビ बुन्देलーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
+    { text: "[System AI]: 手がかりによってメインプロトコルの構造が可視化されます。\n必ずしも全ての手がかりを集める必要はありません。\n状況に応じた最適なアプローチを選択してください。\n\nナビゲーションを終了します。", highlight: 'analysis-panel-area', aiPosition: 'top' }
 ];
 
 let aiIdx = 0;
@@ -240,21 +240,21 @@ function showEnding(isSuccess) {
     endingScreen.style.zIndex = '9999';
 
     if (isSuccess) {
-        endingTitle.innerText = "MISSION CLEAR";
+        endingTitle.innerText = "SYSTEM SHUTDOWN";
         endingTitle.style.color = "#2ea043";
         endingTitle.style.fontSize = "50px";
         endingTitle.style.marginBottom = "20px";
-        endingMsg.innerHTML = "起爆プロトコルの停止に成功した。<br>金庫のロックを解除する。";
+        endingMsg.innerHTML = "防衛プロトコルの停止に成功しました。<br>金庫のロックを解除します。";
         endingMsg.style.color = "#c9d1d9";
         endingMsg.style.fontSize = "20px";
         endingMsg.style.lineHeight = "1.8";
         endingMsg.style.textAlign = "center";
     } else {
-        endingTitle.innerText = "MISSION FAILED";
+        endingTitle.innerText = "CRITICAL ERROR";
         endingTitle.style.color = "#ff7b72";
         endingTitle.style.fontSize = "50px";
         endingTitle.style.marginBottom = "20px";
-        endingMsg.innerHTML = "起爆プロトコルが実行された。<br>通信はここで途絶えている……。";
+        endingMsg.innerHTML = "防衛プロトコルが実行されました。<br>通信はここで途絶えています……。";
         endingMsg.style.color = "#c9d1d9";
         endingMsg.style.fontSize = "20px";
         endingMsg.style.lineHeight = "1.8";
@@ -277,7 +277,7 @@ function alignBackgroundGrid() {
 window.addEventListener('resize', alignBackgroundGrid);
 
 // ==========================================
-// STEP 1: 五十音表と図形描画ロジック
+// LAYER 01: 五十音表と図形描画ロジック
 // ==========================================
 const gojuonLayout = [
     ['ん','わ','ら','や','ま','は','な','た','さ','か','あ'],
@@ -370,7 +370,6 @@ function drawGojuonShape(id, mode) {
 }
 
 let currentDragId = null;
-let currentDragZone = 0; 
 
 function allowDrop(e) { 
     e.preventDefault(); 
@@ -382,7 +381,6 @@ function dragLeave(e) { e.target.classList.remove('drag-over'); }
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
-    currentDragZone = 0; 
     
     drawGojuonShape(currentDragId, 4); 
     const ledPatterns = { 'A': 'P0101', 'B': 'P1100', 'C': 'P0101', 'D': 'P0011', 'E': 'P0101', 'F': 'P1010' };
@@ -396,7 +394,6 @@ document.addEventListener('dragover', (e) => {
 function dragEndItem(e) {
     sendCommand('P0000');
     currentDragId = null;
-    currentDragZone = 0;
     drawGojuonShape(null, 0);
 }
 
@@ -468,7 +465,7 @@ function checkClearStep1() {
 }
 
 // ==========================================
-// 💡 STEP 2: 曜日並べ替えパズル
+// 💡 LAYER 02: 曜日並べ替えパズル
 // ==========================================
 function executeStep2Puzzle() {
     const slots = document.querySelectorAll('#app-step2 .s3-slot');
@@ -534,7 +531,7 @@ function updateS2JudgeButton() {
 }
 
 // ==========================================
-// 💡 STEP 3: 神ギミック・水差しパズル（10, 3, 7）
+// 💡 LAYER 03: 水差しパズル（10, 3, 7）
 // ==========================================
 const S3_CAPACITIES = [10, 3, 7]; 
 let s3_volumes = [10, 0, 0];
@@ -617,9 +614,7 @@ function checkS3Clear() {
             initBetrayal();
         }, 2000);
     } else {
-        // 💡 失敗時、現在のそれぞれの容量をモニターにそのまま表示する
         let resStr = s3_volumes[0].toString() + s3_volumes[1].toString() + s3_volumes[2].toString();
-        // 万が一 10,0,0 だった場合は "1000" (4文字)になるのでそのまま、3桁(例:631)なら先頭に_をつけて4文字にする
         if (resStr.length === 3) resStr = "_" + resStr;
         
         sendCommand("N" + resStr); 
