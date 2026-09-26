@@ -4,63 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>東京グローバル銀行 | TOKYO GLOBAL BANK</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        /* 🏦 銀行HP・ポータル用のスタイル */
-        #dummy-bank-page, #dummy-portal-page {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; z-index: 99999; color: #333; font-family: 'Helvetica Neue', Arial, sans-serif;
-            overflow-y: auto; text-align: center; transition: all 0.5s;
-        }
-        .bank-header { background: #004080; color: #fff; padding: 20px; font-size: 24px; font-weight: bold; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .bank-content { padding: 60px 20px; max-width: 800px; margin: 0 auto; }
-        .bank-content h1 { color: #004080; font-size: 32px; margin-bottom: 20px; }
-        .bank-content p { font-size: 16px; line-height: 1.8; color: #555; }
-        .bank-footer { margin-top: 100px; padding: 30px; border-top: 1px solid #ddd; font-size: 14px; background: #f9f9f9; }
-        .bank-footer a { color: #888; text-decoration: none; cursor: pointer; }
+        body { margin: 0; font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; color: #333; background: #f8f9fa; }
+        a { text-decoration: none; color: inherit; cursor: pointer; }
         
-        #bank-login-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100000;
-        }
-        .login-box { background: #fff; padding: 30px; border-radius: 8px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .login-box h3 { margin-top: 0; color: #004080; }
+        /* 🏦 ヘッダー周り */
+        .bank-top-bar { background: #f0f0f0; padding: 5px 20px; text-align: right; font-size: 12px; color: #666; }
+        .bank-top-bar span { margin-left: 15px; cursor: pointer; }
+        .bank-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #fff; border-bottom: 1px solid #ddd; }
+        .bank-logo { font-size: 26px; font-weight: bold; color: #004080; letter-spacing: 1px; }
+        .bank-nav { display: flex; gap: 30px; font-weight: bold; color: #444; }
+        .bank-nav a:hover { color: #004080; }
+        
+        /* 🏦 ヒーローバナー */
+        .bank-hero { background: linear-gradient(135deg, #004080 0%, #0073e6 100%); color: #fff; padding: 80px 40px; text-align: center; }
+        .bank-hero h1 { font-size: 40px; margin-bottom: 20px; }
+        .bank-hero p { font-size: 18px; opacity: 0.9; }
+
+        /* 🏦 クイックメニュー */
+        .bank-quick-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1000px; margin: -30px auto 40px; padding: 0 20px; }
+        .quick-card { background: #fff; padding: 25px; text-align: center; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-weight: bold; color: #004080; cursor: pointer; transition: 0.2s; }
+        .quick-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+
+        /* 🏦 ニュース */
+        .bank-news { max-width: 800px; margin: 0 auto 60px; background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #ddd; }
+        .bank-news h2 { color: #004080; border-bottom: 2px solid #004080; padding-bottom: 10px; margin-top: 0; }
+        .news-item { padding: 15px 0; border-bottom: 1px dashed #ccc; display: flex; gap: 20px; }
+        .news-date { color: #888; font-size: 14px; }
+
+        /* 🏦 フッター */
+        .bank-footer { background: #333; color: #ccc; padding: 40px 20px; text-align: center; font-size: 14px; }
+        .bank-footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .staff-portal-link { margin-top: 30px; padding-top: 20px; border-top: 1px solid #555; font-size: 12px; color: #666; }
+
+        /* 🕵️‍♂️ ボスの警告モーダル */
+        #boss-alert { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 10000; }
+        .boss-alert-box { background: #161b22; border: 2px solid #ff7b72; padding: 30px; border-radius: 8px; width: 350px; color: #c9d1d9; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .boss-alert-box h3 { margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .boss-alert-box button { margin-top: 20px; width: 100%; padding: 10px; background: #30363d; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+
+        /* 🔑 ログインモーダル */
+        #login-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 10000; }
+        .login-box { background: #fff; padding: 40px; border-radius: 8px; width: 300px; text-align: center; }
+        .login-box h3 { margin-top: 0; color: #004080; margin-bottom: 20px; }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         .login-box button { background: #004080; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        /* 🏢 行員ポータルのスタイル */
-        #dummy-portal-page { display: none; background: #f4f7f6; z-index: 99998; }
-        .portal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 40px; max-width: 900px; margin: 0 auto; }
-        .portal-card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-top: 4px solid #004080; color: #555; font-weight: bold; }
-        
-        /* 🕵️‍♂️ ボスからの通信ウィンドウ */
-        #boss-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100000;
-        }
-        .boss-box { background: #161b22; padding: 30px; border-radius: 8px; width: 400px; border: 1px solid #30363d; color: #c9d1d9; text-align: left; }
-        .boss-box h3 { margin-top: 0; color: #58a6ff; font-size: 16px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        /* グリッチエフェクト画面 */
+        #glitch-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; z-index: 99999; justify-content: center; align-items: center; text-align: center; font-family: monospace; font-size: 24px; transition: opacity 0.5s; }
     </style>
 </head>
 <body>
 
-    <!-- 🏦 ダミー銀行HP（表） -->
-    <div id="dummy-bank-page">
-        <div class="bank-header">TOKYO GLOBAL BANK</div>
-        <div class="bank-content">
-            <h1>お客様の資産を、より強固に。</h1>
-            <p>当行の地下メイン金庫は、最新の独立型セキュリティシステムを導入しています。<br>外部ネットワークからのアクセスを完全に遮断し、あらゆる脅威からお守りします。</p>
-            <div style="background:#e0e0e0; width:100%; max-width:400px; height:250px; margin:40px auto; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#888;">
-                [ Bank Image ]
-            </div>
+    <div class="bank-top-bar">
+        <span onclick="showBossAlert()">店舗・ATM検索</span>
+        <span onclick="showBossAlert()">よくあるご質問</span>
+        <span onclick="showBossAlert()">English</span>
+    </div>
+
+    <div class="bank-header">
+        <div class="bank-logo" onclick="showBossAlert()">TOKYO GLOBAL BANK</div>
+        <div class="bank-nav">
+            <a onclick="showBossAlert()">個人のお客さま</a>
+            <a onclick="showBossAlert()">法人のお客さま</a>
+            <a onclick="showBossAlert()">投資家情報</a>
+            <a onclick="showBossAlert()">採用情報</a>
         </div>
-        <div class="bank-footer">
-            <a onclick="document.getElementById('bank-login-modal').style.display='flex'">▶ 行員専用ポータル (Staff Only)</a>
+    </div>
+
+    <div class="bank-hero">
+        <h1>未来をひらく、強固な信頼。</h1>
+        <p>当行の地下メイン金庫は、外部ネットワークから物理的に遮断された<br>最新の独立型セキュリティシステムで、お客様の資産をあらゆる脅威からお守りします。</p>
+    </div>
+
+    <div class="bank-quick-menu">
+        <div class="quick-card" onclick="showBossAlert()">インターネットバンキング<br>ログイン</div>
+        <div class="quick-card" onclick="showBossAlert()">口座開設のご案内</div>
+        <div class="quick-card" onclick="showBossAlert()">カード紛失・盗難</div>
+        <div class="quick-card" onclick="showBossAlert()">各種ローンお申込み</div>
+    </div>
+
+    <div class="bank-news">
+        <h2>お知らせ</h2>
+        <div class="news-item" onclick="showBossAlert()"><div class="news-date">2026.09.25</div><div>システムメンテナンスに伴う一部サービス休止のお知らせ</div></div>
+        <div class="news-item" onclick="showBossAlert()"><div class="news-date">2026.09.10</div><div>新セキュリティシステム導入完了のご報告</div></div>
+        <div class="news-item" onclick="showBossAlert()"><div class="news-date">2026.09.01</div><div>振り込め詐欺にご注意ください</div></div>
+    </div>
+
+    <div class="bank-footer">
+        <div class="bank-footer-links">
+            <a onclick="showBossAlert()">会社概要</a>
+            <a onclick="showBossAlert()">プライバシーポリシー</a>
+            <a onclick="showBossAlert()">セキュリティについて</a>
+            <a onclick="showBossAlert()">勧誘方針</a>
+        </div>
+        <p>© TOKYO GLOBAL BANK All Rights Reserved.</p>
+        
+        <!-- 💡 ここが本命のリンク -->
+        <div class="staff-portal-link">
+            <a onclick="openLogin()">▶ 行員専用業務ポータル (Staff Portal)</a>
+        </div>
+    </div>
+
+    <!-- 🕵️‍♂️ ボスからの警告モーダル -->
+    <div id="boss-alert" onclick="this.style.display='none'">
+        <div class="boss-alert-box" onclick="event.stopPropagation()">
+            <h3>【 通信着信：ボス 】</h3>
+            <p>「おい、何関係ないボタン押して遊んでるんだ。<br><br>そんな表のページを見ていても金庫室には入れないぞ。ページの一番下にあるフッターから<b>『行員専用ポータル』</b>の入り口を探して、そこから潜入しろ。」</p>
+            <button onclick="document.getElementById('boss-alert').style.display='none'">閉じる</button>
         </div>
     </div>
 
     <!-- 🔑 ログインモーダル -->
-    <div id="bank-login-modal">
+    <div id="login-modal">
         <div class="login-box">
             <h3>行員システム・ログイン</h3>
             <input type="password" id="staff-pass" placeholder="Password">
@@ -69,489 +125,38 @@
         </div>
     </div>
 
-    <!-- 🏢 行員専用ポータル（裏） -->
-    <div id="dummy-portal-page">
-        <div class="bank-header" style="background:#333;">
-            <span>TGB 業務ポータル</span>
-            <span style="font-size:14px; font-weight:normal;">User: System Admin</span>
-        </div>
-        <div class="portal-grid">
-            <div class="portal-card">👥 顧客データ管理</div>
-            <div class="portal-card">💰 口座情報照会</div>
-            <div class="portal-card">📄 融資稟議システム</div>
-            <div class="portal-card">📅 勤怠・スケジュール</div>
-            <div class="portal-card">🔐 セキュリティ設定</div>
-            <div class="portal-card">⚙️ サーバー保守</div>
-        </div>
+    <!-- グリッチ演出画面 -->
+    <div id="glitch-screen">
+        <div>ACCESS GRANTED...<br>SYSTEM OVERRIDE INITIATED.</div>
     </div>
 
-    <!-- 🕵️‍♂️ ボス通信モーダル（ポータル画面上に表示） -->
-    <div id="boss-modal" onclick="nextBossMsg()">
-        <div class="boss-box" onclick="event.stopPropagation(); nextBossMsg();">
-            <h3>【 通信着信：ボス 】</h3>
-            <div id="boss-text" style="line-height: 1.8; min-height: 100px;"></div>
-            <div id="boss-indicator" class="tap-indicator" style="visibility: hidden;">▼ タップして次へ</div>
-            
-            <!-- 💡 接続ボタン（ボスの話が終わったら表示） -->
-            <div id="boss-connect-area" style="display:none; text-align:center; margin-top:20px;">
-                <button class="btn-connect" style="width:100%; padding:15px; font-size:16px; justify-content:center;" onclick="connectSerial()">🔌 デバイス（USB）を接続する</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        function showBossAlert() {
+            document.getElementById('boss-alert').style.display = 'flex';
+        }
 
+        function openLogin() {
+            document.getElementById('login-modal').style.display = 'flex';
+        }
 
-    <!-- ========================================== -->
-    <!-- CHROMAKEY OS 本編 -->
-    <!-- ========================================== -->
-
-    <!-- 📱 モバイルアクセス拒否画面 -->
-    <div id="mobile-blocker">
-        <h1>【ACCESS DENIED】</h1>
-        <p>セキュリティプロトコル違反。<br>このシステムはモバイル端末からのアクセスを許可していません。<br>指定のPC端末から再接続してください。</p>
-    </div>
-
-    <!-- 🌟 CHROMAKEY 起動ポップアップ -->
-    <div id="intro-modal" onclick="nextIntro()">
-        <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
-            <div id="intro-text" class="intro-text"></div>
-            <div id="intro-indicator" class="tap-indicator" style="visibility: visible;">▼ タップして次へ</div>
-            <button id="intro-btn" class="modal-btn" onclick="closeIntroModal(event)" style="display: none;">ハッキングを開始する</button>
-        </div>
-    </div>
-
-    <!-- 🌟 トラップ発動ポップアップ (LAYER 03 クリア後) -->
-    <div id="betrayal-modal" onclick="nextBetrayal()">
-        <div class="modal-content" onclick="event.stopPropagation(); nextBetrayal();" style="border: 2px solid #ff7b72;">
-            <div id="betrayal-text" class="intro-text" style="color: #ff7b72;"></div>
-            <div id="betrayal-indicator" class="tap-indicator" style="visibility: visible;">▼ タップして次へ</div>
-            <button id="betrayal-btn" class="modal-btn" onclick="closeBetrayalModal(event)" style="display: none; background: #da3633;">緊急解除モードへ</button>
-        </div>
-    </div>
-
-    <!-- 🌟 AIチュートリアル専用ポップアップ -->
-    <div id="ai-modal" onclick="nextAITutorial()">
-        <div class="modal-content ai-mode" onclick="event.stopPropagation(); nextAITutorial();">
-            <div id="ai-text" class="ai-text"></div>
-            <div class="tap-indicator">▼ タップして次へ</div>
-        </div>
-    </div>
-
-    <!-- 🌟 エンディング画面 -->
-    <div id="ending-screen" style="display:none;">
-        <div id="ending-title" class="ending-title"></div>
-        <div id="ending-msg" class="ending-msg"></div>
-    </div>
-
-    <div class="header">
-        <div class="app-tabs">
-            <button class="tab-icon active" id="tab-wire1" onclick="switchApp('wire1')">💡</button>
-            <div class="tab-line" id="line-1" style="display:none;"></div>
-            <button class="tab-btn" id="tab-step1" onclick="switchApp('step1')" style="display:none;">LAYER 01</button>
-            
-            <div class="tab-line" id="line-2" style="display:none;"></div>
-            <button class="tab-icon" id="tab-wire2" onclick="switchApp('wire2')" style="display:none;">📟</button>
-            <div class="tab-line" id="line-3" style="display:none;"></div>
-            <button class="tab-btn" id="tab-step2" onclick="switchApp('step2')" style="display:none;">LAYER 02</button>
-            
-            <div class="tab-line" id="line-4" style="display:none;"></div>
-            <button class="tab-icon" id="tab-wire3" onclick="switchApp('wire3')" style="display:none;">🔊</button>
-            <div class="tab-line" id="line-5" style="display:none;"></div>
-            <button class="tab-btn" id="tab-step3" onclick="switchApp('step3')" style="display:none;">LAYER 03</button>
-
-            <!-- 独立した LAST STEP -->
-            <div style="width: 40px;"></div>
-            <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">[ ! ] WARNING</button>
-        </div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <button class="tab-icon" onclick="initAITutorial()" title="AIナビゲーション" style="margin: 0;">❓</button>
-        </div>
-    </div>
-
-    <!-- 🔧 デバッグパネル -->
-    <div class="debug-panel">
-        <span>🔧 テスト:</span>
-        <button class="debug-btn" onclick="testLight()">💡 ライト</button>
-        <button class="debug-btn" onclick="testBuzzer()">🔊 ブザー</button>
-        <button class="debug-btn" onclick="testMonitor()">📟 モニター</button>
-        <span style="margin-left:20px;">👑 開発用:</span>
-        <button class="debug-btn dev" onclick="devUnlockTabs()">全タブ開放</button>
-    </div>
-
-    <!-- 以下、従来のアプリ本体部分 (app-container系) は変更なしなのでそのまま残します -->
-    <!-- ========================================== -->
-    <!-- 配線 1 (ライト) -->
-    <!-- ========================================== -->
-    <div class="app-container active" id="app-wire1">
-        <h2>ハードウェア配線 (ライト)</h2>
-        <div class="instruction">指示書に従ってデバイスに「ライト」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
-        
-        <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
-            
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 0: 共通グラウンド(GND)の構築</p>
-            <p style="color:#c9d1d9;">
-                ブレッドボード（白い基盤）の青い線の列（マイナス列）を使用する。<br>
-                ワイヤーの片方をArduinoの <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピンに挿し、反対側をブレッドボードの <span style="color:#58a6ff; font-weight:bold;">マイナス列の一番上の穴</span> に挿せ。
-            </p>
-
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 1: ライトを配置する</p>
-            <p style="color:#c9d1d9;">4つのライトをすべてブレッドボードに挿していく。</p>
-            <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                【一番左】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e30]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e29]</span> に挿す<br>
-                【2番目】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e25]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e24]</span> に挿す<br>
-                【3番目】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e20]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e19]</span> に挿す<br>
-                【一番右】 <span style="color:#58a6ff;">短い足(－)</span>を <span style="color:#fff; font-weight:bold;">[e15]</span>、<span style="color:#ff7b72;">長い足(＋)</span>を <span style="color:#fff; font-weight:bold;">[e14]</span> に挿す
-            </p>
-
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: 抵抗器を配置する</p>
-            <p style="color:#c9d1d9;">4つの抵抗器（細い部品）をコの字に曲げ、ライトのマイナス側からマイナス列へ繋ぐ。</p>
-            <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                【一番左用】 片方を <span style="color:#fff; font-weight:bold;">[c30]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す<br>
-                【2番目用】 片方を <span style="color:#fff; font-weight:bold;">[c25]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す<br>
-                【3番目用】 片方を <span style="color:#fff; font-weight:bold;">[c20]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す<br>
-                【一番右用】 片方を <span style="color:#fff; font-weight:bold;">[c15]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に挿す
-            </p>
-
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 3: コードを接続する</p>
-            <p style="color:#c9d1d9;">Arduinoの <span style="color:#fdd900; font-weight:bold;">[DIGITAL]</span> ピンと、ライトのプラス側をコードで繋ぐ。</p>
-            <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                【一番左】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[2]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a29]</span><br>
-                【2番目】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[3]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a24]</span><br>
-                【3番目】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[4]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a19]</span><br>
-                【一番右】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[5]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a14]</span>
-            </p>
-        </div>
-
-        <div style="text-align:center; margin-top:20px;">
-            <button id="btn-test-light" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireLight()">💡 テスト発光を実行</button>
-            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ 4つのライトがすべて光れば配線成功です。</p>
-        </div>
-
-        <button class="execute-btn" id="btn-next-wire1" onclick="completeWire(1)" style="max-width: 400px; margin: 30px auto 0; display: none;">4つすべて光った (次へ進む)</button>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- APP 1: LAYER 01 -->
-    <!-- ========================================== -->
-    <div class="app-container" id="app-step1">
-        <h2>LAYER 01 システムに侵入するため、通信の形を合わせろ</h2>
-        <div class="gojuon-container">
-            <div class="gojuon-wrapper" style="position:relative; width: 440px; height: 200px; margin: 0 auto;">
-                <svg id="gojuon-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; overflow:visible;"></svg>
-                <div id="gojuon-table" class="gojuon-table"></div>
-            </div>
-        </div>
-
-        <div id="main-protocol-area" style="padding: 15px; border-radius: 15px; transition: 0.3s; margin-top: 10px;">
-            <div class="s1-slots" id="s1-slots-container" style="padding: 10px; min-height: 70px;">
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-            </div>
-            <br>
-            <div class="s1-items" id="s1-item-pool" style="margin-top: 10px; padding: 10px; min-height: 70px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
-                <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
-                <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
-                <div class="s1-item-slot item-slot" id="pool-C"><div class="s1-item item" draggable="true" id="C" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
-                <div class="s1-item-slot item-slot" id="pool-D"><div class="s1-item item" draggable="true" id="D" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
-                <div class="s1-item-slot item-slot" id="pool-E"><div class="s1-item item" draggable="true" id="E" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
-                <div class="s1-item-slot item-slot" id="pool-F"><div class="s1-item item" draggable="true" id="F" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
-            </div>
-        </div>
-        <button class="execute-btn" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block;">判定</button>
-        <button class="execute-btn" onclick="resetStep1()" style="background: #444; max-width: 200px; margin: 15px auto 0; display: block;">🔄 リセット</button>
-        <div id="result-step1" class="result-msg"></div>
-
-        <div class="split-layout">
-            <div class="puzzle-panel" id="puzzle-panel-area">
-                <div class="panel-header">
-                    <h3 style="color:#58a6ff;">【暗号化データ】</h3>
-                    <div class="status-badge" id="puzzle-points-area" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s1">0</span></div>
-                </div>
-                <div class="carousel-container">
-                    <button class="carousel-btn" id="btn-prev-puzzle-s1" onclick="prevPuzzle(1)">◀</button>
-                    <div class="image-wrapper">
-                        <div class="img-placeholder" id="puzzlePlaceholder-s1">小謎</div>
-                        <div class="grid-overlay" id="puzzleGrid-s1"></div>
-                        <div class="solved-overlay" id="solvedOverlay-s1">解読完了</div>
-                    </div>
-                    <button class="carousel-btn" id="btn-next-puzzle-s1" onclick="nextPuzzle(1)">▶</button>
-                </div>
-                <div class="carousel-indicator" id="puzzleIndicator-s1">DATA A</div>
-                <div class="answer-section">
-                    <input type="text" id="answerInput-s1" placeholder="ANSWER">
-                    <button onclick="submitAnswer(1)">送信</button>
-                    <div class="feedback" id="terminalFeedback-s1"></div>
-                </div>
-            </div>
-            
-            <div class="analysis-panel" id="analysis-panel-area">
-                <div class="panel-header">
-                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s1">0</span></div>
-                </div>
-                <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-                    <div class="carousel-container">
-                        <button class="carousel-btn" id="btn-prev-analysis-s1" onclick="prevAnalysis(1)">◀</button>
-                        <div class="image-wrapper hint-border">
-                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s1">Locked 🔐</div>
-                        </div>
-                        <button class="carousel-btn" id="btn-next-analysis-s1" onclick="nextAnalysis(1)">▶</button>
-                    </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s1">⚫⚫⚫</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 配線 2 (モニター) -->
-    <!-- ========================================== -->
-    <div class="app-container" id="app-wire2">
-        <h2>ハードウェア配線 (モニター)</h2>
-        <div class="instruction">指示書に従ってデバイスに「モニター」と「バイパスコード」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
-        
-        <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: モニターを接続する</p>
-            <p style="color:#c9d1d9;">モニターの裏側から出ている4本の線を、それぞれ直接Arduinoとブレッドボードに接続せよ。</p>
-            <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・<span style="color:#fff; font-weight:bold;">[CLK]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[7]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[DIO]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[8]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[GND]</span> と書かれた線 ➔ Arduinoの <span style="color:#58a6ff; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#58a6ff; font-weight:bold;">[GND]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[5V]</span> と書かれた線 ➔ Arduinoの <span style="color:#ff7b72; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#ff7b72; font-weight:bold;">[5V]</span> ピン
-            </p>
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: システム安定化用バイパスを構築する</p>
-            <p style="color:#c9d1d9;">最後に、システムを安定させるための重要なバイパスコードを1本繋ぐ。</p>
-            <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・ワイヤーの片方を Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[9]</span> ピンに挿す<br>
-                ・もう片方をブレッドボードの <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> に挿す
-            </p>
-        </div>
-
-        <div style="text-align:center; margin-top:20px;">
-            <button id="btn-test-monitor" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireMonitor()">📟 テスト表示を実行</button>
-            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ モニターに記号（8888）が表示されれば配線成功です。</p>
-        </div>
-
-        <button class="execute-btn" id="btn-next-wire2" onclick="completeWire(2)" style="max-width: 400px; margin: 30px auto 0; display: none;">表示された (LAYER 02 へ)</button>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- APP 2: LAYER 02 -->
-    <!-- ========================================== -->
-    <div class="app-container" id="app-step2">
-        <h2>LAYER 02 銀行のスケジュール監視をバグらせろ</h2>
-        <div id="pieces-container" class="pieces-container"></div>
-        <div class="puzzle-layout">
-            <div class="s3-slots-container">
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-            </div>
-
-            <div class="s3-side-panel">
-                <div class="s3-items" id="s3-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
-                    <div class="s3-item-slot item-slot" id="pool-SUN"><div class="s3-item item" draggable="true" id="SUN" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">☀️</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-MON"><div class="s3-item item" draggable="true" id="MON" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🌙</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-TUE"><div class="s3-item item" draggable="true" id="TUE" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🔥</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-WED"><div class="s3-item item" draggable="true" id="WED" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">💧</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-THU"><div class="s3-item item" draggable="true" id="THU" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🌳</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-FRI"><div class="s3-item item" draggable="true" id="FRI" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">💰</div></div>
-                    <div class="s3-item-slot item-slot" id="pool-SAT"><div class="s3-item item" draggable="true" id="SAT" ondragstart="dragItem(event)" ondragend="dragEndItem(event)">🪐</div></div>
-                </div>
-                <button class="execute-btn" id="btn-judge-s3" onclick="executeStep2Puzzle()" style="background: #444; opacity: 0.5; cursor: not-allowed;" disabled>判定</button>
-                <button class="execute-btn" onclick="resetStep2Puzzle()" style="background: #444; margin-top: 15px;">🔄 リセット</button>
-                <div id="result-step2" class="result-msg"></div>
-            </div>
-        </div>
-
-        <div class="split-layout">
-            <div class="puzzle-panel">
-                <div class="panel-header">
-                    <h3 style="color:#58a6ff;">【暗号化データ】</h3>
-                    <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s2">0</span></div>
-                </div>
-                <div class="carousel-container">
-                    <button class="carousel-btn" id="btn-prev-puzzle-s2" onclick="prevPuzzle(2)">◀</button>
-                    <div class="image-wrapper">
-                        <div class="img-placeholder" id="puzzlePlaceholder-s2">小謎</div>
-                        <div class="grid-overlay" id="puzzleGrid-s2"></div>
-                        <div class="solved-overlay" id="solvedOverlay-s2">解読完了</div>
-                    </div>
-                    <button class="carousel-btn" id="btn-next-puzzle-s2" onclick="nextPuzzle(2)">▶</button>
-                </div>
-                <div class="carousel-indicator" id="puzzleIndicator-s2">DATA A</div>
-                <div class="answer-section">
-                    <input type="text" id="answerInput-s2" placeholder="ANSWER">
-                    <button onclick="submitAnswer(2)">送信</button>
-                    <div class="feedback" id="terminalFeedback-s2"></div>
-                </div>
-            </div>
-
-            <div class="analysis-panel">
-                <div class="panel-header">
-                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s2">0</span></div>
-                </div>
-                <div id="hintArea-s2" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-                    <div class="carousel-container">
-                        <button class="carousel-btn" id="btn-prev-analysis-s2" onclick="prevAnalysis(2)">◀</button>
-                        <div class="image-wrapper hint-border">
-                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s2">Locked 🔐</div>
-                        </div>
-                        <button class="carousel-btn" id="btn-next-analysis-s2" onclick="nextAnalysis(2)">▶</button>
-                    </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s2">⚫⚫⚫</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- 配線 3 (ブザー) -->
-    <!-- ========================================== -->
-    <div class="app-container" id="app-wire3">
-        <h2>ハードウェア配線 (ブザー)</h2>
-        <div class="instruction">指示書に従ってデバイスに「ブザー」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
-        
-        <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ブザーの配線方法について 】</h3>
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: ブザーを配置する</p>
-            <p style="color:#c9d1d9;">ブザーは極性（プラスマイナスの向き）を間違えると鳴らないので注意して挿せ。</p>
-            <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・<span style="color:#ff7b72; font-weight:bold;">長い足（＋）</span> を <span style="color:#fff; font-weight:bold;">[e7]</span> に挿す<br>
-                ・<span style="color:#58a6ff; font-weight:bold;">短い足（－）</span> を <span style="color:#fff; font-weight:bold;">[e10]</span> に挿す
-            </p>
-            <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: コードを接続する</p>
-            <p style="color:#c9d1d9;">Arduinoとブレッドボードを2本のワイヤーで繋ぐ。</p>
-            <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                【プラス側】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[6]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a7]</span> を繋ぐ<br>
-                【マイナス側】 片方をブレッドボード <span style="color:#fff; font-weight:bold;">[a10]</span> に挿し、もう片方を最も近い <span style="color:#58a6ff; font-weight:bold;">[マイナス列]</span> の穴に繋ぐ
-            </p>
-        </div>
-
-        <div style="text-align:center; margin-top:20px;">
-            <button id="btn-test-buzzer" class="debug-btn" style="font-size:18px; padding:15px 40px; background:#1f6feb; border:none; border-radius:30px;" onclick="testWireBuzzer()">🔊 テスト音を実行</button>
-            <p style="color:#8b949e; font-size:14px; margin-top:10px;">※ 「ピッ」と音が鳴れば配線成功です。</p>
-        </div>
-
-        <button class="execute-btn" id="btn-next-wire3" onclick="completeWire(3)" style="max-width: 400px; margin: 30px auto 0; display: none;">音が鳴った (LAYER 03 へ)</button>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- APP 3: LAYER 03 -->
-    <!-- ========================================== -->
-    <div class="app-container" id="app-step3">
-        <h2>LAYER 03 内部の容量を操作して「緊急開錠システム」を作動させろ</h2>
-        <div class="s2-ui-wrapper">
-            <div class="s2-container">
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-0" onclick="handleS3NodeClick(0)"></div>
-                    <div class="s2-vol" id="vol-0" style="display:none;">10</div>
-                </div>
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-1" onclick="handleS3NodeClick(1)"></div>
-                    <div class="s2-vol" id="vol-1" style="display:none;">0</div>
-                </div>
-                <div class="s2-node-wrapper">
-                    <div class="s2-node" id="node-2" onclick="handleS3NodeClick(2)"></div>
-                    <div class="s2-vol" id="vol-2" style="display:none;">0</div>
-                </div>
-            </div>
-        </div>
-
-        <button class="execute-btn" onclick="resetStep3Puzzle()" style="background: #444; max-width: 200px; margin: 0 auto; display: block;">🔄 リセット</button>
-        <div id="result-step3" class="result-msg"></div>
-
-        <div class="split-layout">
-            <div class="puzzle-panel">
-                <div class="panel-header">
-                    <h3 style="color:#58a6ff;">【暗号化データ】</h3>
-                    <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル開放権: <span id="puzzlePoints-s3">0</span></div>
-                </div>
-                <div class="carousel-container">
-                    <button class="carousel-btn" id="btn-prev-puzzle-s3" onclick="prevPuzzle(3)">◀</button>
-                    <div class="image-wrapper">
-                        <div class="img-placeholder" id="puzzlePlaceholder-s3">小謎</div>
-                        <div class="grid-overlay" id="puzzleGrid-s3"></div>
-                        <div class="solved-overlay" id="solvedOverlay-s3">解読完了</div>
-                    </div>
-                    <button class="carousel-btn" id="btn-next-puzzle-s3" onclick="nextPuzzle(3)">▶</button>
-                </div>
-                <div class="carousel-indicator" id="puzzleIndicator-s3">DATA A</div>
-                <div class="answer-section">
-                    <input type="text" id="answerInput-s3" placeholder="ANSWER">
-                    <button onclick="submitAnswer(3)">送信</button>
-                    <div class="feedback" id="terminalFeedback-s3"></div>
-                </div>
-            </div>
-            
-            <div class="analysis-panel">
-                <div class="panel-header">
-                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s3">0</span></div>
-                </div>
-                <div id="hintArea-s3" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-                    <div class="carousel-container">
-                        <button class="carousel-btn" id="btn-prev-analysis-s3" onclick="prevAnalysis(3)">◀</button>
-                        <div class="image-wrapper hint-border">
-                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s3">Locked 🔐</div>
-                        </div>
-                        <button class="carousel-btn" id="btn-next-analysis-s3" onclick="nextAnalysis(3)">▶</button>
-                    </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s3">⚫⚫⚫</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- APP 4: LAST STEP -->
-    <!-- ========================================== -->
-    <div class="app-container" id="app-last">
-        <h2 style="color: #ff7b72;">[ ! ] 最終防衛プログラム 停止作業</h2>
-        <div id="last-start-screen">
-            <div class="instruction" style="border-color: #ff7b72; color: #ff7b72;">
-                【警告】金庫のロックが封鎖されました。<br><br>
-                デバイスが爆発する限界時間まで残りわずかです。<br>
-                <span class="highlight" style="color:#fff; font-weight:bold;">OSが少しずつ復元するマニュアルの画像を見て、安全なタイミングで特定のコードを引き抜いてください。</span><br>
-                ※残り時間は手元のモニターを確認してください。
-            </div>
-            <button class="execute-btn" style="background:#da3633; max-width: 400px; margin: 30px auto;" onclick="startLastStep()">強制解除を試みる (START)</button>
-        </div>
-        <div id="last-active-screen" style="display:none;">
-            <div class="instruction">
-                【警告】爆発限界まで残りわずか。<br>
-                <span class="highlight">OSが復元したマニュアルの指示に従い、安全なタイミングでコードを引き抜いてください。</span><br>
-                ※残り時間は手元のモニターを確認してください。<br><br>
+        function checkBankLogin() {
+            const pass = document.getElementById('staff-pass').value;
+            if (pass === "OVERRIDE") {
+                document.getElementById('login-err').style.display = 'none';
+                document.getElementById('login-modal').style.display = 'none';
                 
-                <span style="color:#58a6ff; font-size:16px;">
-                【システム】銀行のサーバーから保守員用の『緊急停止マニュアル』を発見しました。<br>
-                【システム】暗号化されているため、現在全力で復元処理を行っています……<br>
-                </span>
-            </div>
-            
-            <div id="last-hint-8" class="last-hint-box">
-                <div class="last-hint-text">【システム】復元完了（残り8分）：マニュアル画像 1</div>
-                <img src="FILE4_hint1.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
-            </div>
-            <div id="last-hint-6" class="last-hint-box">
-                <div class="last-hint-text">【システム】復元完了（残り6分）：マニュアル画像 2</div>
-                <img src="FILE4_hint2.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
-            </div>
-            <div id="last-hint-4" class="last-hint-box">
-                <div class="last-hint-text">【システム】復元完了（残り4分）：マニュアル画像 3</div>
-                <img src="FILE4_hint3.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+                // 画面をバグらせて、game.html に遷移
+                const glitch = document.getElementById('glitch-screen');
+                glitch.style.display = 'flex';
+                
+                setTimeout(() => { glitch.style.opacity = "0"; }, 1500);
+                setTimeout(() => { 
+                    window.location.href = "game.html"; // 💡 ゲーム本編へ移動
+                }, 2000);
+            } else {
+                document.getElementById('login-err').style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
