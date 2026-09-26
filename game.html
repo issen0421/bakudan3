@@ -198,7 +198,8 @@
                 <div class="s1-item-slot item-slot" id="pool-F"><div class="s1-item item" draggable="true" id="F" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
             </div>
         </div>
-        <button class="execute-btn" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block;">判定</button>
+        <!-- 💡 初期状態でボタンを無効化（グレーアウト） -->
+        <button class="execute-btn" id="btn-judge-s1" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block; background: #444; opacity: 0.5; cursor: not-allowed;" disabled>判定</button>
         <button class="execute-btn" onclick="resetStep1()" style="background: #444; max-width: 200px; margin: 15px auto 0; display: block;">🔄 リセット</button>
         <div id="result-step1" class="result-msg"></div>
 
