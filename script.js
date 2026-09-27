@@ -1,6 +1,47 @@
 // ==========================================
-// 💡 行員ポータルからのCHROMAKEY起動処理
+// 💡 行員ポータル ＆ ログイン処理
 // ==========================================
+function showBossAlert() {
+    document.getElementById('boss-alert').style.display = 'flex';
+}
+
+function openLogin() {
+    document.getElementById('login-modal').style.display = 'flex';
+}
+
+function togglePassword() {
+    const passInput = document.getElementById('staff-pass');
+    if (passInput.type === "password") {
+        passInput.type = "text";
+    } else {
+        passInput.type = "password";
+    }
+}
+
+function checkBankLogin() {
+    const pass = document.getElementById('staff-pass').value;
+    if (pass === "TGBadmin99") {
+        document.getElementById('login-err').style.display = 'none';
+        document.getElementById('login-modal').style.display = 'none';
+        
+        const glitch = document.getElementById('glitch-screen');
+        glitch.style.display = 'flex';
+        
+        setTimeout(() => { glitch.style.opacity = "0"; }, 1500);
+        setTimeout(() => { 
+            glitch.style.display = 'none';
+            glitch.style.opacity = "1";
+            document.getElementById('dummy-bank-page').style.display = 'none';
+            document.getElementById('dummy-portal-page').style.display = 'block';
+            
+            // 💡 画面が切り替わったらボスの通信を開始
+            setTimeout(initBossCommunication, 500);
+        }, 2000);
+    } else {
+        document.getElementById('login-err').style.display = 'block';
+    }
+}
+
 const bossStory = [
     "「よし、行員用ページに潜入できたな。これで金庫の開閉システムへ繋がる通信経路は確保できた。」",
     "「だが、ここから先のセキュリティは普通の操作じゃ突破できない。専用のハッキングAI『CHROMAKEY』の力が必要だ。」",
@@ -510,7 +551,7 @@ function resetStep1() {
         if(item && pool) pool.appendChild(item);
     });
     document.getElementById("result-step1").innerText = ""; 
-    updateS1JudgeButton(); // 💡 リセット時にもボタンを無効化
+    updateS1JudgeButton(); // リセット時にもボタンを無効化
 }
 
 const s1_answer = ["F", "B", "A", "E", "C", "D"];
@@ -668,7 +709,7 @@ function handleS3NodeClick(index) {
             let moveStr = ("0" + s3_moves).slice(-2);
             
             // 💡 マイナス表示を削除し、純粋な数字（09〜01）だけを送る
-            sendCommand("N__" + moveStr);
+            sendCommand("N_" + moveStr);
             
             let beeps = 0; s3_isTransferring = true; updateS3NodeColors();
             const interval = setInterval(() => {
@@ -707,8 +748,6 @@ function checkS3Clear() {
         document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発動失敗)";
         document.getElementById("result-step3").style.color = "#ff7b72";
         
-        // 💡 0回になった時のピー（エラーブザー）を削除しました
-
         setTimeout(() => { 
             resetStep3Puzzle(); 
         }, 5000); // 💡 失敗した時の数字を5秒間長く表示してからリセットする
@@ -724,7 +763,7 @@ function resetStep3Puzzle() {
     document.getElementById("result-step3").innerText = ""; 
     
     // 💡 マイナス表示を削除
-    sendCommand("N__09"); 
+    sendCommand("N_09"); 
 }
 
 // ==========================================
@@ -770,8 +809,7 @@ function switchApp(appId) {
     }
     
     if (appId === 'step3') {
-        // 💡 ここもマイナス表示を削除
-        setTimeout(() => sendCommand("N__09"), 500); 
+        setTimeout(() => sendCommand("N_09"), 500); // マイナス削除
     }
 }
 
@@ -1196,16 +1234,11 @@ function startLastStep() {
     }, 1000);
 }
 
-// 💡 画面読み込み時は何もしない。銀行のログイン後に initBossCommunication() が呼ばれる。
+// 💡 画面読み込み時に何もしない仕様に変更（ログイン後に呼び出されます）
 window.addEventListener('DOMContentLoaded', () => { 
-    if (document.getElementById('dummy-portal-page')) {
-        initGojuon();
-        initPolyomino();
-        initPuzzles(); 
-        updateS3NodeColors(); 
-        alignBackgroundGrid(); 
-        
-        // テスト・開発用（game.htmlを直接開いた場合すぐにボス通信開始）
-        setTimeout(() => { initBossCommunication(); }, 500);
-    }
+    initGojuon();
+    initPolyomino();
+    initPuzzles(); 
+    updateS3NodeColors(); 
+    alignBackgroundGrid(); 
 });
