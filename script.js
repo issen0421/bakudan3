@@ -1025,7 +1025,6 @@ function renderPuzzleGrid(step) {
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
-    // 💡 点線枠を消して、画像を100%幅で配置する修正
     placeholder.style.backgroundImage = "none";
     placeholder.style.border = "none";
     placeholder.style.width = "100%";
@@ -1164,8 +1163,9 @@ function updateAnalysisCarousel(step) {
             placeholder.style.backgroundPosition = "center";
             placeholder.style.backgroundRepeat = "no-repeat";
         } else if (step === 3) {
+            // 💡 LAYER 03のメッセージ変更
             if (idx === 2) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">操作する容量のサイズが判明しました</span>`;
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">モニターに出力すべき『緊急信号』が判明しました</span>`;
             } else {
                 placeholder.innerHTML = "";
                 placeholder.style.backgroundImage = `url('FILE3_hint${idx + 1}.jpg')`;
