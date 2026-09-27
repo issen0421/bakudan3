@@ -3,6 +3,27 @@
 // ==========================================
 function showBossAlert() {
     document.getElementById('boss-alert').style.display = 'flex';
+    document.getElementById('boss-alert-btn').style.display = 'none';
+    const indicator = document.getElementById('boss-alert-indicator');
+    if (indicator) {
+        indicator.style.visibility = 'visible';
+        indicator.innerText = '▼ タップしてスキップ';
+    }
+
+    const text = "おい、何関係ないボタン押して遊んでるんだ。\n\nページの一番下にある「行員専用ポータル」を押して、パスワード「TGBadmin99」で、さっさとシステムに潜り込め。";
+
+    typeWriter('boss-alert-text', text, () => {
+        if (indicator) indicator.style.visibility = 'hidden';
+        document.getElementById('boss-alert-btn').style.display = 'block';
+    }, 'boss-alert-indicator');
+}
+
+function closeBossAlert() {
+    if (isTyping && currentTypingElement === 'boss-alert-text') {
+        finishTyping();
+        return;
+    }
+    document.getElementById('boss-alert').style.display = 'none';
 }
 
 function openLogin() {
@@ -1022,16 +1043,17 @@ function renderPuzzleGrid(step) {
         grid.style.height = "100%";
         grid.style.gridTemplateColumns = "repeat(3, 1fr)";
         grid.style.gridTemplateRows = "repeat(3, 1fr)";
-        grid.style.backgroundColor = "transparent";
         grid.style.pointerEvents = "auto";
-        
+        grid.style.gap = "4px"; 
+        grid.style.padding = "4px"; 
+        grid.style.boxSizing = "border-box";
+
         overlay.style.display = "none";
         grid.innerHTML = "";
         
         for(let i=0; i<9; i++) {
             let div = document.createElement("div");
             div.className = "grid-panel";
-            div.style.border = "1px solid #000";
             div.style.transition = "0.3s";
             
             if (panelsState[step][pIdx][i]) {
