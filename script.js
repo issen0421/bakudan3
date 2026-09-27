@@ -1025,9 +1025,13 @@ function renderPuzzleGrid(step) {
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
+    // 💡 点線枠を消して、画像を100%幅で配置する修正
     placeholder.style.backgroundImage = "none";
+    placeholder.style.border = "none";
+    placeholder.style.width = "100%";
+    placeholder.style.height = "100%";
     placeholder.parentElement.style.backgroundColor = "transparent"; 
-    placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; aspect-ratio: 1/1; object-fit: contain; display: block; border-radius: 3px;">`;
+    placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 3px;">`;
     
     if (isSolved[step][pIdx]) {
         grid.style.display = "none";
