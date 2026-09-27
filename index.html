@@ -62,9 +62,10 @@
         </div>
     </div>
 
-    <!-- 🕵️‍♂️ ボスからの警告モーダル (アニメーション対応版) -->
+    <!-- 🕵️‍♂️ ボスからの警告モーダル -->
+    <!-- 💡 箱の中をクリックしてもスキップされるように修正 -->
     <div id="boss-alert" onclick="closeBossAlert()">
-        <div class="boss-alert-box" onclick="event.stopPropagation()">
+        <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信着信：ボス 】</h3>
             <div id="boss-alert-text" style="line-height: 1.8; min-height: 80px; font-size: 16px; margin-bottom: 15px;"></div>
             <div id="boss-alert-indicator" class="tap-indicator" style="visibility: hidden; color: #ff7b72;">▼ タップしてスキップ</div>
@@ -262,9 +263,9 @@
                 </div>
             </div>
 
-            <!-- 💡 Flexboxに変更し、縦並びに修正 -->
-            <div id="main-protocol-area" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 5px; border-radius: 15px; transition: 0.3s; margin-top: 0;">
-                <div class="s1-slots" id="s1-slots-container" style="padding: 10px; min-height: 70px;">
+            <!-- 💡 Flexboxとgapで等間隔(25px)に揃え、marginを0にして統一 -->
+            <div id="main-protocol-area" style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 15px; border-radius: 15px; margin-top: 10px;">
+                <div class="s1-slots" id="s1-slots-container" style="margin: 0; padding: 10px; min-height: 70px;">
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -272,7 +273,8 @@
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 </div>
-                <div class="s1-items" id="s1-item-pool" style="margin-top: 5px; padding: 10px; min-height: 70px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
+                
+                <div class="s1-items" id="s1-item-pool" style="margin: 0; padding: 10px; min-height: 70px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
                     <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                     <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                     <div class="s1-item-slot item-slot" id="pool-C"><div class="s1-item item" draggable="true" id="C" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
@@ -280,10 +282,11 @@
                     <div class="s1-item-slot item-slot" id="pool-E"><div class="s1-item item" draggable="true" id="E" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                     <div class="s1-item-slot item-slot" id="pool-F"><div class="s1-item item" draggable="true" id="F" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                 </div>
+                
+                <button class="execute-btn" id="btn-judge-s1" onclick="checkClearStep1()" style="max-width: 400px; margin: 0; display: block; background: #444; opacity: 0.5; cursor: not-allowed;" disabled>判定</button>
+                <button class="execute-btn" onclick="resetStep1()" style="background: #444; max-width: 200px; margin: 0; display: block;">🔄 リセット</button>
             </div>
             
-            <button class="execute-btn" id="btn-judge-s1" onclick="checkClearStep1()" style="max-width: 400px; margin: 0 auto; display: block; background: #444; opacity: 0.5; cursor: not-allowed;" disabled>判定</button>
-            <button class="execute-btn" onclick="resetStep1()" style="background: #444; max-width: 200px; margin: 10px auto 0; display: block;">🔄 リセット</button>
             <div id="result-step1" class="result-msg"></div>
         </div>
 
