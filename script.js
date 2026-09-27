@@ -9,6 +9,11 @@ function openLogin() {
     document.getElementById('login-modal').style.display = 'flex';
 }
 
+function closeLogin() {
+    document.getElementById('login-modal').style.display = 'none';
+    document.getElementById('login-err').style.display = 'none';
+}
+
 function togglePassword() {
     const passInput = document.getElementById('staff-pass');
     if (passInput.type === "password") {
@@ -34,7 +39,6 @@ function checkBankLogin() {
             document.getElementById('dummy-bank-page').style.display = 'none';
             document.getElementById('dummy-portal-page').style.display = 'block';
             
-            // 💡 画面が切り替わったらボスの通信を開始
             setTimeout(initBossCommunication, 500);
         }, 2000);
     } else {
@@ -263,7 +267,7 @@ function closeBetrayalModal(e) {
 // AIチュートリアル
 const aiSequence = [
     { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内の3つのデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
-    { text: "【CHROMAKEY】\nあなたの最終目標は、画面中央の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-area', aiPosition: 'bottom' },
+    { text: "【CHROMAKEY】\nあなたの最終目標は、画面中央の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-wrapper-s1', aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nすぐに内部構造に気づいて突破できれば問題ありませんが、もし行き詰まった場合は、左下の『暗号化データ』を解読してください。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "【CHROMAKEY】\nあなたが暗号を解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかりデータ』を右下に表示します。", highlight: 'analysis-panel-area', aiPosition: 'top' },
     { text: "【CHROMAKEY】\nただし、左下の暗号化データは強固なプロテクトにより、最初は9枚のパネルで隠されています。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
@@ -517,11 +521,10 @@ function drop(e) {
         if (pool) pool.appendChild(dragged);
     }
     
-    updateS1JudgeButton(); // 💡 LAYER 1のボタン更新
+    updateS1JudgeButton(); 
     updateS2JudgeButton();
 }
 
-// 💡 LAYER 1 の判定ボタンの有効/無効を切り替える関数
 function updateS1JudgeButton() {
     const slots = document.querySelectorAll('#app-step1 .s1-slot');
     let filledCount = 0;
@@ -551,7 +554,7 @@ function resetStep1() {
         if(item && pool) pool.appendChild(item);
     });
     document.getElementById("result-step1").innerText = ""; 
-    updateS1JudgeButton(); // リセット時にもボタンを無効化
+    updateS1JudgeButton(); 
 }
 
 const s1_answer = ["F", "B", "A", "E", "C", "D"];
@@ -708,7 +711,6 @@ function handleS3NodeClick(index) {
             s3_moves--;
             let moveStr = ("0" + s3_moves).slice(-2);
             
-            // 💡 マイナス表示を削除し、純粋な数字（09〜01）だけを送る
             sendCommand("N_" + moveStr);
             
             let beeps = 0; s3_isTransferring = true; updateS3NodeColors();
@@ -738,7 +740,7 @@ function checkS3Clear() {
         document.getElementById("result-step3").style.color = "#2ea043";
         setTimeout(() => {
             initBetrayal();
-        }, 4000); // 💡 正解の数字「505」を4秒間長く表示する
+        }, 4000); 
     } else {
         let resStr = s3_volumes[0].toString() + s3_volumes[1].toString() + s3_volumes[2].toString();
         if (resStr.length === 3) resStr = "_" + resStr;
@@ -750,7 +752,7 @@ function checkS3Clear() {
         
         setTimeout(() => { 
             resetStep3Puzzle(); 
-        }, 5000); // 💡 失敗した時の数字を5秒間長く表示してからリセットする
+        }, 5000); 
     }
 }
 
@@ -762,7 +764,6 @@ function resetStep3Puzzle() {
     updateS3NodeColors();
     document.getElementById("result-step3").innerText = ""; 
     
-    // 💡 マイナス表示を削除
     sendCommand("N_09"); 
 }
 
@@ -809,7 +810,7 @@ function switchApp(appId) {
     }
     
     if (appId === 'step3') {
-        setTimeout(() => sendCommand("N_09"), 500); // マイナス削除
+        setTimeout(() => sendCommand("N_09"), 500); 
     }
 }
 
