@@ -62,8 +62,7 @@
         </div>
     </div>
 
-    <!-- 🕵️‍♂️ ボスからの警告モーダル -->
-    <!-- 💡 箱の中をクリックしてもスキップされるように修正 -->
+    <!-- 🕵️‍♂️ ボスからの警告モーダル (アニメーション対応版) -->
     <div id="boss-alert" onclick="closeBossAlert()">
         <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信着信：ボス 】</h3>
@@ -249,7 +248,8 @@
     <!-- APP 1: LAYER 01 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step1">
-        <h2>LAYER 01 システムに侵入するため、通信の形を合わせろ</h2>
+        <!-- 💡 タイトルを「手段（太字） ➔ 目的」に修正 -->
+        <h2><strong>6つの円を正しい順番で並べ替え</strong>、システムの第一防壁を突破せよ</h2>
         
         <div id="main-protocol-wrapper-s1" class="main-protocol-wrapper">
             <div class="panel-header" style="margin-bottom: 15px;">
@@ -263,7 +263,6 @@
                 </div>
             </div>
 
-            <!-- 💡 Flexboxとgapで等間隔(25px)に揃え、marginを0にして統一 -->
             <div id="main-protocol-area" style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 15px; border-radius: 15px; margin-top: 10px;">
                 <div class="s1-slots" id="s1-slots-container" style="margin: 0; padding: 10px; min-height: 70px;">
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -369,7 +368,8 @@
     <!-- APP 2: LAYER 02 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <h2>LAYER 02 銀行のスケジュール監視をバグらせろ</h2>
+        <!-- 💡 タイトルを「手段（太字） ➔ 目的」に修正 -->
+        <h2><strong>5つのピースを正しい順番で配置し</strong>、銀行のスケジュール監視を無効化せよ</h2>
         
         <div id="main-protocol-wrapper-s2" class="main-protocol-wrapper">
             <div class="panel-header" style="margin-bottom: 15px;">
@@ -480,7 +480,8 @@
     <!-- APP 3: LAYER 03 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <h2>LAYER 03 内部の容量を操作して「緊急開錠システム」を作動させろ</h2>
+        <!-- 💡 タイトルを「手段（太字） ➔ 目的」に修正 -->
+        <h2><strong>緊急信号を7セグモニターに出力し</strong>、金庫の『緊急開錠システム』を作動させろ</h2>
         
         <div id="main-protocol-wrapper-s3" class="main-protocol-wrapper">
             <div class="panel-header" style="margin-bottom: 15px;">
