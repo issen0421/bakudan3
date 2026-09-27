@@ -1043,11 +1043,9 @@ function renderPuzzleGrid(step) {
         grid.style.height = "100%";
         grid.style.gridTemplateColumns = "repeat(3, 1fr)";
         grid.style.gridTemplateRows = "repeat(3, 1fr)";
+        grid.style.backgroundColor = "transparent";
         grid.style.pointerEvents = "auto";
-        grid.style.gap = "4px"; 
-        grid.style.padding = "4px"; 
-        grid.style.boxSizing = "border-box";
-
+        
         overlay.style.display = "none";
         grid.innerHTML = "";
         
@@ -1062,7 +1060,6 @@ function renderPuzzleGrid(step) {
                 div.style.pointerEvents = "none";
             } else {
                 div.style.opacity = "1";
-                div.style.backgroundColor = "#161b22";
                 div.style.cursor = "pointer";
                 div.onclick = () => openPanel(step, pIdx, i);
             }
