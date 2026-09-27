@@ -1,7 +1,9 @@
 // ==========================================
 // 💡 行員ポータル ＆ ログイン処理
 // ==========================================
-function showBossAlert() {
+let isFirstBossAlert = true;
+
+function showBossAlert(isAuto = false) {
     document.getElementById('boss-alert').style.display = 'flex';
     document.getElementById('boss-alert-btn').style.display = 'none';
     const indicator = document.getElementById('boss-alert-indicator');
@@ -10,7 +12,14 @@ function showBossAlert() {
         indicator.innerText = '▼ タップしてスキップ';
     }
 
-    const text = "おい、何関係ないボタン押して遊んでるんだ。\n\nページの一番下にある「行員専用ポータル」を押して、パスワード「TGBadmin99」で、さっさとシステムに潜り込め。";
+    let text = "";
+    // 💡 初回の自動表示のみ、ミッションの目的を伝える
+    if (isAuto && isFirstBossAlert) {
+        text = "表向きはメガバンクだが、あの地下金庫には巨大シンジケートの『裏金とブラックリスト』が隠されている。奴らの悪事を世間に暴き、資産を根こそぎ頂くのが今回の我々のミッションだ。\n\nまずはページの一番下にある「行員専用ポータル」を探し、パスワード「TGBadmin99」でシステムに潜り込め。";
+        isFirstBossAlert = false;
+    } else {
+        text = "おい、何関係ないボタン押して遊んでるんだ。\n\nさっさとページの一番下にある「行員専用ポータル」を押して、パスワード「TGBadmin99」でシステムに潜り込め。";
+    }
 
     typeWriter('boss-alert-text', text, () => {
         if (indicator) indicator.style.visibility = 'hidden';
@@ -243,10 +252,10 @@ function closeIntroModal(e) {
 // 💡 トラップ発動イベント (LAYER 03 クリア後)
 // ==========================================
 const betrayalStory = [
-    "【WARNING】異常な電流を検知。ハッキングが銀行側にバレました。",
-    "【WARNING】金庫室が封鎖されました。銀行の『最終防衛プログラム』が作動しています。接続した9番のコードから、致死量の高圧電流が逆流しています。",
-    "【WARNING】このままでは10分後に装置が大爆発します。ただちにコードを抜いてください。",
-    "【ALERT】※警告※ 今すぐ適当にコードを抜くと、センサーが反応して即座に爆発します！"
+    "【WARNING】異常な熱源を検知。ハッキングが銀行（シンジケート）側に検知されました。",
+    "【WARNING】奴ら、データが盗まれるくらいならと『完全証拠隠滅プロトコル』を作動させました。金庫室ごとすべてを爆破して焼き払う気です！",
+    "【WARNING】接続した9番のコードから、起爆用の高圧電流がこちらへ逆流しています。このままでは10分後に手元の装置まで巻き込んで大爆発します！",
+    "【ALERT】※警告※ 今すぐ適当にコードを抜くと、センサーが反応して即座に起爆します！"
 ];
 
 let betrayalIdx = 0;
@@ -1258,11 +1267,13 @@ function startLastStep() {
     }, 1000);
 }
 
-// 💡 画面読み込み時に何もしない仕様に変更（ログイン後に呼び出されます）
+// 💡 画面読み込み時に自動でボスの通信を呼び出す
 window.addEventListener('DOMContentLoaded', () => { 
     initGojuon();
     initPolyomino();
     initPuzzles(); 
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
+    
+    setTimeout(() => showBossAlert(true), 1000); // 💡 追加
 });
