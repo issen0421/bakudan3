@@ -13,12 +13,12 @@ function showBossAlert(isAuto = false) {
     }
 
     let text = "";
-    // 💡 初回の自動表示のみ、ミッションの目的を伝える
+    // 💡 初回の自動表示のみ、ミッションの目的とパスワードの謎を伝える
     if (isAuto && isFirstBossAlert) {
-        text = "表向きはメガバンクだが、あの地下金庫には巨大シンジケートの『裏金とブラックリスト』が隠されている。奴らの悪事を世間に暴き、資産を根こそぎ頂くのが今回の我々のミッションだ。\n\nまずはページの一番下にある「行員専用ポータル」を探し、パスワード「TGBadmin99」でシステムに潜り込め。";
+        text = "表向きはメガバンクだが、あの地下金庫には巨大シンジケートの『裏金とブラックリスト』が隠されている。奴らの悪事を世間に暴き、資産を根こそぎ頂くのが今回の我々のミッションだ。\n\n内部の協力者からシステムへ侵入するためのパスワードが送られてきたが、奴らの通信監視網は異常だ。検知を逃れるため、手元の『業務マニュアル』の中に暗号化して隠したらしい。\n\nお前の頭脳でパスワードを解読し、ページ一番下にある「行員専用ポータル」からシステムに潜り込め。";
         isFirstBossAlert = false;
     } else {
-        text = "おい、何関係ないボタン押して遊んでるんだ。\n\nさっさとページの一番下にある「行員専用ポータル」を押して、パスワード「TGBadmin99」でシステムに潜り込め。";
+        text = "おい、何関係ないボタン押して遊んでるんだ。\n\nさっさと手元の『業務マニュアル』からパスワードを解読し、ページ一番下にある「行員専用ポータル」からシステムに潜り込め。";
     }
 
     typeWriter('boss-alert-text', text, () => {
@@ -55,6 +55,7 @@ function togglePassword() {
 
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
+    // 💡 パスワードの判定（現在は TGBadmin99 のままです。後で自由に変更できます）
     if (pass === "TGBadmin99") {
         document.getElementById('login-err').style.display = 'none';
         document.getElementById('login-modal').style.display = 'none';
@@ -1172,7 +1173,6 @@ function updateAnalysisCarousel(step) {
             placeholder.style.backgroundPosition = "center";
             placeholder.style.backgroundRepeat = "no-repeat";
         } else if (step === 3) {
-            // 💡 LAYER 03のメッセージ変更
             if (idx === 2) {
                 placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">モニターに出力すべき『緊急信号』が判明しました</span>`;
             } else {
@@ -1275,5 +1275,5 @@ window.addEventListener('DOMContentLoaded', () => {
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
     
-    setTimeout(() => showBossAlert(true), 1000); // 💡 追加
+    setTimeout(() => showBossAlert(true), 1000);
 });
