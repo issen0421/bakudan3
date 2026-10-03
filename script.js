@@ -430,15 +430,18 @@ function showEnding(isSuccess) {
 }
 
 // ==========================================
-// 💡 ドットグリッド背景と五十音表の完全同期
+// 💡 ドットグリッド背景と五十音表の完全同期（枠内に限定）
 // ==========================================
 function alignBackgroundGrid() {
     const table = document.getElementById('gojuon-table');
-    if (table) {
-        const rect = table.getBoundingClientRect();
-        const x = rect.left + window.scrollX;
-        const y = rect.top + window.scrollY;
-        document.body.style.backgroundPosition = `${x + 20}px ${y + 20}px`;
+    const wrapper = document.getElementById('main-protocol-wrapper-s1');
+    if (table && wrapper) {
+        const tableRect = table.getBoundingClientRect();
+        const wrapperRect = wrapper.getBoundingClientRect();
+        // wrapperの左上を基準にした、五十音表の相対座標を計算
+        const x = tableRect.left - wrapperRect.left;
+        const y = tableRect.top - wrapperRect.top;
+        wrapper.style.backgroundPosition = `${x + 20}px ${y + 20}px`;
     }
 }
 window.addEventListener('resize', alignBackgroundGrid);
@@ -533,7 +536,7 @@ function drawGojuonShape(id, mode) {
 }
 
 let currentDragId = null;
-let dragSourceIsPool = false; // 💡 ドラッグ元が下枠かを保持する変数
+let dragSourceIsPool = false; 
 
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
@@ -551,7 +554,6 @@ function dragItem(e) {
     }
 }
 
-// 💡 ドラッグ中、下枠の「外」に出たら図形を消すロジック
 document.addEventListener('dragover', (e) => {
     if (!currentDragId) return;
     
@@ -1307,11 +1309,9 @@ function startLastStep() {
     }, 1000);
 }
 
-// 💡 DOMContentLoaded時の自動アラートは削除し、初期設定のみ実行
 window.addEventListener('DOMContentLoaded', () => { 
     initGojuon();
     initPolyomino();
     initPuzzles(); 
     updateS3NodeColors(); 
-    alignBackgroundGrid(); 
 });
