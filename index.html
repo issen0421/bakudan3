@@ -109,7 +109,7 @@
         </div>
     </div>
 
-    <!-- 🕵️‍♂️ ボス通信モーダル -->
+    <!-- 🕵️‍♂️️ ボス通信モーダル -->
     <div id="boss-modal" onclick="nextBossMsg()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100000;">
         <div class="boss-box" onclick="event.stopPropagation(); nextBossMsg();" style="background: #161b22; padding: 30px; border-radius: 8px; width: 450px; border: 1px solid #30363d; color: #c9d1d9; text-align: left;">
             <h3 style="margin-top: 0; color: #58a6ff; font-size: 16px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信着信：ボス 】</h3>
@@ -262,22 +262,33 @@
                 </div>
             </div>
 
+            <!-- 💡 矢印（▶︎）をアイテム間に追加 -->
             <div id="main-protocol-area" style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 15px; border-radius: 15px; margin-top: 10px;">
                 <div class="s1-slots" id="s1-slots-container" style="margin: 0; padding: 10px; min-height: 70px;">
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                 </div>
                 
                 <div class="s1-items" id="s1-item-pool" style="margin: 0; padding: 10px; min-height: 70px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
                     <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-item-slot item-slot" id="pool-C"><div class="s1-item item" draggable="true" id="C" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-item-slot item-slot" id="pool-D"><div class="s1-item item" draggable="true" id="D" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-item-slot item-slot" id="pool-E"><div class="s1-item item" draggable="true" id="E" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
+                    <div class="s1-arrow">▶︎</div>
                     <div class="s1-item-slot item-slot" id="pool-F"><div class="s1-item item" draggable="true" id="F" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                 </div>
                 
