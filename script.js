@@ -8,7 +8,6 @@ function startMission() {
     if (!screen) return;
     screen.style.display = 'none';
 
-    // 💡 初回クリック時に音声をアンロック
     if (!isAudioUnlocked) {
         msgAudio.muted = true; 
         msgAudio.play().then(() => {
@@ -19,7 +18,6 @@ function startMission() {
         isAudioUnlocked = true;
     }
 
-    // アンロック後にボスの通信を開始
     setTimeout(() => showBossAlert(true), 500);
 }
 
@@ -535,21 +533,15 @@ function drawGojuonShape(id, mode) {
 }
 
 let currentDragId = null;
+let dragSourceIsPool = false; // 💡 ドラッグ元が下枠かを保持する変数
 
-function allowDrop(e) { 
-    e.preventDefault(); 
-    if(e.target.classList.contains('slot') || e.target.classList.contains('item-slot')) {
-        e.target.classList.add('drag-over'); 
-    }
-}
-function dragLeave(e) { e.target.classList.remove('drag-over'); }
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
     
-    const isFromPool = e.target.closest('#s1-item-pool') !== null;
+    dragSourceIsPool = e.target.closest('#s1-item-pool') !== null;
     
-    if (isFromPool) {
+    if (dragSourceIsPool) {
         drawGojuonShape(currentDragId, 4); 
         sendCommand('P1111'); 
     } else {
@@ -559,8 +551,18 @@ function dragItem(e) {
     }
 }
 
+// 💡 ドラッグ中、下枠の「外」に出たら図形を消すロジック
 document.addEventListener('dragover', (e) => {
     if (!currentDragId) return;
+    
+    if (dragSourceIsPool) {
+        const isOverPool = e.target.closest('#s1-item-pool') !== null;
+        if (isOverPool) {
+            drawGojuonShape(currentDragId, 4);
+        } else {
+            drawGojuonShape(null, 0);
+        }
+    }
 });
 
 function dragEndItem(e) {
