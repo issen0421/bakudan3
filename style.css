@@ -6,7 +6,33 @@ body {
     background-size: 40px 40px; 
     color: #c9d1d9; text-align: center; padding: 0; margin: 0; 
     transition: background-position 0.1s;
+    /* 🌟 テキストの全選択（青くなる現象）を防止 */
+    user-select: none;
+    -webkit-user-select: none;
 }
+
+/* 🌟 入力欄だけは選択可能にする */
+input, textarea {
+    user-select: auto;
+    -webkit-user-select: auto;
+}
+
+/* 🌟 スタート画面（初回クリック要求） */
+#start-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; color: #58a6ff; z-index: 9999999;
+    display: flex; align-items: center; justify-content: center;
+    font-family: monospace; cursor: pointer;
+}
+
+/* 🔌 常設デバイス接続ボタン */
+.fixed-connect-btn {
+    position: fixed; top: 15px; right: 15px; z-index: 999999;
+    background: #238636; color: white; border: none; padding: 8px 15px;
+    font-size: 14px; cursor: pointer; border-radius: 5px; font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: 0.2s;
+}
+.fixed-connect-btn:hover { background: #2ea043; transform: scale(1.05); }
 
 /* --- グローバルヘッダー & タブ --- */
 .header { background: #161b22; padding: 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 100; }
