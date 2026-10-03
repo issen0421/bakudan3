@@ -176,7 +176,6 @@ function startChromakey() {
     }, 2000);
 }
 
-
 // ==========================================
 // 💡 メッセージ表示用のタイピングエフェクトと音声
 // ==========================================
@@ -254,7 +253,6 @@ function initIntro() {
     document.getElementById('intro-indicator').style.display = 'block';
     document.getElementById('intro-btn').style.display = 'none';
 
-    // 💡 OS起動以降は、常設のデバイス接続ボタンを表示する
     document.querySelector('.fixed-connect-btn').style.display = 'block';
 }
 
@@ -432,9 +430,6 @@ function showEnding(isSuccess) {
     }
 }
 
-// ==========================================
-// 💡 ドットグリッド背景と五十音表の完全同期（枠内に限定）
-// ==========================================
 function alignBackgroundGrid() {
     const table = document.getElementById('gojuon-table');
     const wrapper = document.getElementById('main-protocol-wrapper-s1');
@@ -540,6 +535,19 @@ function drawGojuonShape(id, mode) {
 let currentDragId = null;
 let dragSourceIsPool = false; 
 
+// 🌟 消えてしまっていた超重要コード（ドロップ許可）を復活！
+function allowDrop(e) { 
+    e.preventDefault(); 
+    if(e.target.classList && (e.target.classList.contains('slot') || e.target.classList.contains('item-slot'))) {
+        e.target.classList.add('drag-over'); 
+    }
+}
+function dragLeave(e) { 
+    if(e.target.classList) {
+        e.target.classList.remove('drag-over'); 
+    }
+}
+
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
@@ -560,7 +568,8 @@ document.addEventListener('dragover', (e) => {
     if (!currentDragId) return;
     
     if (dragSourceIsPool) {
-        const isOverPool = e.target.closest('#s1-item-pool') !== null;
+        // e.target.closest がエラーを出さないように安全確認を追加
+        const isOverPool = e.target.closest && (e.target.closest('#s1-item-pool') !== null);
         if (isOverPool) {
             drawGojuonShape(currentDragId, 4);
         } else {
