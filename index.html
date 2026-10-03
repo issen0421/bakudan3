@@ -8,6 +8,14 @@
 </head>
 <body>
 
+    <!-- 🌟 音声アンロック用の初回クリック画面 -->
+    <div id="start-screen" onclick="startMission()">
+        <div class="tap-indicator" style="font-size: 18px;">▼ 画面をタップしてシステムにアクセス ▼</div>
+    </div>
+
+    <!-- 🔌 常設デバイス接続ボタン -->
+    <button class="fixed-connect-btn" onclick="connectSerial()" title="デバイス再接続">🔌 デバイス接続</button>
+
     <!-- ========================================== -->
     <!-- 🏦 銀行HP（トップページ） -->
     <!-- ========================================== -->
@@ -62,7 +70,7 @@
         </div>
     </div>
 
-    <!-- 🕵️‍♂️ ボスからの警告モーダル (アニメーション対応版) -->
+    <!-- 🕵️️‍♂️ ボスからの警告モーダル (アニメーション対応版) -->
     <div id="boss-alert" onclick="closeBossAlert()">
         <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信着信：ボス 】</h3>
@@ -262,7 +270,6 @@
                 </div>
             </div>
 
-            <!-- 💡 矢印（▶︎）をアイテム間に追加 -->
             <div id="main-protocol-area" style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 15px; border-radius: 15px; margin-top: 10px;">
                 <div class="s1-slots" id="s1-slots-container" style="margin: 0; padding: 10px; min-height: 70px;">
                     <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
