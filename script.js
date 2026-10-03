@@ -1,4 +1,29 @@
 // ==========================================
+// 💡 スタート画面と音声アンロック
+// ==========================================
+let isAudioUnlocked = false;
+
+function startMission() {
+    const screen = document.getElementById('start-screen');
+    if (!screen) return;
+    screen.style.display = 'none';
+
+    // 💡 初回クリック時に音声をアンロック
+    if (!isAudioUnlocked) {
+        msgAudio.muted = true; 
+        msgAudio.play().then(() => {
+            msgAudio.pause();
+            msgAudio.currentTime = 0;
+            msgAudio.muted = false;
+        }).catch(e => console.log("Audio unlock failed", e));
+        isAudioUnlocked = true;
+    }
+
+    // アンロック後にボスの通信を開始
+    setTimeout(() => showBossAlert(true), 500);
+}
+
+// ==========================================
 // 💡 行員ポータル ＆ ログイン処理
 // ==========================================
 let isFirstBossAlert = true;
@@ -15,7 +40,6 @@ function showBossAlert(isAuto = false) {
     }
 
     if (isAuto && isFirstBossAlert) {
-        // 💡 チーム名「Remora」を追加
         bankBossStory = [
             "「通信繋がったな。今回お前には、我々義賊団『Remora』の頭脳、ハッキング担当として動いてもらう。」",
             "「ターゲットは東京グローバル銀行。表向きはメガバンクだが、地下金庫には巨大シンジケートの『裏金とブラックリスト』が隠されている。」",
@@ -164,19 +188,6 @@ let typeInterval;
 const msgAudio = new Audio('message.mp3'); 
 msgAudio.loop = true;
 msgAudio.volume = 0.5;
-
-let isAudioUnlocked = false;
-document.addEventListener('click', () => {
-    if (!isAudioUnlocked) {
-        msgAudio.muted = true; 
-        msgAudio.play().then(() => {
-            msgAudio.pause();
-            msgAudio.currentTime = 0;
-            msgAudio.muted = false;
-        }).catch(e => console.log("Audio unlock failed", e));
-        isAudioUnlocked = true;
-    }
-}, { once: true });
 
 let currentTypingContent = "";
 let currentTypingElement = "";
@@ -536,16 +547,13 @@ function dragItem(e) {
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
     
-    // 💡 ドロップ元が下枠（プール）かどうかを判定
     const isFromPool = e.target.closest('#s1-item-pool') !== null;
     
     if (isFromPool) {
-        drawGojuonShape(currentDragId, 4); // 下枠の時は図形を描画
-        sendCommand('P1111'); // 4つ光る
+        drawGojuonShape(currentDragId, 4); 
+        sendCommand('P1111'); 
     } else {
-        drawGojuonShape(null, 0); // 上枠の時は図形を消す
-        // 💡 抽出語のインデックスに合わせたLED点灯パターン
-        // A(1,2), B(1,3), C(3,4), D(2,3), E(2,4), F(1,3)
+        drawGojuonShape(null, 0); 
         const ledPatterns = { 'A': 'P1100', 'B': 'P1010', 'C': 'P0011', 'D': 'P0110', 'E': 'P0101', 'F': 'P1010' };
         if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
     }
@@ -1297,13 +1305,11 @@ function startLastStep() {
     }, 1000);
 }
 
-// 💡 画面読み込み時に自動でボスの通信を呼び出す
+// 💡 DOMContentLoaded時の自動アラートは削除し、初期設定のみ実行
 window.addEventListener('DOMContentLoaded', () => { 
     initGojuon();
     initPolyomino();
     initPuzzles(); 
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
-    
-    setTimeout(() => showBossAlert(true), 1000);
 });
