@@ -15,8 +15,9 @@ function showBossAlert(isAuto = false) {
     }
 
     if (isAuto && isFirstBossAlert) {
+        // 💡 チーム名「Remora」を追加
         bankBossStory = [
-            "「通信繋がったな。今回お前には、我々『義賊団』の頭脳、ハッキング担当として動いてもらう。」",
+            "「通信繋がったな。今回お前には、我々義賊団『Remora』の頭脳、ハッキング担当として動いてもらう。」",
             "「ターゲットは東京グローバル銀行。表向きはメガバンクだが、地下金庫には巨大シンジケートの『裏金とブラックリスト』が隠されている。」",
             "「奴らの悪事を世間に暴き、資産を根こそぎ頂くのが我々のミッションだ。まずは金庫のシステムに侵入する必要がある。」",
             "「内部の協力者からパスワードが送られてきたが、検知を逃れるため手元の『業務マニュアル』の中に暗号化して隠したらしい。」",
@@ -444,7 +445,6 @@ const gojuonLayout = [
     ['','を','ろ','よ','も','ほ','の','と','そ','こ','お']
 ];
 
-// 💡 4文字と抽出される2文字を更新
 const blockData = {
     'A': { color: '#ec3321', chars4: ['さ','い','き','ん'], chars2: ['さ','い'] }, 
     'B': { color: '#ff8b00', chars4: ['つ','め','き','り'], chars2: ['つ','き'] }, 
@@ -500,11 +500,7 @@ function drawGojuonShape(id, mode) {
         if (points.length > 2) {
             const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
             polygon.setAttribute("points", points.join(" "));
-            polygon.setAttribute("fill", data.color + "30"); 
-            polygon.setAttribute("stroke", data.color);
-            polygon.setAttribute("stroke-width", "3");
-            polygon.setAttribute("stroke-linejoin", "round");
-            polygon.style.filter = `drop-shadow(0 0 5px ${data.color})`;
+            polygon.setAttribute("fill", data.color + "60"); 
             svg.appendChild(polygon);
         }
         if (unlockedAnalysisCount[1] >= 1) {
@@ -540,9 +536,19 @@ function dragItem(e) {
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
     
-    drawGojuonShape(currentDragId, 4); 
-    const ledPatterns = { 'A': 'P0101', 'B': 'P1100', 'C': 'P0101', 'D': 'P0011', 'E': 'P0101', 'F': 'P1010' };
-    if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
+    // 💡 ドロップ元が下枠（プール）かどうかを判定
+    const isFromPool = e.target.closest('#s1-item-pool') !== null;
+    
+    if (isFromPool) {
+        drawGojuonShape(currentDragId, 4); // 下枠の時は図形を描画
+        sendCommand('P1111'); // 4つ光る
+    } else {
+        drawGojuonShape(null, 0); // 上枠の時は図形を消す
+        // 💡 抽出語のインデックスに合わせたLED点灯パターン
+        // A(1,2), B(1,3), C(3,4), D(2,3), E(2,4), F(1,3)
+        const ledPatterns = { 'A': 'P1100', 'B': 'P1010', 'C': 'P0011', 'D': 'P0110', 'E': 'P0101', 'F': 'P1010' };
+        if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
+    }
 }
 
 document.addEventListener('dragover', (e) => {
@@ -612,7 +618,6 @@ function resetStep1() {
     updateS1JudgeButton(); 
 }
 
-// 💡 抽出語のサイズ順（のみ < あり < さる < さい < いえ < つき）の正解に更新
 const s1_answer = ["C", "F", "E", "A", "D", "B"];
 function checkClearStep1() {
     const slots = document.querySelectorAll('#app-step1 .s1-slot');
