@@ -253,6 +253,9 @@ function initIntro() {
     document.getElementById('intro-indicator').innerText = "▼ タップして再生";
     document.getElementById('intro-indicator').style.display = 'block';
     document.getElementById('intro-btn').style.display = 'none';
+
+    // 💡 OS起動以降は、常設のデバイス接続ボタンを表示する
+    document.querySelector('.fixed-connect-btn').style.display = 'block';
 }
 
 function nextIntro() {
@@ -438,7 +441,6 @@ function alignBackgroundGrid() {
     if (table && wrapper) {
         const tableRect = table.getBoundingClientRect();
         const wrapperRect = wrapper.getBoundingClientRect();
-        // wrapperの左上を基準にした、五十音表の相対座標を計算
         const x = tableRect.left - wrapperRect.left;
         const y = tableRect.top - wrapperRect.top;
         wrapper.style.backgroundPosition = `${x + 20}px ${y + 20}px`;
@@ -578,7 +580,8 @@ function drop(e) {
     e.target.classList.remove('drag-over');
     
     let dropTarget = e.target.classList.contains('item') ? e.target.parentElement : e.target;
-    const data = e.dataTransfer.getData("text"); 
+    
+    const data = e.dataTransfer.getData("text") || currentDragId; 
     const dragged = document.getElementById(data);
     if (!dragged) return;
 
@@ -1314,4 +1317,5 @@ window.addEventListener('DOMContentLoaded', () => {
     initPolyomino();
     initPuzzles(); 
     updateS3NodeColors(); 
+    alignBackgroundGrid(); 
 });
