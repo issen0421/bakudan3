@@ -1,11 +1,8 @@
-/* 💡 画面全体にドットグリッド（交点）を敷き詰める */
+/* 💡 画面全体は無地のサイバー背景に */
 body { 
     font-family: monospace; 
     background-color: #0d1117; 
-    background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
-    background-size: 40px 40px; 
     color: #c9d1d9; text-align: center; padding: 0; margin: 0; 
-    transition: background-position 0.1s;
     /* 🌟 テキストの全選択（青くなる現象）を防止 */
     user-select: none;
     -webkit-user-select: none;
@@ -174,13 +171,11 @@ input, textarea {
 .gojuon-table.revealed .gojuon-cell:not(.empty) { border-color: rgba(88, 166, 255, 0.6); box-shadow: inset 0 0 10px rgba(88, 166, 255, 0.2); }
 
 .s1-slots { display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; background: #f2f2f2; border-radius: 40px; padding: 15px 30px; min-height: 50px; }
-/* 💡 上枠の丸に border-box を設定し、横幅のズレを解消 */
 .s1-slot { width: 50px; height: 50px; border: 3px dashed #333; background: transparent; display: flex; align-items: center; justify-content: center; transition: 0.3s; border-radius: 50%; box-sizing: border-box; }
 .s1-slot.drag-over { border-color: #58a6ff; background: rgba(88, 166, 255, 0.2); }
 
 .s1-arrow { color: #8b949e; font-size: 20px; font-weight: bold; user-select: none; pointer-events: none; }
 
-/* 💡 丸（slot）だけを正確に指定して、左から右へサイズアップさせる */
 .s1-slots.size-hint-active .s1-slot:nth-child(1) { width: 30px; height: 30px; }
 .s1-slots.size-hint-active .s1-slot:nth-child(3) { width: 40px; height: 40px; }
 .s1-slots.size-hint-active .s1-slot:nth-child(5) { width: 50px; height: 50px; }
@@ -188,15 +183,12 @@ input, textarea {
 .s1-slots.size-hint-active .s1-slot:nth-child(9) { width: 70px; height: 70px; }
 .s1-slots.size-hint-active .s1-slot:nth-child(11) { width: 80px; height: 80px; }
 
-/* 💡 下枠の左右の余白（padding）を広げてバランスを調整 */
 .s1-items { display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 15px 0; padding: 25px 50px; background: #f2f2f2; min-height: 80px; clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%); transition: 0.3s; box-sizing: border-box; } 
-/* 💡 下枠の穴にも border-box を設定し、上枠と縦のラインを合わせる */
 .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; transition: 0.3s; border-radius: 50%; box-sizing: border-box; }
 .s1-item { width: 100%; height: 100%; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); flex-shrink: 0; box-sizing: border-box; }
 .s1-item:active { width: 50px !important; height: 50px !important; cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
 .s1-slot .s1-item { width: 100%; height: 100%; }
 
-/* 💡 ゴースト（残像）カラーを濃いめに調整 (0.2 -> 0.4) */
 #A.s1-item { background-color: #ec3321; } 
 #pool-A { background-color: rgba(236, 51, 33, 0.4); }
 
@@ -243,7 +235,6 @@ input, textarea {
 .poly-cell.empty { background: transparent; pointer-events: none; border: none; }
 
 .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; margin: 0 auto; max-width: 900px; }
-/* 💡 LAYER 02 の青い線を、3文字のド真ん中（16.6%, 50%, 83.3%付近）を貫くように再計算 */
 .s3-slots-container { display: flex; flex-direction: column; gap: 40px; width: 180px; position: relative; padding: 0; background: linear-gradient(to right, transparent 15.5%, #58a6ff 15.5%, #58a6ff 17.5%, transparent 17.5%, transparent 49%, #58a6ff 49%, #58a6ff 51%, transparent 51%, transparent 82.5%, #58a6ff 82.5%, #58a6ff 84.5%, transparent 84.5%); }
 .s3-slot { width: 180px; height: 60px; border: 3px solid #555; background: #161b22; display: flex; align-items: center; justify-content: center; font-size: 30px; z-index: 1; transition: 0.2s; }
 .s3-slot.drag-over { background: #1f6feb; border-color: #58a6ff; }
@@ -268,11 +259,9 @@ input, textarea {
 #mobile-blocker h1 { font-size: 30px; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
 #mobile-blocker p { font-size: 16px; color: #c9d1d9; }
 
-/* 💡 画面幅が768px以下の場合に発動 */
 @media screen and (max-width: 768px) {
     #mobile-blocker { display: flex; }
     .header, .app-container, .debug-panel, #intro-modal, #ai-modal { display: none !important; }
-    body { background-image: none; }
 }
 
 /* --- 🌟 ボス裏切りポップアップ (FILE 03 クリア後) --- */
@@ -330,7 +319,15 @@ input, textarea {
 
 #glitch-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; z-index: 99999; justify-content: center; align-items: center; text-align: center; font-family: monospace; font-size: 24px; transition: opacity 0.5s; }
 
-/* --- 💡 メインプロトコル枠 (背景は透明) --- */
+/* --- 💡 メインプロトコル枠 --- */
+/* LAYER 01の枠内だけにドットグリッドを設定 */
+#main-protocol-wrapper-s1 {
+    background-color: transparent;
+    background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
+    background-size: 40px 40px; 
+    transition: background-position 0.1s;
+}
+
 .main-protocol-wrapper {
     background: transparent;
     border: 2px solid #58a6ff;
