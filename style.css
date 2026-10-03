@@ -3,15 +3,12 @@ body {
     font-family: monospace; 
     background-color: #0d1117; 
     color: #c9d1d9; text-align: center; padding: 0; margin: 0; 
-    /* 🌟 テキストの全選択（青くなる現象）を防止 */
-    user-select: none;
-    -webkit-user-select: none;
 }
 
-/* 🌟 入力欄だけは選択可能にする */
-input, textarea {
-    user-select: auto;
-    -webkit-user-select: auto;
+/* 🌟 ボスやAIの「通信テキスト」だけ全選択（青くなる現象）を防止 */
+#boss-alert-text, #boss-text, .intro-text, .ai-text {
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* 🌟 スタート画面（初回クリック要求） */
@@ -24,7 +21,9 @@ input, textarea {
 
 /* 🔌 常設デバイス接続ボタン */
 .fixed-connect-btn {
-    position: fixed; top: 15px; right: 15px; z-index: 999999;
+    display: none; /* 💡 初期は非表示 */
+    position: fixed; top: 15px; right: 80px; /* 💡 ❓ボタンと被らないように位置を左にずらす */
+    z-index: 999999;
     background: #238636; color: white; border: none; padding: 8px 15px;
     font-size: 14px; cursor: pointer; border-radius: 5px; font-weight: bold;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: 0.2s;
@@ -185,7 +184,10 @@ input, textarea {
 
 .s1-items { display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 15px 0; padding: 25px 50px; background: #f2f2f2; min-height: 80px; clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%); transition: 0.3s; box-sizing: border-box; } 
 .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; transition: 0.3s; border-radius: 50%; box-sizing: border-box; }
-.s1-item { width: 100%; height: 100%; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); flex-shrink: 0; box-sizing: border-box; }
+
+.s1-item, .s3-item, .item { 
+    width: 100%; height: 100%; cursor: grab; transition: transform 0.1s, width 0.3s, height 0.3s; border-radius: 50%; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); flex-shrink: 0; box-sizing: border-box; 
+}
 .s1-item:active { width: 50px !important; height: 50px !important; cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
 .s1-slot .s1-item { width: 100%; height: 100%; }
 
@@ -320,7 +322,6 @@ input, textarea {
 #glitch-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; z-index: 99999; justify-content: center; align-items: center; text-align: center; font-family: monospace; font-size: 24px; transition: opacity 0.5s; }
 
 /* --- 💡 メインプロトコル枠 --- */
-/* LAYER 01の枠内だけにドットグリッドを設定 */
 #main-protocol-wrapper-s1 {
     background-color: transparent;
     background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
