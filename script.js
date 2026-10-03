@@ -2,6 +2,8 @@
 // 💡 行員ポータル ＆ ログイン処理
 // ==========================================
 let isFirstBossAlert = true;
+let bankBossIdx = -1;
+let bankBossStory = [];
 
 function showBossAlert(isAuto = false) {
     document.getElementById('boss-alert').style.display = 'flex';
@@ -9,22 +11,27 @@ function showBossAlert(isAuto = false) {
     const indicator = document.getElementById('boss-alert-indicator');
     if (indicator) {
         indicator.style.visibility = 'visible';
-        indicator.innerText = '▼ タップしてスキップ';
+        indicator.innerText = '▼ タップして再生';
     }
 
-    let text = "";
-    // 💡 初回の自動表示のみ、ミッションの目的とパスワードの謎を伝える
     if (isAuto && isFirstBossAlert) {
-        text = "表向きはメガバンクだが、あの地下金庫には巨大シンジケートの『裏金とブラックリスト』が隠されている。奴らの悪事を世間に暴き、資産を根こそぎ頂くのが今回の我々のミッションだ。\n\n内部の協力者からシステムへ侵入するためのパスワードが送られてきたが、奴らの通信監視網は異常だ。検知を逃れるため、手元の『業務マニュアル』の中に暗号化して隠したらしい。\n\nお前の頭脳でパスワードを解読し、ページ一番下にある「行員専用ポータル」からシステムに潜り込め。";
+        bankBossStory = [
+            "「通信繋がったな。今回お前には、我々『義賊団』の頭脳、ハッキング担当として動いてもらう。」",
+            "「ターゲットは東京グローバル銀行。表向きはメガバンクだが、地下金庫には巨大シンジケートの『裏金とブラックリスト』が隠されている。」",
+            "「奴らの悪事を世間に暴き、資産を根こそぎ頂くのが我々のミッションだ。まずは金庫のシステムに侵入する必要がある。」",
+            "「内部の協力者からパスワードが送られてきたが、検知を逃れるため手元の『業務マニュアル』の中に暗号化して隠したらしい。」",
+            "「お前の頭脳で解読し、ページ一番下にある『行員専用ポータル』からシステムに潜り込んでくれ。頼んだぞ。」"
+        ];
         isFirstBossAlert = false;
     } else {
-        text = "おい、何関係ないボタン押して遊んでるんだ。\n\nさっさと手元の『業務マニュアル』からパスワードを解読し、ページ一番下にある「行員専用ポータル」からシステムに潜り込め。";
+        bankBossStory = [
+            "「おい、何関係ないボタン押して遊んでるんだ。」",
+            "「さっさと手元の『業務マニュアル』からパスワードを解読し、ページ一番下にある『行員専用ポータル』からシステムに潜り込め。」"
+        ];
     }
 
-    typeWriter('boss-alert-text', text, () => {
-        if (indicator) indicator.style.visibility = 'hidden';
-        document.getElementById('boss-alert-btn').style.display = 'block';
-    }, 'boss-alert-indicator');
+    bankBossIdx = -1;
+    document.getElementById('boss-alert-text').innerText = "【 通信を受信しました 】";
 }
 
 function closeBossAlert() {
@@ -32,7 +39,24 @@ function closeBossAlert() {
         finishTyping();
         return;
     }
-    document.getElementById('boss-alert').style.display = 'none';
+
+    const indicator = document.getElementById('boss-alert-indicator');
+    if(bankBossIdx === -1 && indicator) {
+        indicator.innerText = "▼ タップして次へ";
+    }
+
+    bankBossIdx++;
+    if (bankBossIdx < bankBossStory.length) {
+        let isLast = (bankBossIdx === bankBossStory.length - 1);
+        typeWriter('boss-alert-text', bankBossStory[bankBossIdx], () => {
+            if (isLast) {
+                if (indicator) indicator.style.visibility = 'hidden';
+                document.getElementById('boss-alert-btn').style.display = 'block';
+            }
+        }, 'boss-alert-indicator');
+    } else {
+        document.getElementById('boss-alert').style.display = 'none';
+    }
 }
 
 function openLogin() {
@@ -55,7 +79,6 @@ function togglePassword() {
 
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
-    // 💡 パスワードの判定（現在は TGBadmin99 のままです。後で自由に変更できます）
     if (pass === "TGBadmin99") {
         document.getElementById('login-err').style.display = 'none';
         document.getElementById('login-modal').style.display = 'none';
@@ -421,12 +444,13 @@ const gojuonLayout = [
     ['','を','ろ','よ','も','ほ','の','と','そ','こ','お']
 ];
 
+// 💡 4文字と抽出される2文字を更新
 const blockData = {
-    'A': { color: '#ec3321', chars4: ['う','い','る','す'], chars2: ['い','す'] }, 
-    'B': { color: '#ff8b00', chars4: ['く','り','お','ね'], chars2: ['く','り'] }, 
-    'C': { color: '#fdd900', chars4: ['し','い','た','け'], chars2: ['い','け'] }, 
-    'D': { color: '#00b18e', chars4: ['か','し','つ','き'], chars2: ['つ','き'] }, 
-    'E': { color: '#0081ce', chars4: ['と','く','し','ま'], chars2: ['く','ま'] }, 
+    'A': { color: '#ec3321', chars4: ['さ','い','き','ん'], chars2: ['さ','い'] }, 
+    'B': { color: '#ff8b00', chars4: ['つ','め','き','り'], chars2: ['つ','き'] }, 
+    'C': { color: '#fdd900', chars4: ['や','し','の','み'], chars2: ['の','み'] }, 
+    'D': { color: '#00b18e', chars4: ['は','い','え','な'], chars2: ['い','え'] }, 
+    'E': { color: '#0081ce', chars4: ['み','さ','い','る'], chars2: ['さ','る'] }, 
     'F': { color: '#58278c', chars4: ['あ','め','り','か'], chars2: ['あ','り'] }  
 };
 
@@ -588,7 +612,8 @@ function resetStep1() {
     updateS1JudgeButton(); 
 }
 
-const s1_answer = ["F", "B", "A", "E", "C", "D"];
+// 💡 抽出語のサイズ順（のみ < あり < さる < さい < いえ < つき）の正解に更新
+const s1_answer = ["C", "F", "E", "A", "D", "B"];
 function checkClearStep1() {
     const slots = document.querySelectorAll('#app-step1 .s1-slot');
     let placedItems = [];
