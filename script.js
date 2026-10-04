@@ -965,6 +965,120 @@ function clickPolyomino(char) {
     }, 2000);
 }
 
+// 🌟 LAYER 02 のガイド（26マス）を生成する関数
+function initPolyGuide() {
+    const guide = document.getElementById("poly-guide");
+    if(!guide) return;
+    guide.innerHTML = "";
+    for(let r=0; r<5; r++) {
+        for(let c=0; c<6; c++) {
+            let cell = document.createElement("div");
+            cell.className = "poly-guide-cell";
+            // 5行目(r=4)以外で、6列目(c=5)は隠して、画像通りの26マスを作る
+            if(r < 4 && c === 5) {
+                cell.classList.add("hidden");
+            }
+            guide.appendChild(cell);
+        }
+    }
+}
+
+// 🌟 ポリオミノを自由にドラッグできるようにする関数
+let isPolyDraggable = false;
+function enablePolyDrag() {
+    if(isPolyDraggable) return;
+    isPolyDraggable = true;
+    
+    const polyArea = document.getElementById("poly-area");
+    const pieces = document.querySelectorAll('.poly-piece');
+    
+    // ガイドを表示
+    document.getElementById("poly-guide-area").style.display = "block";
+    polyArea.style.minHeight = "400px"; // ドラッグ用の余白を確保
+    
+    // 現在の位置（polyAreaからの相対位置）を記憶
+    const rects = [];
+    const areaRect = polyArea.getBoundingClientRect();
+    pieces.forEach(piece => {
+        const pRect = piece.getBoundingClientRect();
+        rects.push({
+            left: pRect.left - areaRect.left,
+            top: pRect.top - areaRect.top
+        });
+    });
+    
+    // 各ピースを absolute 配置に変更して自由に動かせるようにする
+    pieces.forEach((piece, i) => {
+        polyArea.appendChild(piece); 
+        piece.style.position = 'absolute';
+        piece.style.left = rects[i].left + 'px';
+        piece.style.top = rects[i].top + 'px';
+        piece.style.margin = "0";
+        piece.style.cursor = "grab";
+        piece.style.zIndex = "10";
+        makeDraggable(piece);
+    });
+}
+
+// 🌟 絶対配置された要素のドラッグ処理（マウス＆タッチ両対応）
+function makeDraggable(element) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    
+    element.onmousedown = dragMouseDown;
+    element.ontouchstart = dragMouseDown;
+
+    function dragMouseDown(e) {
+        e.preventDefault();
+        e = e || window.event;
+        
+        document.querySelectorAll('.poly-piece').forEach(p => p.style.zIndex = "10");
+        element.style.zIndex = "100";
+        element.style.cursor = "grabbing";
+        
+        if (e.type === 'touchstart') {
+            pos3 = e.touches[0].clientX;
+            pos4 = e.touches[0].clientY;
+        } else {
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+        }
+        
+        document.onmouseup = closeDragElement;
+        document.ontouchend = closeDragElement;
+        document.onmousemove = elementDrag;
+        document.ontouchmove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        let clientX, clientY;
+        if (e.type === 'touchmove') {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        
+        pos1 = pos3 - clientX;
+        pos2 = pos4 - clientY;
+        pos3 = clientX;
+        pos4 = clientY;
+        
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+        element.style.cursor = "grab";
+    }
+}
+
+
 // ==========================================
 // 💡 シリアル通信 & ハードウェアテスト
 // ==========================================
@@ -1203,6 +1317,11 @@ function unlockAnalysis(step) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
         
+        // 🌟 追加：LAYER 02の手がかり1でポリオミノのガイド表示＆ドラッグ解禁
+        if (step === 2 && unlockedAnalysisCount[2] >= 1) {
+            enablePolyDrag();
+        }
+        
         if (step === 3 && unlockedAnalysisCount[3] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
@@ -1230,7 +1349,7 @@ function updateAnalysisCarousel(step) {
             }
         } else if (step === 2) {
             if (idx === 0) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">関連性フィルターの第一段階を適用しました</span>`;
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">セキュリティパターンの外枠を検出しました</span>`;
             } else if (idx === 1) {
                 placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">関連性フィルターの第二段階を適用しました</span>`;
             } else if (idx === 2) {
@@ -1330,6 +1449,7 @@ function startLastStep() {
 window.addEventListener('DOMContentLoaded', () => { 
     initGojuon();
     initPolyomino();
+    initPolyGuide(); // 🌟 ガイド枠の初期生成を追加
     initPuzzles(); 
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
