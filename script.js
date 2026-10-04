@@ -903,7 +903,7 @@ setInterval(() => {
 
 
 // ==========================================
-// 💡 ポリオミノ・マス目 クリック共通処理
+// 💡 ポリオミノ・マス目 クリック共通処理（ここで確実化）
 // ==========================================
 let polyTimer;
 function sendSegmentCommand(char, cellElement) {
@@ -946,17 +946,19 @@ function initPolyomino() {
                 let div = document.createElement("div");
                 if (char === "") {
                     div.className = "poly-cell empty";
+                    // 🌟 どんなレイアウト状態でも空マスが潰れないようにJSから強制指定
+                    div.style.width = "30px";
+                    div.style.height = "30px";
                 } else {
                     div.id = "poly-" + char;
                     if (blackCells.has(char)) {
                         div.className = "poly-cell black";
                     } else {
                         div.className = "poly-cell white";
-                        // 🌟 データ属性に文字を記憶させておく
                         div.dataset.char = char;
-                        // 🌟 初期状態でのクリック処理（一番確実な onclick）
-                        div.onclick = function(e) {
-                            if(e) e.stopPropagation();
+                        // 🌟 クリックイベントがドラッグ親に吸われないように stopPropagation する！
+                        div.onmousedown = function(e) {
+                            e.stopPropagation(); 
                             sendSegmentCommand(char, this);
                         };
                     }
@@ -991,7 +993,7 @@ function initAZGrid(container) {
     container.innerHTML = "";
     container.style.gridTemplateColumns = "repeat(6, 30px)"; 
     
-    // 🌟 黒と白の配置（5x4 + 6マスに合わせて再定義）
+    // 🌟 黒と白の配置（5x4 + 6マスに合わせて定義）
     const solColors = [
         'B','W','W','B','B', 'X', // 0-5
         'B','W','B','B','W', 'X', // 6-11
@@ -1017,8 +1019,8 @@ function initAZGrid(container) {
         } else if(solColors[i] === 'W') {
             cell.classList.add("white");
             let char = azChars[i];
-            cell.onclick = function(e) {
-                if(e) e.stopPropagation();
+            cell.onmousedown = function(e) {
+                e.stopPropagation();
                 sendSegmentCommand(char, this);
             };
         } else {
@@ -1044,7 +1046,7 @@ function initKeyboardGrid() {
     const wrapper = document.createElement("div");
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
-    wrapper.style.alignItems = "flex-start"; 
+    wrapper.style.alignItems = "flex-start"; // 左揃えにしてマージンを正しく効かせる
     wrapper.style.gap = "3px";
     
     kbLayout.forEach((rowArr, rIdx) => {
@@ -1052,7 +1054,7 @@ function initKeyboardGrid() {
         rowDiv.style.display = "flex";
         rowDiv.style.gap = "3px";
         
-        // 🌟 QWERTYキーの正確なズレ（A行は16px(約0.5マス)、Z行は32px(約1マス)に修正し、画像を完全に再現）
+        // 🌟 QWERTYキーの正確なズレ（画像に合わせて、A行は16px、Z行は32px右にずらす）
         if(rIdx === 1) rowDiv.style.marginLeft = "16px";
         if(rIdx === 2) rowDiv.style.marginLeft = "32px";
         
@@ -1064,8 +1066,8 @@ function initKeyboardGrid() {
                 cell.classList.add("black");
             } else {
                 cell.classList.add("white");
-                cell.onclick = function(e) {
-                    if(e) e.stopPropagation();
+                cell.onmousedown = function(e) {
+                    e.stopPropagation();
                     sendSegmentCommand(char, this);
                 };
             }
@@ -1086,28 +1088,31 @@ function enablePolyDrag() {
     const pieces = document.querySelectorAll('.poly-piece');
     
     document.getElementById("poly-guide-area").style.display = "block";
+    polyArea.style.minHeight = "250px"; // 🌟 スロットと被らないように高さを広げる
     
-    // 🌟 ピースを絶対配置にして、左側に「互い違い」に配置し、絶対に重ならないようにする
-    const positions = [
-        { left: 0,   top: 0 },
-        { left: 60,  top: 40 },
-        { left: 0,   top: 100 },
-        { left: 60,  top: 140 },
-        { left: 0,   top: 200 }
-    ];
-    
+    // 🌟 ピースを絶対配置にして、スロットと被らない左側に並べる
     pieces.forEach((piece, i) => {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
         
-        piece.style.left = positions[i].left + 'px';
-        piece.style.top = positions[i].top + 'px';
+        // 縦に2列で並べる。X座標はマイナスにして左側に配置
+        let col = i % 2;
+        let row = Math.floor(i / 2);
+        
+        let scatterX = (col === 0) ? -180 : -70; 
+        let scatterY = (row * 80); 
+        
+        piece.style.left = scatterX + 'px';
+        piece.style.top = scatterY + 'px';
         
         piece.style.margin = "0";
         piece.style.cursor = "grab";
         piece.style.zIndex = "10";
         makeDraggable(piece);
     });
+    
+    // 元のコンテナ枠は用済みなので消す
+    document.getElementById("pieces-container").style.display = "none";
 }
 
 // 🌟 スナップ付きのドラッグ処理
@@ -1119,14 +1124,8 @@ function makeDraggable(element) {
     function dragMouseDown(e) {
         e = e || window.event;
         
-        // 🌟 ここで確実に白マスのクリック判定を拾い、即座にコマンドを送る！（ドラッグとクリックの完全両立）
-        let targetCell = e.target;
-        if (targetCell && targetCell.classList.contains('white') && targetCell.id.startsWith("poly-")) {
-            let char = targetCell.dataset.char; 
-            if(char) {
-                sendSegmentCommand(char, targetCell);
-            }
-        }
+        // 🌟 この時点で、白マスをクリックしていたら stopPropagation() されているため、
+        // 🌟 ここ（ドラッグ開始処理）には到達しない。これでクリックとドラッグが完璧に共存する！
         
         document.querySelectorAll('.poly-piece').forEach(p => p.style.zIndex = "10");
         element.style.zIndex = "100";
@@ -1156,10 +1155,14 @@ function makeDraggable(element) {
         document.onmousemove = null;
         element.style.cursor = "grab";
 
-        const guideArea = document.getElementById("poly-guide-area");
-        if(guideArea) {
-            const gLeft = guideArea.offsetLeft;
-            const gTop = guideArea.offsetTop;
+        const polyArea = document.getElementById("poly-area");
+        const guide = document.getElementById("poly-guide");
+        if(guide) {
+            const areaRect = polyArea.getBoundingClientRect();
+            const guideRect = guide.getBoundingClientRect();
+            
+            const gLeft = guideRect.left - areaRect.left;
+            const gTop = guideRect.top - areaRect.top;
             
             const pLeft = element.offsetLeft;
             const pTop = element.offsetTop;
@@ -1412,13 +1415,12 @@ function unlockAnalysis(step) {
                 enablePolyDrag();
             } else if (unlockedAnalysisCount[2] === 2) {
                 // 手がかり2: 盤面の表示
-                // 上段のドラッグエリアを完全に隠す
+                // 🌟 上段のドラッグエリアを完全に隠す
                 document.getElementById("poly-area").style.display = "none";
                 
                 const hint2Area = document.getElementById("s2-hint2-area");
                 let solvedGrid = document.createElement("div");
                 solvedGrid.id = "poly-solved-grid";
-                // クラスを確実に指定し、不要なCSSを上書きしない
                 solvedGrid.className = "poly-solved-grid";
                 solvedGrid.style.display = "grid";
                 solvedGrid.style.gridTemplateColumns = "repeat(6, 30px)";
