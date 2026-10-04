@@ -259,7 +259,10 @@ input, textarea {
 .s2-vol { display: none; color: #58a6ff; font-weight: bold; font-size: 20px; margin-top: -5px; }
 
 /* --- STEP 3 UI --- */
-.pieces-container { display: flex; justify-content: center; align-items: flex-start; gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10; }
+.pieces-container { 
+    display: flex; justify-content: center; align-items: flex-start; 
+    gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10; 
+}
 .poly-piece { display: grid; gap: 3px; }
 .piece-1 { grid-template-columns: repeat(4, 30px); }
 .piece-2 { grid-template-columns: repeat(3, 30px); }
@@ -268,11 +271,11 @@ input, textarea {
 .piece-5 { grid-template-columns: repeat(2, 30px); }
 
 /* 🌟 キーボードマス（及びA〜Zマス）を完全な正方形（30x30）に固定 */
-.poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; color: transparent; user-select: none; box-sizing: border-box; }
-.poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
+.poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; font-size: 16px; font-weight: bold; user-select: none; box-sizing: border-box; }
+.poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; color: #000; }
 .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
-.poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
-.poly-cell.empty { background: transparent; pointer-events: none; border: none; }
+.poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; color: transparent; }
+.poly-cell.empty { background: transparent; pointer-events: none; border: none; color: transparent; }
 
 .poly-guide-cell { width: 30px; height: 30px; border: 2px dashed #58a6ff; box-sizing: border-box; }
 .poly-guide-cell.hidden { border: none; }
