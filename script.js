@@ -91,18 +91,10 @@ function closeLogin() {
     document.getElementById('login-err').style.display = 'none';
 }
 
-function togglePassword() {
-    const passInput = document.getElementById('staff-pass');
-    if (passInput.classList.contains("secure-input")) {
-        passInput.classList.remove("secure-input");
-    } else {
-        passInput.classList.add("secure-input");
-    }
-}
-
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
-    if (pass === "TGBadmin99" || pass === "てすと") {
+    // 🌟 パスワードは「てすと」で固定
+    if (pass === "てすと") {
         document.getElementById('login-err').style.display = 'none';
         document.getElementById('login-modal').style.display = 'none';
         
@@ -329,13 +321,13 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル
+// AIチュートリアル（セリフを「右側」に修正）
 const aiSequence = [
-    { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内の3つのデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
-    { text: "【CHROMAKEY】\nあなたの最終目標は、画面中央の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-wrapper-s1', aiPosition: 'bottom' },
-    { text: "【CHROMAKEY】\nすぐに内部構造に気づいて突破できれば問題ありませんが、もし行き詰まった場合は、左下の『暗号化データ』を解読してください。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
+    { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内のデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
+    { text: "【CHROMAKEY】\nあなたの最終目標は、左側の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-wrapper-s1', aiPosition: 'bottom' },
+    { text: "【CHROMAKEY】\nすぐに内部構造に気づいて突破できれば問題ありませんが、もし行き詰まった場合は、右側の『暗号化データ』を解読してください。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "【CHROMAKEY】\nあなたが暗号を解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかり』をプロトコル上に反映します。", highlight: null, aiPosition: 'top' },
-    { text: "【CHROMAKEY】\nただし、左下の暗号化データは強固なプロテクトにより、最初は9枚のパネルで隠されています。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
+    { text: "【CHROMAKEY】\nただし、右側の暗号化データは強固なプロテクトにより、最初は9枚のパネルで隠されています。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "【CHROMAKEY】\n私は裏でこのプロテクトの解除を進めており、約2分に1枚のペースでパネルをめくる権限をお渡しできます。少しずつパネルをめくって暗号の全貌を推測し、答えを導き出してください。", highlight: 'puzzle-points-area', aiPosition: 'bottom' }
 ];
 
@@ -1230,7 +1222,8 @@ const puzzleFiles = {
     3: ["A", "B", "C"]
 };
 
-let availableAnalysisPoints = { 1: 0, 2: 0, 3: 0 }; 
+let openPoints = { 1: 0, 2: 0, 3: 0 }; 
+let panelsState = { 1: [], 2: [], 3: [] }; // 🌟復活: パネル開閉状態
 let unlockedAnalysisCount = { 1: 0, 2: 0, 3: 0 }; 
 let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 }; 
 let isSolved = { 1: [], 2: [], 3: [] };
@@ -1247,16 +1240,24 @@ function getRow(char) { return QWERTY_TOP.includes(char) ? 1 : QWERTY_MID.includ
 function initPuzzles() {
     for(let s=1; s<=3; s++) {
         for(let p=0; p<maxPuzzles[s]; p++) {
+            panelsState[s].push(new Array(9).fill(false)); // 🌟復活: 9枚のパネル状態を初期化
             isSolved[s].push(false);
         }
         renderPuzzleGrid(s);
     }
 }
 
+function addPoint(step) {
+    openPoints[step]++;
+    const el = document.getElementById(`puzzlePoints-s${step}`);
+    if(el) el.innerText = openPoints[step];
+}
+
 function renderPuzzleGrid(step) {
     const pIdx = currentPuzzleIdx[step];
-    const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
+    const grid = document.getElementById(`puzzleGrid-s${step}`);
     const overlay = document.getElementById(`solvedOverlay-s${step}`);
+    const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
@@ -1268,12 +1269,54 @@ function renderPuzzleGrid(step) {
     placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 3px;">`;
     
     if (isSolved[step][pIdx]) {
+        grid.style.display = "none";
         overlay.style.display = "flex";
     } else {
+        grid.style.display = "grid";
+        
+        grid.parentElement.style.position = "relative"; 
+        grid.style.position = "absolute";
+        grid.style.top = "0";
+        grid.style.left = "0";
+        grid.style.width = "100%";
+        grid.style.height = "100%";
+        grid.style.gridTemplateColumns = "repeat(3, 1fr)";
+        grid.style.gridTemplateRows = "repeat(3, 1fr)";
+        grid.style.backgroundColor = "transparent";
+        grid.style.pointerEvents = "auto";
+        
         overlay.style.display = "none";
+        grid.innerHTML = "";
+        
+        // 🌟復活: パネルの描画とクリックイベント
+        for(let i=0; i<9; i++) {
+            let div = document.createElement("div");
+            div.className = "grid-panel";
+            div.style.transition = "0.3s";
+            
+            if (panelsState[step][pIdx][i]) {
+                div.classList.add("open");
+                div.style.opacity = "0";
+                div.style.pointerEvents = "none";
+            } else {
+                div.style.opacity = "1";
+                div.style.cursor = "pointer";
+                div.onclick = () => openPanel(step, pIdx, i);
+            }
+            grid.appendChild(div);
+        }
     }
     document.getElementById(`btn-prev-puzzle-s${step}`).style.visibility = (pIdx === 0) ? 'hidden' : 'visible';
     document.getElementById(`btn-next-puzzle-s${step}`).style.visibility = (pIdx === maxPuzzles[step] - 1) ? 'hidden' : 'visible';
+}
+
+function openPanel(step, pIdx, panelIdx) {
+    if (openPoints[step] > 0) {
+        openPoints[step]--;
+        panelsState[step][pIdx][panelIdx] = true;
+        document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
+        renderPuzzleGrid(step);
+    }
 }
 
 function prevPuzzle(step) { if(currentPuzzleIdx[step] > 0) { currentPuzzleIdx[step]--; renderPuzzleGrid(step); } }
@@ -1295,8 +1338,7 @@ function submitAnswer(step) {
     if (isCorrect) {
         if (!isSolved[step][pIdx]) {
             isSolved[step][pIdx] = true;
-            availableAnalysisPoints[step]++;
-            unlockAnalysis(step); // 解けたら自動で作用を適用
+            unlockAnalysis(step); // 🌟 解けたら自動で作用を適用
         }
         feedback.style.color = "#0f0";
         feedback.innerText = "DATA DECODED";
@@ -1313,10 +1355,8 @@ function submitAnswer(step) {
     }
 }
 
-// 🌟 手がかりパネル削除に伴い、自動開放ロジックに変更
 function unlockAnalysis(step) {
-    if (availableAnalysisPoints[step] > 0 && unlockedAnalysisCount[step] < maxPuzzles[step]) {
-        availableAnalysisPoints[step]--;
+    if (unlockedAnalysisCount[step] < maxPuzzles[step]) {
         unlockedAnalysisCount[step]++;
         
         sendCommand("P1111"); 
@@ -1385,6 +1425,7 @@ function unlockAnalysis(step) {
         }
     }
 }
+
 
 // ==========================================
 // 🚫 リアルハッカー（ソースコード閲覧）対策システム
