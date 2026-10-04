@@ -9,7 +9,7 @@
 <body>
 
     <!-- 🌟 バージョン確認用（本番環境ではこの1行を削除してください） -->
-    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.9</div>
+    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.10</div>
 
     <!-- 🌟 音声アンロック用の初回クリック画面 -->
     <div id="start-screen" onclick="startMission()">
@@ -376,8 +376,7 @@
                     </div>
 
                     <!-- 🌟 手がかり1：ピースとガイドのドラッグエリア -->
-                    <!-- 🌟 幅と高さを固定し、絶対配置の基準にする -->
-                    <div id="poly-area" style="position: relative; width: 400px; min-height: 200px; margin: 0 auto 20px auto;">
+                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; margin-bottom: 0;">
                         <!-- ピース置き場（初期はFlexbox、ドラッグ解禁で絶対配置に切り替わる） -->
                         <div id="pieces-container" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;"></div>
                         
