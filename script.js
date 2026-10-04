@@ -102,7 +102,8 @@ function togglePassword() {
 
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
-    if (pass === "TGBadmin99") {
+    // 🌟 デバッグ用パスワード「てすと」を追加
+    if (pass === "TGBadmin99" || pass === "てすと") {
         document.getElementById('login-err').style.display = 'none';
         document.getElementById('login-modal').style.display = 'none';
         
@@ -535,7 +536,6 @@ function drawGojuonShape(id, mode) {
 let currentDragId = null;
 let dragSourceIsPool = false; 
 
-// 🌟 消えてしまっていた超重要コード（ドロップ許可）を復活！
 function allowDrop(e) { 
     e.preventDefault(); 
     if(e.target.classList && (e.target.classList.contains('slot') || e.target.classList.contains('item-slot'))) {
@@ -568,7 +568,6 @@ document.addEventListener('dragover', (e) => {
     if (!currentDragId) return;
     
     if (dragSourceIsPool) {
-        // e.target.closest がエラーを出さないように安全確認を追加
         const isOverPool = e.target.closest && (e.target.closest('#s1-item-pool') !== null);
         if (isOverPool) {
             drawGojuonShape(currentDragId, 4);
@@ -1153,9 +1152,17 @@ function submitAnswer(step) {
     const input = document.getElementById(`answerInput-s${step}`).value.trim();
     const feedback = document.getElementById(`terminalFeedback-s${step}`);
     const dict = puzzleDict[step];
+    const pIdx = currentPuzzleIdx[step];
 
-    if (input in dict) {
-        const pIdx = dict[input]; 
+    // 🌟 デバッグ用回答「てすと」を追加
+    let isCorrect = false;
+    if (input === "てすと") {
+        isCorrect = true;
+    } else if (input in dict && dict[input] === pIdx) {
+        isCorrect = true;
+    }
+
+    if (isCorrect) {
         if (!isSolved[step][pIdx]) {
             isSolved[step][pIdx] = true;
             availableAnalysisPoints[step]++;
@@ -1212,6 +1219,7 @@ function updateAnalysisCarousel(step) {
     placeholder.style.backgroundImage = "none";
     
     if (idx < unlockedAnalysisCount[step]) {
+        // 🌟 画像表示を廃止し、すべてテキスト（メインプロトコルへの作用）に変更
         if (step === 1) {
             if (idx === 0) {
                 placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">接続するポイントを特定しました</span>`;
@@ -1221,23 +1229,21 @@ function updateAnalysisCarousel(step) {
                 placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">画面上の見えないロックを解除しました</span>`;
             }
         } else if (step === 2) {
-            placeholder.innerHTML = "";
-            placeholder.style.backgroundImage = `url('FILE2_hint${idx + 1}.jpg')`;
-            placeholder.style.backgroundSize = "contain";
-            placeholder.style.backgroundPosition = "center";
-            placeholder.style.backgroundRepeat = "no-repeat";
-        } else if (step === 3) {
-            if (idx === 2) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">モニターに出力すべき『緊急信号』が判明しました</span>`;
-            } else {
-                placeholder.innerHTML = "";
-                placeholder.style.backgroundImage = `url('FILE3_hint${idx + 1}.jpg')`;
-                placeholder.style.backgroundSize = "contain";
-                placeholder.style.backgroundPosition = "center";
-                placeholder.style.backgroundRepeat = "no-repeat";
+            if (idx === 0) {
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">関連性フィルターの第一段階を適用しました</span>`;
+            } else if (idx === 1) {
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">関連性フィルターの第二段階を適用しました</span>`;
+            } else if (idx === 2) {
+                placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">すべての制限が解除されました</span>`;
             }
-        } else {
-            placeholder.innerHTML = `DECRYPTED: DATA ${pName}`;
+        } else if (step === 3) {
+            if (idx === 0) {
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">水差しの構造を解析しました</span>`;
+            } else if (idx === 1) {
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">フェイルセーフのパターンを特定しました</span>`;
+            } else if (idx === 2) {
+                placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">モニターの出力信号が判明しました</span>`;
+            }
         }
         placeholder.style.color = "#0f0";
         placeholder.style.borderColor = "#0f0";
