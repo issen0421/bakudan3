@@ -85,7 +85,7 @@
         <div class="login-box" onclick="event.stopPropagation()">
             <h3>行員システム・ログイン</h3>
             <div style="position: relative; margin-bottom: 20px;">
-                <!-- 🌟 目玉アイコンや伏字をすべて廃止し、純粋なテキスト入力に変更 -->
+                <!-- 🌟 パスワードを隠さない普通のテキスト入力欄に変更 -->
                 <input type="text" id="staff-pass" placeholder="Password (「てすと」と入力)" style="margin-bottom: 0; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
             </div>
             <button onclick="checkBankLogin()" style="background: #004080; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
@@ -252,7 +252,6 @@
     <div class="app-container" id="app-step1">
         <h2>【CHROMAKEY】<strong>6つの円を正しい順番で並べ替え</strong>、システムの第一防壁を突破してください。</h2>
         
-        <!-- 🌟 横並びレイアウトに変更 -->
         <div class="layer-layout">
             <div class="left-protocol">
                 <div id="main-protocol-wrapper-s1" class="main-protocol-wrapper">
@@ -304,7 +303,6 @@
                 </div>
             </div>
 
-            <!-- 右側に小謎パネルを配置 -->
             <div class="right-puzzle">
                 <div class="puzzle-panel" id="puzzle-panel-area">
                     <div class="panel-header">
@@ -382,36 +380,40 @@
                         
                         <div id="pieces-container" class="pieces-container"></div>
                         
-                        <div id="poly-guide-area" style="display:none; margin-top: 20px; opacity: 0.5;">
+                        <div id="poly-guide-area" style="display:none; margin-top: 10px; opacity: 0.5;">
                             <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); grid-template-rows: repeat(5, 30px); gap: 3px;">
-                                <!-- JSで26マスのガイドを生成 -->
+                                <!-- JSでマスのガイドを生成 -->
                             </div>
                         </div>
 
                     </div>
                     
-                    <!-- 手がかり2：セグメント情報のヒント表示エリア -->
-                    <div id="s2-hint2-area" style="display:none; justify-content: center; gap: 40px; align-items: center; margin-bottom: 30px;">
+                    <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア（最初は非表示） -->
+                    <div id="s2-hint2-area" style="display:none; justify-content: center; gap: 40px; align-items: center; margin-bottom: 20px;">
                         <!-- 左側に完成形グリッドが入る -->
                         <!-- 右側にセグメント情報 -->
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
                                 <span style="color:#8b949e;">... 10</span>
+                                <!-- 🌟 画像を挿入するためのプレースホルダー（四角い枠） -->
+                                <div class="hint2-img-box" style="width: 40px; height: 40px; border: 1px dashed #555; background: #222; margin-left: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #888;">画像</div>
                             </div>
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top"></span><span class="seg-mid on"></span><span class="seg-bot"></span></div>
                                 <span style="color:#8b949e;">... 9</span>
+                                <div class="hint2-img-box" style="width: 40px; height: 40px; border: 1px dashed #555; background: #222; margin-left: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #888;">画像</div>
                             </div>
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top"></span><span class="seg-mid"></span><span class="seg-bot on"></span></div>
                                 <span style="color:#8b949e;">... 7</span>
+                                <div class="hint2-img-box" style="width: 40px; height: 40px; border: 1px dashed #555; background: #222; margin-left: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #888;">画像</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- 手がかり3：キーボード配列表示エリア -->
-                    <div id="keyboard-area" style="display:none; flex-direction: column; gap: 3px; align-items: center; margin-bottom: 30px;">
+                    <div id="keyboard-area" style="display:none; flex-direction: column; gap: 3px; align-items: center; margin-bottom: 20px;">
                         <!-- JSでキーボードを生成 -->
                     </div>
 
