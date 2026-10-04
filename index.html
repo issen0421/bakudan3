@@ -9,7 +9,7 @@
 <body>
 
     <!-- 🌟 バージョン確認用（本番環境ではこの1行を削除してください） -->
-    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.8</div>
+    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.9</div>
 
     <!-- 🌟 音声アンロック用の初回クリック画面 -->
     <div id="start-screen" onclick="startMission()">
@@ -271,7 +271,7 @@
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                            <div class="s1-arrow">▶︎︎</div>
+                            <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -376,19 +376,17 @@
                     </div>
 
                     <!-- 🌟 手がかり1：ピースとガイドのドラッグエリア -->
-                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; gap: 40px; margin-bottom: 10px;">
+                    <!-- 🌟 幅と高さを固定し、絶対配置の基準にする -->
+                    <div id="poly-area" style="position: relative; width: 400px; min-height: 200px; margin: 0 auto 20px auto;">
+                        <!-- ピース置き場（初期はFlexbox、ドラッグ解禁で絶対配置に切り替わる） -->
+                        <div id="pieces-container" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;"></div>
                         
-                        <!-- ピース置き場（左側） -->
-                        <!-- 🌟 FlexboxやGridは使わず、JSでabsolute配置します -->
-                        <div id="pieces-container" style="position: relative; width: 200px;"></div>
-                        
-                        <!-- ガイド枠（右側） -->
-                        <div id="poly-guide-area" style="display:none; opacity: 0.5;">
+                        <!-- ガイド枠（右側に絶対配置） -->
+                        <div id="poly-guide-area" style="display:none; position: absolute; right: 0; top: 0; opacity: 0.5;">
                             <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;">
                                 <!-- JSで26マスのガイドを生成 -->
                             </div>
                         </div>
-
                     </div>
                     
                     <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア（横並びで高さを揃える） -->
