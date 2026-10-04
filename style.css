@@ -267,7 +267,7 @@ input, textarea {
 .piece-4 { grid-template-columns: repeat(3, 30px); }
 .piece-5 { grid-template-columns: repeat(2, 30px); }
 
-/* 🌟 キーボードマスを完全な正方形（30x30）に固定 */
+/* 🌟 キーボードマス（及びA〜Zマス）を完全な正方形（30x30）に固定 */
 .poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; color: transparent; user-select: none; box-sizing: border-box; }
 .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
 .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
