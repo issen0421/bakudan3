@@ -263,7 +263,7 @@ input, textarea {
     display: flex; justify-content: center; align-items: flex-start; 
     gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10; 
 }
-/* 🌟 ピースの形が崩れないように width: max-content を追加 */
+/* 🌟 width: max-content でドラッグ時のグリッド崩壊を防ぐ */
 .poly-piece { display: grid; gap: 3px; width: max-content; }
 .piece-1 { grid-template-columns: repeat(4, 30px); }
 .piece-2 { grid-template-columns: repeat(3, 30px); }
@@ -277,7 +277,9 @@ input, textarea {
 .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
 .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
 .poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
-.poly-cell.empty { background: transparent; pointer-events: none; border: none; }
+
+/* 🌟 バラバラ現象の元凶を修正。emptyにも幅・高さを強制して潰れないようにする */
+.poly-cell.empty { background: transparent; pointer-events: none; border: none; min-width: 30px; min-height: 30px; }
 
 .poly-guide-cell { width: 30px; height: 30px; border: 2px dashed #58a6ff; box-sizing: border-box; }
 .poly-guide-cell.hidden { border: none; }
