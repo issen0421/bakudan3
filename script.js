@@ -91,12 +91,13 @@ function closeLogin() {
     document.getElementById('login-err').style.display = 'none';
 }
 
+// 🌟 パスワード表示切替（CSSのクラスつけ外しに変更）
 function togglePassword() {
     const passInput = document.getElementById('staff-pass');
-    if (passInput.type === "password") {
-        passInput.type = "text";
+    if (passInput.classList.contains("secure-input")) {
+        passInput.classList.remove("secure-input");
     } else {
-        passInput.type = "password";
+        passInput.classList.add("secure-input");
     }
 }
 
@@ -940,6 +941,7 @@ function initPolyomino() {
                         div.className = "poly-cell black";
                     } else {
                         div.className = "poly-cell white";
+                        // ドラッグ可能にする前はクリック対応しておく
                         div.onclick = () => clickPolyomino(char);
                     }
                 }
@@ -952,6 +954,7 @@ function initPolyomino() {
 
 let polyTimer;
 function clickPolyomino(char) {
+    if (isPolyDraggable) return; // ドラッグモード中はクリック無効
     let row = getRow(char);
     let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
     if (polyTimer) clearTimeout(polyTimer);
@@ -974,7 +977,7 @@ function initPolyGuide() {
         for(let c=0; c<6; c++) {
             let cell = document.createElement("div");
             cell.className = "poly-guide-cell";
-            // 5行目(r=4)以外で、6列目(c=5)は隠して、画像通りの26マスを作る
+            // 5行目(r=4)以外で、6列目(c=5)は隠して、26マスを作る
             if(r < 4 && c === 5) {
                 cell.classList.add("hidden");
             }
@@ -983,7 +986,54 @@ function initPolyGuide() {
     }
 }
 
-// 🌟 ポリオミノを自由にドラッグできるようにする関数
+// 🌟 キーボード配列（手がかり3）を生成する関数
+const kbLayout = [
+    ['Q','W','E','R','T','Y','U','I','O','P'],
+    ['A','S','D','F','G','H','J','K','L'],
+    ['Z','X','C','V','B','N','M']
+];
+
+function initKeyboardGrid() {
+    const kArea = document.getElementById("keyboard-area");
+    if(!kArea) return;
+    kArea.innerHTML = "";
+    
+    kbLayout.forEach((rowArr, rIdx) => {
+        let rowDiv = document.createElement("div");
+        rowDiv.style.display = "flex";
+        rowDiv.style.gap = "3px";
+        if(rIdx === 1) rowDiv.style.marginLeft = "15px";
+        if(rIdx === 2) rowDiv.style.marginLeft = "30px";
+        
+        rowArr.forEach(char => {
+            let cell = document.createElement("div");
+            cell.id = "kb-" + char;
+            cell.innerText = char;
+            cell.className = "poly-cell";
+            if (blackCells.has(char)) {
+                cell.classList.add("black");
+            } else {
+                cell.classList.add("white");
+                cell.onclick = () => {
+                    let row = getRow(char);
+                    let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
+                    if (polyTimer) clearTimeout(polyTimer);
+                    sendCommand("S" + val + val + val + val);
+                    document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
+                    cell.classList.add("active");
+                    polyTimer = setTimeout(() => {
+                        sendCommand("S0000");
+                        cell.classList.remove("active");
+                    }, 2000);
+                };
+            }
+            rowDiv.appendChild(cell);
+        });
+        kArea.appendChild(rowDiv);
+    });
+}
+
+// 🌟 ポリオミノを自由にドラッグできるようにする関数（手がかり1）
 let isPolyDraggable = false;
 function enablePolyDrag() {
     if(isPolyDraggable) return;
@@ -994,9 +1044,8 @@ function enablePolyDrag() {
     
     // ガイドを表示
     document.getElementById("poly-guide-area").style.display = "block";
-    polyArea.style.minHeight = "400px"; // ドラッグ用の余白を確保
+    polyArea.style.minHeight = "400px"; 
     
-    // 現在の位置（polyAreaからの相対位置）を記憶
     const rects = [];
     const areaRect = polyArea.getBoundingClientRect();
     pieces.forEach(piece => {
@@ -1007,7 +1056,6 @@ function enablePolyDrag() {
         });
     });
     
-    // 各ピースを absolute 配置に変更して自由に動かせるようにする
     pieces.forEach((piece, i) => {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
@@ -1020,7 +1068,7 @@ function enablePolyDrag() {
     });
 }
 
-// 🌟 絶対配置された要素のドラッグ処理（マウス＆タッチ両対応）
+// 🌟 スナップ付きのドラッグ処理
 function makeDraggable(element) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     
@@ -1075,6 +1123,36 @@ function makeDraggable(element) {
         document.ontouchend = null;
         document.ontouchmove = null;
         element.style.cursor = "grab";
+
+        // 🌟 近くのグリッドにスナップ（吸着）させる処理
+        const polyArea = document.getElementById("poly-area");
+        const guide = document.getElementById("poly-guide");
+        if(guide) {
+            const areaRect = polyArea.getBoundingClientRect();
+            const guideRect = guide.getBoundingClientRect();
+            
+            // ガイドの左上（polyArea内の相対座標）
+            const gLeft = guideRect.left - areaRect.left;
+            const gTop = guideRect.top - areaRect.top;
+            
+            // ピースの現在の座標
+            const pLeft = element.offsetLeft;
+            const pTop = element.offsetTop;
+            
+            // ガイド基準での相対座標に変換
+            const relX = pLeft - gLeft;
+            const relY = pTop - gTop;
+            
+            // 33px単位（30px + gap 3px）で丸める
+            const snapX = Math.round(relX / 33) * 33;
+            const snapY = Math.round(relY / 33) * 33;
+            
+            // ガイドから近ければ吸着させる（±3マスの範囲内なら）
+            if(snapX >= -99 && snapX <= 198 && snapY >= -99 && snapY <= 165) {
+                element.style.left = (gLeft + snapX) + "px";
+                element.style.top = (gTop + snapY) + "px";
+            }
+        }
     }
 }
 
@@ -1310,6 +1388,7 @@ function unlockAnalysis(step) {
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 500); 
         
+        // 🌟 LAYER 01
         if (step === 1 && unlockedAnalysisCount[1] >= 2) {
             document.getElementById("s1-slots-container").classList.add("size-hint-active");
         }
@@ -1317,11 +1396,62 @@ function unlockAnalysis(step) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
         
-        // 🌟 追加：LAYER 02の手がかり1でポリオミノのガイド表示＆ドラッグ解禁
-        if (step === 2 && unlockedAnalysisCount[2] >= 1) {
-            enablePolyDrag();
+        // 🌟 LAYER 02 のイベント進行
+        if (step === 2) {
+            if (unlockedAnalysisCount[2] === 1) {
+                // 手がかり1: ガイド表示＆ドラッグ解禁
+                enablePolyDrag();
+            } else if (unlockedAnalysisCount[2] === 2) {
+                // 手がかり2: ピース非表示、セグメントヒント表示
+                document.getElementById("poly-guide-area").style.display = "none";
+                document.querySelectorAll('.poly-piece').forEach(p => p.style.display = "none");
+                
+                // 完全な完成形のグリッド（26マス）を手がかり2の演出として表示
+                const polyArea = document.getElementById("poly-area");
+                let solvedGrid = document.createElement("div");
+                solvedGrid.id = "poly-solved-grid";
+                solvedGrid.style.display = "grid";
+                solvedGrid.style.gridTemplateColumns = "repeat(6, 30px)";
+                solvedGrid.style.gridTemplateRows = "repeat(5, 30px)";
+                solvedGrid.style.gap = "3px";
+                solvedGrid.style.opacity = "0";
+                solvedGrid.style.transition = "opacity 1s";
+                
+                // 白黒の正解配置（キーボード配列から逆算）
+                const solutionCells = [
+                    'W','W','B','B','B','W',
+                    'B','W','W','W','B','B',
+                    'B','B','W','B','W','W',
+                    'W','W','W','W','W','B',
+                    'B','B','N','N','N','N'
+                ];
+                
+                for(let i=0; i<30; i++) {
+                    let cell = document.createElement("div");
+                    cell.className = "poly-cell";
+                    if(solutionCells[i] === 'B') cell.classList.add("black");
+                    else if(solutionCells[i] === 'W') cell.classList.add("white");
+                    else cell.style.border = "none";
+                    solvedGrid.appendChild(cell);
+                }
+                
+                polyArea.insertBefore(solvedGrid, polyArea.firstChild);
+                
+                document.getElementById("s2-hint2-area").style.display = "flex";
+                
+                setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
+
+            } else if (unlockedAnalysisCount[2] === 3) {
+                // 手がかり3: 完成形非表示、キーボード配列表示
+                const solvedGrid = document.getElementById("poly-solved-grid");
+                if (solvedGrid) solvedGrid.style.display = "none";
+                document.getElementById("s2-hint2-area").style.display = "none";
+                
+                document.getElementById("keyboard-area").style.display = "flex";
+            }
         }
         
+        // 🌟 LAYER 03
         if (step === 3 && unlockedAnalysisCount[3] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
@@ -1338,7 +1468,7 @@ function updateAnalysisCarousel(step) {
     placeholder.style.backgroundImage = "none";
     
     if (idx < unlockedAnalysisCount[step]) {
-        // 🌟 画像表示を廃止し、すべてテキスト（メインプロトコルへの作用）に変更
+        // 画像表示を廃止し、すべてテキスト（メインプロトコルへの作用）に変更
         if (step === 1) {
             if (idx === 0) {
                 placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">接続するポイントを特定しました</span>`;
@@ -1351,7 +1481,7 @@ function updateAnalysisCarousel(step) {
             if (idx === 0) {
                 placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">セキュリティパターンの外枠を検出しました</span>`;
             } else if (idx === 1) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">関連性フィルターの第二段階を適用しました</span>`;
+                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">関連性フィルターのデータ構造を復元しました</span>`;
             } else if (idx === 2) {
                 placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">すべての制限が解除されました</span>`;
             }
@@ -1449,7 +1579,8 @@ function startLastStep() {
 window.addEventListener('DOMContentLoaded', () => { 
     initGojuon();
     initPolyomino();
-    initPolyGuide(); // 🌟 ガイド枠の初期生成を追加
+    initPolyGuide(); 
+    initKeyboardGrid(); // 🌟 キーボード配列の初期生成を追加
     initPuzzles(); 
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
