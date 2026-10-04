@@ -263,8 +263,8 @@ input, textarea {
     display: flex; justify-content: center; align-items: flex-start; 
     gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10; 
 }
-/* 🌟 width: max-content でドラッグ時のグリッド崩壊を完全に防ぐ */
-.poly-piece { display: grid; gap: 3px; width: max-content; }
+/* 🌟 縦の隙間を消し、形が絶対に崩れないように完全固定 */
+.poly-piece { display: grid; gap: 3px; width: max-content; height: max-content; grid-auto-rows: 30px; align-content: start; }
 .piece-1 { grid-template-columns: repeat(4, 30px); }
 .piece-2 { grid-template-columns: repeat(3, 30px); }
 .piece-3 { grid-template-columns: repeat(3, 30px); }
@@ -272,13 +272,12 @@ input, textarea {
 .piece-5 { grid-template-columns: repeat(2, 30px); }
 
 /* 🌟 キーボードマス（及びA〜Zマス）を完全な正方形（30x30）に固定 */
-/* 🌟 color: transparent !important; で中の文字を完全に不可視化 */
 .poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; user-select: none; box-sizing: border-box; color: transparent !important; }
 .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
 .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
 .poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
 
-/* 🌟 emptyマスにも幅・高さを強制して潰れないようにする（これがバラバラ崩壊の真の原因でした） */
+/* 🌟 emptyマスにも幅・高さを強制して潰れないようにする */
 .poly-cell.empty { background: transparent; pointer-events: none; border: none; min-width: 30px; min-height: 30px; }
 
 .poly-guide-cell { width: 30px; height: 30px; border: 2px dashed #58a6ff; box-sizing: border-box; }
@@ -286,7 +285,6 @@ input, textarea {
 
 .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; margin: 0 auto; max-width: 900px; }
 
-/* 🌟 LAYER 02: 不要な余白を削除 */
 .s3-slots-container { display: flex; flex-direction: column; gap: 15px; width: 180px; position: relative; padding: 0; }
 .s3-not-equal-container { position: relative; height: 30px; width: 100%; }
 .s3-not-equal-container span { position: absolute; top: 50%; transform: translate(-50%, -50%) rotate(90deg); color: #58a6ff; font-size: 28px; font-weight: bold; pointer-events: none; user-select: none; }
