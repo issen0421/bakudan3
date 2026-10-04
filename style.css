@@ -270,8 +270,9 @@ input, textarea {
 .piece-4 { grid-template-columns: repeat(3, 30px); }
 .piece-5 { grid-template-columns: repeat(2, 30px); }
 
-/* 🌟 キーボードマス（及びA〜Zマス）を完全な正方形（30x30）に固定。文字は表示しない */
-.poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; user-select: none; box-sizing: border-box; }
+/* 🌟 キーボードマス（及びA〜Zマス）を完全な正方形（30x30）に固定 */
+/* 🌟 color: transparent !important; を設定し、中の文字を完全に不可視化 */
+.poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; user-select: none; box-sizing: border-box; color: transparent !important; }
 .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
 .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
 .poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
