@@ -93,7 +93,7 @@ function closeLogin() {
 
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
-    // 🌟 パスワードは「てすと」で通るように設定
+    // 🌟 パスワードは「てすと」で固定
     if (pass === "てすと") {
         document.getElementById('login-err').style.display = 'none';
         document.getElementById('login-modal').style.display = 'none';
@@ -959,23 +959,94 @@ function clickPolyomino(char) {
     }, 2000);
 }
 
-// 🌟 LAYER 02 のガイド（26マス）を生成する関数
+// 🌟 LAYER 02 のガイド（26マス: 5x5+1）を生成する関数
 function initPolyGuide() {
     const guide = document.getElementById("poly-guide");
     if(!guide) return;
     guide.innerHTML = "";
-    // 5行×6列で生成し、5行目(r=4)は1マスだけにする
     for(let r=0; r<5; r++) {
         for(let c=0; c<6; c++) {
             let cell = document.createElement("div");
             cell.className = "poly-guide-cell";
-            if(r === 4 && c > 0) {
+            // 🌟 4行目までは5マス、最後の5行目だけ6マスにする
+            if(r < 4 && c === 5) {
                 cell.classList.add("hidden");
             }
             guide.appendChild(cell);
         }
     }
 }
+
+// 🌟 A〜Z順のマス（手がかり2の完成形表示用）を生成する関数
+function initAZGrid(container) {
+    container.innerHTML = "";
+    // 🌟 5行×5列 ＋ 最後の行に1マスの計26マス
+    const solutionCells = [
+        'W','W','B','B','B',
+        'W','B','W','W','W',
+        'B','B','B','B','W',
+        'B','W','W','W','W',
+        'W','B','B','B','N','N'
+    ];
+    
+    // AZの順に割り当てる文字リスト
+    const azChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let charIdx = 0;
+    
+    // 5列のグリッドにする
+    container.style.gridTemplateColumns = "repeat(5, 30px)";
+    // 余計な6列目の設定を打ち消し、正方形のまま表示
+    
+    for(let i=0; i<25; i++) {
+        let cell = document.createElement("div");
+        cell.className = "poly-cell";
+        if(solutionCells[i] === 'B') {
+            cell.classList.add("black");
+        } else if(solutionCells[i] === 'W') {
+            cell.classList.add("white");
+            let char = azChars[charIdx++];
+            cell.onclick = () => {
+                let row = getRow(char);
+                let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
+                if (polyTimer) clearTimeout(polyTimer);
+                sendCommand("S" + val + val + val + val);
+                document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
+                cell.classList.add("active");
+                polyTimer = setTimeout(() => {
+                    sendCommand("S0000");
+                    cell.classList.remove("active");
+                }, 2000);
+            };
+        } else {
+            cell.style.border = "none";
+        }
+        container.appendChild(cell);
+    }
+    
+    // 🌟 最後の「Z」のマスを右下にポツンと置く
+    let lastCellContainer = document.createElement("div");
+    lastCellContainer.style.gridColumn = "6"; 
+    lastCellContainer.style.gridRow = "5";
+    
+    let lastCell = document.createElement("div");
+    lastCell.className = "poly-cell white";
+    let charZ = azChars[25];
+    lastCell.onclick = () => {
+        let row = getRow(charZ);
+        let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
+        if (polyTimer) clearTimeout(polyTimer);
+        sendCommand("S" + val + val + val + val);
+        document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
+        lastCell.classList.add("active");
+        polyTimer = setTimeout(() => {
+            sendCommand("S0000");
+            lastCell.classList.remove("active");
+        }, 2000);
+    };
+    lastCellContainer.appendChild(lastCell);
+    container.appendChild(lastCellContainer);
+}
+
 
 // 🌟 キーボード配列（手がかり3）を生成する関数
 const kbLayout = [
@@ -995,13 +1066,13 @@ function initKeyboardGrid() {
         rowDiv.style.gap = "3px";
         
         // 🌟 QWERTYキーの実際のズレ（インデント）を調整
-        if(rIdx === 1) rowDiv.style.marginLeft = "12px";
-        if(rIdx === 2) rowDiv.style.marginLeft = "36px";
+        if(rIdx === 1) rowDiv.style.marginLeft = "15px"; // A行は半マスズレ
+        if(rIdx === 2) rowDiv.style.marginLeft = "30px"; // Z行はさらに半マスズレ
         
         rowArr.forEach(char => {
             let cell = document.createElement("div");
             cell.id = "kb-" + char;
-            cell.innerText = char;
+            // cell.innerText = char; // 🌟 文字は非表示にする
             cell.className = "poly-cell";
             if (blackCells.has(char)) {
                 cell.classList.add("black");
@@ -1052,7 +1123,7 @@ function enablePolyDrag() {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
         
-        // 🌟 ピースを少し左上に散らしてガイドと被らないように調整
+        // 🌟 ピースを少し左側に寄せて配置
         let scatterX = (i % 2 === 0) ? -40 : -80;
         let scatterY = (i * 10) - 20;
         piece.style.left = (rects[i].left + scatterX) + 'px';
@@ -1242,9 +1313,6 @@ const puzzleDict = {
     3: {"そぷらのりこーだー":0, "ちきゅうおんだんか":1, "もんぶかがくしょう":2}
 };
 
-const QWERTY_TOP = "QWERTYUIOP"; const QWERTY_MID = "ASDFGHJKL"; const QWERTY_BOT = "ZXCVBNM";
-function getRow(char) { return QWERTY_TOP.includes(char) ? 1 : QWERTY_MID.includes(char) ? 2 : QWERTY_BOT.includes(char) ? 3 : 0; }
-
 function initPuzzles() {
     for(let s=1; s<=3; s++) {
         for(let p=0; p<maxPuzzles[s]; p++) {
@@ -1389,48 +1457,13 @@ function unlockAnalysis(step) {
                 let solvedGrid = document.createElement("div");
                 solvedGrid.id = "poly-solved-grid";
                 solvedGrid.style.display = "grid";
-                solvedGrid.style.gridTemplateColumns = "repeat(6, 30px)";
                 solvedGrid.style.gridTemplateRows = "repeat(5, 30px)";
                 solvedGrid.style.gap = "3px";
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
-                // 🌟 完成形を 5x4 + 6マス（最後の行が6マス）に変更
-                const solutionCells = [
-                    'W','W','B','B','B','W',
-                    'B','W','W','W','B','B',
-                    'B','B','W','B','W','W',
-                    'W','W','W','W','W','B',
-                    'B','B','N','N','N','N'
-                ];
-                
-                for(let i=0; i<30; i++) {
-                    let cell = document.createElement("div");
-                    cell.className = "poly-cell";
-                    
-                    // 🌟 白いマスにはクリックイベントを追加してモニター表示を機能させる
-                    if(solutionCells[i] === 'B') {
-                        cell.classList.add("black");
-                    } else if(solutionCells[i] === 'W') {
-                        cell.classList.add("white");
-                        let char = (i<10) ? kbLayout[0][i] : (i<19) ? kbLayout[1][i-10] : (i<26) ? kbLayout[2][i-19] : '';
-                        cell.onclick = () => {
-                            let row = getRow(char);
-                            let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
-                            if (polyTimer) clearTimeout(polyTimer);
-                            sendCommand("S" + val + val + val + val);
-                            document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
-                            cell.classList.add("active");
-                            polyTimer = setTimeout(() => {
-                                sendCommand("S0000");
-                                cell.classList.remove("active");
-                            }, 2000);
-                        };
-                    } else {
-                        cell.style.border = "none";
-                    }
-                    solvedGrid.appendChild(cell);
-                }
+                // 🌟 A〜Zのマス（5x5+1）を生成
+                initAZGrid(solvedGrid);
                 
                 polyArea.insertBefore(solvedGrid, polyArea.firstChild);
                 document.getElementById("s2-hint2-area").style.display = "flex";
