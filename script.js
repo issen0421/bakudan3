@@ -903,7 +903,7 @@ setInterval(() => {
 
 
 // ==========================================
-// 💡 ポリオミノ・マス目 クリック共通処理（ここで確実化）
+// 💡 ポリオミノ・マス目 クリック共通処理
 // ==========================================
 let polyTimer;
 function sendSegmentCommand(char, cellElement) {
@@ -954,7 +954,7 @@ function initPolyomino() {
                         div.className = "poly-cell white";
                         // 🌟 データ属性に文字を記憶させておく
                         div.dataset.char = char;
-                        // 🌟 初期状態でのクリック処理
+                        // 🌟 初期状態でのクリック処理（一番確実な onclick）
                         div.onclick = function(e) {
                             if(e) e.stopPropagation();
                             sendSegmentCommand(char, this);
@@ -1044,7 +1044,7 @@ function initKeyboardGrid() {
     const wrapper = document.createElement("div");
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
-    wrapper.style.alignItems = "flex-start"; // 🌟 左揃え
+    wrapper.style.alignItems = "flex-start"; 
     wrapper.style.gap = "3px";
     
     kbLayout.forEach((rowArr, rIdx) => {
@@ -1052,7 +1052,7 @@ function initKeyboardGrid() {
         rowDiv.style.display = "flex";
         rowDiv.style.gap = "3px";
         
-        // 🌟 QWERTYキーの正確なズレ（A行は約0.5マス=16px、Z行は約1マス=32px右にずらす）
+        // 🌟 QWERTYキーの正確なズレ（A行は16px(約0.5マス)、Z行は32px(約1マス)に修正し、画像を完全に再現）
         if(rIdx === 1) rowDiv.style.marginLeft = "16px";
         if(rIdx === 2) rowDiv.style.marginLeft = "32px";
         
@@ -1087,21 +1087,18 @@ function enablePolyDrag() {
     
     document.getElementById("poly-guide-area").style.display = "block";
     
-    // 🌟 ピースを絶対配置にして、左側の空間に固定の座標で散らす（重ならないように調整）
+    // 🌟 ピースを絶対配置にして、左側に「互い違い」に配置し、絶対に重ならないようにする
     const positions = [
         { left: 0,   top: 0 },
-        { left: 130, top: 20 },
+        { left: 60,  top: 40 },
         { left: 0,   top: 100 },
-        { left: 130, top: 120 },
+        { left: 60,  top: 140 },
         { left: 0,   top: 200 }
     ];
     
     pieces.forEach((piece, i) => {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
-        
-        // 🌟 ドラッグ解禁時に形が崩れないように幅を強制固定
-        piece.style.width = "max-content"; 
         
         piece.style.left = positions[i].left + 'px';
         piece.style.top = positions[i].top + 'px';
@@ -1122,10 +1119,13 @@ function makeDraggable(element) {
     function dragMouseDown(e) {
         e = e || window.event;
         
-        // 🌟 クリックしたのが白マスなら、ドラッグ開始と同時に信号を飛ばす！
-        if(e.target && e.target.classList.contains('white')) {
-            let char = e.target.dataset.char; 
-            if(char) sendSegmentCommand(char, e.target);
+        // 🌟 ここで確実に白マスのクリック判定を拾い、即座にコマンドを送る！（ドラッグとクリックの完全両立）
+        let targetCell = e.target;
+        if (targetCell && targetCell.classList.contains('white') && targetCell.id.startsWith("poly-")) {
+            let char = targetCell.dataset.char; 
+            if(char) {
+                sendSegmentCommand(char, targetCell);
+            }
         }
         
         document.querySelectorAll('.poly-piece').forEach(p => p.style.zIndex = "10");
@@ -1408,7 +1408,7 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 02 のイベント進行
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
-                // 手がかり1: ガイド表示＆ドラッグ解禁
+                // 手がかり1: ピース群を左に寄せ、右にガイド表示
                 enablePolyDrag();
             } else if (unlockedAnalysisCount[2] === 2) {
                 // 手がかり2: 盤面の表示
@@ -1429,7 +1429,7 @@ function unlockAnalysis(step) {
                 // 🌟 A〜Zの盤面（5x4+6マス）を生成（文字なし）
                 initAZGrid(solvedGrid);
                 
-                // 🌟 下段のエリア（10,9,7のヒント画像の横）に盤面を挿入（高さが完璧に揃います！）
+                // 🌟 下段のエリア（10,9,7のヒント表示の横）に盤面を挿入
                 hint2Area.insertBefore(solvedGrid, hint2Area.firstChild);
                 hint2Area.style.display = "flex";
                 setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
