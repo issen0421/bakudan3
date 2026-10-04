@@ -823,7 +823,7 @@ function checkS3Clear() {
         
         sendCommand("N" + resStr); 
 
-        document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発発動失敗)";
+        document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発動失敗)";
         document.getElementById("result-step3").style.color = "#ff7b72";
         
         setTimeout(() => { 
@@ -931,10 +931,10 @@ function initPolyomino() {
                         div.className = "poly-cell black";
                     } else {
                         div.className = "poly-cell white";
-                        // 🌟 スマホ・PC問わず確実にクリック反応させるため pointerdown を使用
-                        div.addEventListener('pointerdown', (e) => {
-                            if (!isPolyDraggable) clickPolyomino(char);
-                        });
+                        // 🌟 ストッパーを外し、最も安全な標準 onclick イベントに変更
+                        div.onclick = () => {
+                            clickPolyomino(char);
+                        };
                     }
                 }
                 pieceDiv.appendChild(div);
@@ -964,12 +964,13 @@ function initPolyGuide() {
     const guide = document.getElementById("poly-guide");
     if(!guide) return;
     guide.innerHTML = "";
-    // CSSグリッドの6列設定に対し、4行目までは6列目を非表示にして 5マス にする。
+    // CSSグリッドの6列設定に対し、0〜29のマスを作り、不要なマスを非表示にすることで 5x4+6 を実現
     for(let i=0; i<30; i++) {
         let r = Math.floor(i / 6);
         let c = i % 6;
         let cell = document.createElement("div");
         cell.className = "poly-guide-cell";
+        // 4行目(r=0,1,2,3)の6列目(c=5)は不可視にする
         if(r < 4 && c === 5) {
             cell.style.visibility = "hidden";
             cell.style.border = "none";
@@ -979,8 +980,11 @@ function initPolyGuide() {
 }
 
 // 🌟 A〜Zの盤面（手がかり2の完成形表示用）を生成する関数
-function initAZGrid(container) {
+function initAZGrid() {
+    const container = document.getElementById("poly-solved-grid");
+    if(!container) return;
     container.innerHTML = "";
+    container.style.gridTemplateColumns = "repeat(6, 30px)"; 
     
     // 🌟 黒と白の配置と、非表示（X）の配置を 5x4 + 6マス に合わせて完全定義
     const solColors = [
@@ -991,7 +995,7 @@ function initAZGrid(container) {
         'B','W','B','W','W', 'W'  // 24-29
     ];
     
-    // AZの順に割り当てる文字リスト（画面上には一切表示しない）
+    // AZの順に割り当てる文字リスト
     const azChars = [
         'A','B','C','D','E', '',
         'F','G','H','I','J', '',
@@ -1006,13 +1010,11 @@ function initAZGrid(container) {
         
         if(solColors[i] === 'B') {
             cell.classList.add("black");
-            // 文字は入れない
         } else if(solColors[i] === 'W') {
             cell.classList.add("white");
-            // 文字は入れない
             let char = azChars[i];
-            // 🌟 確実に反応させるために pointerdown を使用
-            cell.addEventListener('pointerdown', () => {
+            // 🌟 ストッパーを外し、最も安全な標準 onclick イベントに変更
+            cell.onclick = () => {
                 let row = getRow(char);
                 let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
                 if (polyTimer) clearTimeout(polyTimer);
@@ -1023,7 +1025,7 @@ function initAZGrid(container) {
                     sendCommand("S0000");
                     cell.classList.remove("active");
                 }, 2000);
-            });
+            };
         } else {
             cell.style.visibility = "hidden";
             cell.style.border = "none";
@@ -1062,8 +1064,8 @@ function initKeyboardGrid() {
                 cell.classList.add("black");
             } else {
                 cell.classList.add("white");
-                // 🌟 確実に反応させるために pointerdown を使用
-                cell.addEventListener('pointerdown', () => {
+                // 🌟 ストッパーを外し、最も安全な標準 onclick イベントに変更
+                cell.onclick = () => {
                     let row = getRow(char);
                     let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
                     if (polyTimer) clearTimeout(polyTimer);
@@ -1074,7 +1076,7 @@ function initKeyboardGrid() {
                         sendCommand("S0000");
                         cell.classList.remove("active");
                     }, 2000);
-                });
+                };
             }
             rowDiv.appendChild(cell);
         });
@@ -1098,9 +1100,9 @@ function enablePolyDrag() {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
         
-        // 左側の空間に縦に並べる
-        let scatterX = (i % 2 === 0) ? -160 : -80; 
-        let scatterY = (Math.floor(i / 2) * 60) - 10;
+        // 左側の空間に縦に並べる（重ならないようにマージンを広く取る）
+        let scatterX = (i % 2 === 0) ? -160 : -40; 
+        let scatterY = (Math.floor(i / 2) * 65);
         
         piece.style.left = scatterX + 'px';
         piece.style.top = scatterY + 'px';
@@ -1120,6 +1122,7 @@ function makeDraggable(element) {
     element.ontouchstart = dragMouseDown;
 
     function dragMouseDown(e) {
+        // e.preventDefault() はクリックイベントを殺すため使用しません
         e = e || window.event;
         
         document.querySelectorAll('.poly-piece').forEach(p => p.style.zIndex = "10");
@@ -1423,17 +1426,17 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 02 のイベント進行
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
-                // 手がかり1: ガイド表示＆ドラッグ解禁
+                // 手がかり1: ピース群を左に寄せ、右にガイド表示
                 enablePolyDrag();
             } else if (unlockedAnalysisCount[2] === 2) {
                 // 手がかり2: 盤面の表示
-                // 🌟 上段のドラッグエリアを完全に隠す
+                // 上段のドラッグエリアを完全に隠す
                 document.getElementById("poly-area").style.display = "none";
                 
                 const hint2Area = document.getElementById("s2-hint2-area");
                 let solvedGrid = document.createElement("div");
                 solvedGrid.id = "poly-solved-grid";
-                // 🌟 盤面のスタイルを確実に指定
+                // 🌟 クラスを確実に指定し、不要なCSSを上書きしない
                 solvedGrid.className = "poly-solved-grid";
                 solvedGrid.style.display = "grid";
                 solvedGrid.style.gridTemplateColumns = "repeat(6, 30px)";
@@ -1441,10 +1444,11 @@ function unlockAnalysis(step) {
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
-                // 🌟 A〜Zの盤面（5x4+6マス）を生成
+                // 🌟 A〜Zの盤面（5x4+6マス）を生成して文字情報を排除
                 initAZGrid(solvedGrid);
                 
-                // 🌟 下段のエリア（10,9,7のヒント画像の横）に盤面を挿入（高さが完璧に揃います！）
+                // 🌟 下段のエリア（10,9,7のヒント表示の横）に盤面を挿入
+                // id="s2-hint2-area" は display: flex; flex-direction: row; になっているため横に並びます
                 hint2Area.insertBefore(solvedGrid, hint2Area.firstChild);
                 hint2Area.style.display = "flex";
                 setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
@@ -1455,6 +1459,9 @@ function unlockAnalysis(step) {
                 if (solvedGrid) solvedGrid.style.display = "none";
                 document.getElementById("s2-hint2-area").style.display = "none";
                 document.getElementById("keyboard-area").style.display = "flex";
+                
+                // 初回構築
+                initKeyboardGrid();
             }
         }
         
@@ -1519,7 +1526,6 @@ window.addEventListener('DOMContentLoaded', () => {
     initGojuon();
     initPolyomino();
     initPolyGuide(); 
-    initKeyboardGrid();
     initPuzzles(); 
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
