@@ -85,7 +85,6 @@
         <div class="login-box" onclick="event.stopPropagation()">
             <h3>行員システム・ログイン</h3>
             <div style="position: relative; margin-bottom: 20px;">
-                <!-- 🌟 パスワードを隠さない普通のテキスト入力欄 -->
                 <input type="text" id="staff-pass" placeholder="Password (「てすと」と入力)" style="margin-bottom: 0; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
             </div>
             <button onclick="checkBankLogin()" style="background: #004080; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
@@ -97,7 +96,6 @@
     <div id="glitch-screen">
         <div>ACCESS GRANTED...<br>SYSTEM OVERRIDE INITIATED.</div>
     </div>
-
 
     <!-- ========================================== -->
     <!-- 🏢 行員専用ポータル -->
@@ -190,7 +188,6 @@
         </div>
     </div>
 
-    <!-- 🔧 デバッグパネル -->
     <div class="debug-panel">
         <span>🔧 テスト:</span>
         <button class="debug-btn" onclick="testLight()">💡 ライト</button>
@@ -277,7 +274,7 @@
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                            <div class="s1-arrow">▶︎︎</div>
+                            <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                         </div>
                         
@@ -375,24 +372,22 @@
                         <h3 style="color:#58a6ff; margin:0;">【メインプロトコル】</h3>
                     </div>
 
-                    <!-- ポリオミノとガイドのドラッグエリア -->
-                    <!-- 🌟 左にピース、右にガイドのレイアウトに変更 -->
-                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; gap: 40px; margin-bottom: 10px;">
-                        
+                    <!-- 🌟 手がかり1：ピースとガイドのドラッグエリア -->
+                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; margin-bottom: 0;">
+                        <!-- ピース置き場（左側） -->
                         <div id="pieces-container" class="pieces-container"></div>
                         
+                        <!-- ガイド枠（右側） -->
                         <div id="poly-guide-area" style="display:none; opacity: 0.5;">
-                            <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); grid-template-rows: repeat(5, 30px); gap: 3px;">
-                                <!-- JSで26マスのガイドを生成 -->
+                            <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;">
+                                <!-- JSで26マス(5x4 + 6x1)のガイドを生成 -->
                             </div>
                         </div>
-
                     </div>
                     
                     <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア -->
-                    <!-- 🌟 余白を詰める -->
-                    <div id="s2-hint2-area" style="display:none; justify-content: center; gap: 40px; align-items: center; margin-bottom: 20px;">
-                        <!-- 左側に完成形グリッドが入る -->
+                    <div id="s2-hint2-area" style="display:none; justify-content: center; gap: 40px; align-items: center; margin-bottom: 10px;">
+                        <!-- 左側に完成形A-Zグリッドが入る -->
                         <!-- 右側にセグメント情報 -->
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
@@ -410,13 +405,12 @@
                         </div>
                     </div>
 
-                    <!-- 手がかり3：キーボード配列表示エリア -->
-                    <!-- 🌟 余白を詰める -->
+                    <!-- 🌟 手がかり3：キーボード配列表示エリア -->
                     <div id="keyboard-area" style="display:none; flex-direction: column; gap: 3px; align-items: center; margin-bottom: 10px;">
                         <!-- JSでキーボードを生成 -->
                     </div>
 
-
+                    <!-- 🌟 下部のスロットエリア（常に表示） -->
                     <div class="puzzle-layout" id="s2-main-puzzle-ui">
                         <div class="s3-slots-container">
                             <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
