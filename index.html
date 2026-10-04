@@ -380,15 +380,15 @@
                         <!-- ガイド枠（右側） -->
                         <div id="poly-guide-area" style="display:none; opacity: 0.5;">
                             <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;">
-                                <!-- JSで26マス(5x4 + 6x1)のガイドを生成 -->
+                                <!-- JSで26マス(5x5+1)のガイドを生成 -->
                             </div>
                         </div>
                     </div>
                     
-                    <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア -->
+                    <!-- 🌟 手がかり2：盤面完成＆セグメント情報 -->
                     <div id="s2-hint2-area" style="display:none; justify-content: center; gap: 40px; align-items: center; margin-bottom: 10px;">
-                        <!-- 左側に完成形A-Zグリッドが入る -->
-                        <!-- 右側にセグメント情報 -->
+                        <!-- JSでここに完成形の盤面が挿入されます -->
+                        
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
