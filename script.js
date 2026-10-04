@@ -91,7 +91,6 @@ function closeLogin() {
     document.getElementById('login-err').style.display = 'none';
 }
 
-// 🌟 パスワード表示切替（CSSのクラスつけ外しに変更）
 function togglePassword() {
     const passInput = document.getElementById('staff-pass');
     if (passInput.classList.contains("secure-input")) {
@@ -103,7 +102,6 @@ function togglePassword() {
 
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
-    // 🌟 デバッグ用パスワード「てすと」を追加
     if (pass === "TGBadmin99" || pass === "てすと") {
         document.getElementById('login-err').style.display = 'none';
         document.getElementById('login-modal').style.display = 'none';
@@ -336,7 +334,7 @@ const aiSequence = [
     { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内の3つのデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nあなたの最終目標は、画面中央の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-wrapper-s1', aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nすぐに内部構造に気づいて突破できれば問題ありませんが、もし行き詰まった場合は、左下の『暗号化データ』を解読してください。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "【CHROMAKEY】\nあなたが暗号を解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかりデータ』を右下に表示します。", highlight: 'analysis-panel-area', aiPosition: 'top' },
+    { text: "【CHROMAKEY】\nあなたが暗号を解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかり』をプロトコル上に反映します。", highlight: null, aiPosition: 'top' },
     { text: "【CHROMAKEY】\nただし、左下の暗号化データは強固なプロテクトにより、最初は9枚のパネルで隠されています。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "【CHROMAKEY】\n私は裏でこのプロテクトの解除を進めており、約2分に1枚のペースでパネルをめくる権限をお渡しできます。少しずつパネルをめくって暗号の全貌を推測し、答えを導き出してください。", highlight: 'puzzle-points-area', aiPosition: 'bottom' }
 ];
@@ -371,9 +369,11 @@ function showAIText() {
 
     if (current.highlight) {
         const targetEl = document.getElementById(current.highlight);
-        targetEl.classList.add('tutorial-highlight');
-        modal.style.backgroundColor = 'rgba(0, 0, 0, 0)'; 
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if(targetEl) {
+            targetEl.classList.add('tutorial-highlight');
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0)'; 
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     } else {
         modal.style.backgroundColor = 'rgba(0, 0, 0, 0)';
     }
@@ -941,7 +941,6 @@ function initPolyomino() {
                         div.className = "poly-cell black";
                     } else {
                         div.className = "poly-cell white";
-                        // ドラッグ可能にする前はクリック対応しておく
                         div.onclick = () => clickPolyomino(char);
                     }
                 }
@@ -954,7 +953,7 @@ function initPolyomino() {
 
 let polyTimer;
 function clickPolyomino(char) {
-    if (isPolyDraggable) return; // ドラッグモード中はクリック無効
+    if (isPolyDraggable) return; 
     let row = getRow(char);
     let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
     if (polyTimer) clearTimeout(polyTimer);
@@ -977,7 +976,6 @@ function initPolyGuide() {
         for(let c=0; c<6; c++) {
             let cell = document.createElement("div");
             cell.className = "poly-guide-cell";
-            // 5行目(r=4)以外で、6列目(c=5)は隠して、26マスを作る
             if(r < 4 && c === 5) {
                 cell.classList.add("hidden");
             }
@@ -1042,7 +1040,6 @@ function enablePolyDrag() {
     const polyArea = document.getElementById("poly-area");
     const pieces = document.querySelectorAll('.poly-piece');
     
-    // ガイドを表示
     document.getElementById("poly-guide-area").style.display = "block";
     polyArea.style.minHeight = "400px"; 
     
@@ -1124,30 +1121,24 @@ function makeDraggable(element) {
         document.ontouchmove = null;
         element.style.cursor = "grab";
 
-        // 🌟 近くのグリッドにスナップ（吸着）させる処理
         const polyArea = document.getElementById("poly-area");
         const guide = document.getElementById("poly-guide");
         if(guide) {
             const areaRect = polyArea.getBoundingClientRect();
             const guideRect = guide.getBoundingClientRect();
             
-            // ガイドの左上（polyArea内の相対座標）
             const gLeft = guideRect.left - areaRect.left;
             const gTop = guideRect.top - areaRect.top;
             
-            // ピースの現在の座標
             const pLeft = element.offsetLeft;
             const pTop = element.offsetTop;
             
-            // ガイド基準での相対座標に変換
             const relX = pLeft - gLeft;
             const relY = pTop - gTop;
             
-            // 33px単位（30px + gap 3px）で丸める
             const snapX = Math.round(relX / 33) * 33;
             const snapY = Math.round(relY / 33) * 33;
             
-            // ガイドから近ければ吸着させる（±3マスの範囲内なら）
             if(snapX >= -99 && snapX <= 198 && snapY >= -99 && snapY <= 165) {
                 element.style.left = (gLeft + snapX) + "px";
                 element.style.top = (gTop + snapY) + "px";
@@ -1241,10 +1232,7 @@ const puzzleFiles = {
 
 let availableAnalysisPoints = { 1: 0, 2: 0, 3: 0 }; 
 let unlockedAnalysisCount = { 1: 0, 2: 0, 3: 0 }; 
-let analysisIdx = { 1: 0, 2: 0, 3: 0 }; 
 let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 }; 
-let openPoints = { 1: 0, 2: 0, 3: 0 }; 
-let panelsState = { 1: [], 2: [], 3: [] };
 let isSolved = { 1: [], 2: [], 3: [] };
 
 const puzzleDict = {
@@ -1259,24 +1247,16 @@ function getRow(char) { return QWERTY_TOP.includes(char) ? 1 : QWERTY_MID.includ
 function initPuzzles() {
     for(let s=1; s<=3; s++) {
         for(let p=0; p<maxPuzzles[s]; p++) {
-            panelsState[s].push(new Array(9).fill(false));
             isSolved[s].push(false);
         }
         renderPuzzleGrid(s);
-        updateAnalysisCarousel(s);
     }
-}
-
-function addPoint(step) {
-    openPoints[step]++;
-    document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
 }
 
 function renderPuzzleGrid(step) {
     const pIdx = currentPuzzleIdx[step];
-    const grid = document.getElementById(`puzzleGrid-s${step}`);
-    const overlay = document.getElementById(`solvedOverlay-s${step}`);
     const placeholder = document.getElementById(`puzzlePlaceholder-s${step}`);
+    const overlay = document.getElementById(`solvedOverlay-s${step}`);
     
     document.getElementById(`puzzleIndicator-s${step}`).innerText = `DATA ${puzzleFiles[step][pIdx]}`;
     
@@ -1288,53 +1268,12 @@ function renderPuzzleGrid(step) {
     placeholder.innerHTML = `<img src="FILE${step}_${puzzleFiles[step][pIdx]}.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 3px;">`;
     
     if (isSolved[step][pIdx]) {
-        grid.style.display = "none";
         overlay.style.display = "flex";
     } else {
-        grid.style.display = "grid";
-        
-        grid.parentElement.style.position = "relative"; 
-        grid.style.position = "absolute";
-        grid.style.top = "0";
-        grid.style.left = "0";
-        grid.style.width = "100%";
-        grid.style.height = "100%";
-        grid.style.gridTemplateColumns = "repeat(3, 1fr)";
-        grid.style.gridTemplateRows = "repeat(3, 1fr)";
-        grid.style.backgroundColor = "transparent";
-        grid.style.pointerEvents = "auto";
-        
         overlay.style.display = "none";
-        grid.innerHTML = "";
-        
-        for(let i=0; i<9; i++) {
-            let div = document.createElement("div");
-            div.className = "grid-panel";
-            div.style.transition = "0.3s";
-            
-            if (panelsState[step][pIdx][i]) {
-                div.classList.add("open");
-                div.style.opacity = "0";
-                div.style.pointerEvents = "none";
-            } else {
-                div.style.opacity = "1";
-                div.style.cursor = "pointer";
-                div.onclick = () => openPanel(step, pIdx, i);
-            }
-            grid.appendChild(div);
-        }
     }
     document.getElementById(`btn-prev-puzzle-s${step}`).style.visibility = (pIdx === 0) ? 'hidden' : 'visible';
     document.getElementById(`btn-next-puzzle-s${step}`).style.visibility = (pIdx === maxPuzzles[step] - 1) ? 'hidden' : 'visible';
-}
-
-function openPanel(step, pIdx, panelIdx) {
-    if (openPoints[step] > 0) {
-        openPoints[step]--;
-        panelsState[step][pIdx][panelIdx] = true;
-        document.getElementById(`puzzlePoints-s${step}`).innerText = openPoints[step];
-        renderPuzzleGrid(step);
-    }
 }
 
 function prevPuzzle(step) { if(currentPuzzleIdx[step] > 0) { currentPuzzleIdx[step]--; renderPuzzleGrid(step); } }
@@ -1346,7 +1285,6 @@ function submitAnswer(step) {
     const dict = puzzleDict[step];
     const pIdx = currentPuzzleIdx[step];
 
-    // 🌟 デバッグ用回答「てすと」を追加
     let isCorrect = false;
     if (input === "てすと") {
         isCorrect = true;
@@ -1358,13 +1296,12 @@ function submitAnswer(step) {
         if (!isSolved[step][pIdx]) {
             isSolved[step][pIdx] = true;
             availableAnalysisPoints[step]++;
-            document.getElementById(`analysisPoints-s${step}`).innerText = availableAnalysisPoints[step];
+            unlockAnalysis(step); // 解けたら自動で作用を適用
         }
         feedback.style.color = "#0f0";
         feedback.innerText = "DATA DECODED";
         
         renderPuzzleGrid(step); 
-        updateAnalysisCarousel(step); 
         document.getElementById(`answerInput-s${step}`).value = ""; 
 
         sendCommand("B");
@@ -1376,19 +1313,16 @@ function submitAnswer(step) {
     }
 }
 
+// 🌟 手がかりパネル削除に伴い、自動開放ロジックに変更
 function unlockAnalysis(step) {
     if (availableAnalysisPoints[step] > 0 && unlockedAnalysisCount[step] < maxPuzzles[step]) {
         availableAnalysisPoints[step]--;
         unlockedAnalysisCount[step]++;
-        document.getElementById(`analysisPoints-s${step}`).innerText = availableAnalysisPoints[step];
-        
-        analysisIdx[step] = unlockedAnalysisCount[step] - 1; 
-        updateAnalysisCarousel(step);
         
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 500); 
         
-        // 🌟 LAYER 01
+        // 🌟 LAYER 01 のイベント進行
         if (step === 1 && unlockedAnalysisCount[1] >= 2) {
             document.getElementById("s1-slots-container").classList.add("size-hint-active");
         }
@@ -1399,14 +1333,11 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 02 のイベント進行
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
-                // 手がかり1: ガイド表示＆ドラッグ解禁
                 enablePolyDrag();
             } else if (unlockedAnalysisCount[2] === 2) {
-                // 手がかり2: ピース非表示、セグメントヒント表示
                 document.getElementById("poly-guide-area").style.display = "none";
                 document.querySelectorAll('.poly-piece').forEach(p => p.style.display = "none");
                 
-                // 完全な完成形のグリッド（26マス）を手がかり2の演出として表示
                 const polyArea = document.getElementById("poly-area");
                 let solvedGrid = document.createElement("div");
                 solvedGrid.id = "poly-solved-grid";
@@ -1417,7 +1348,6 @@ function unlockAnalysis(step) {
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
-                // 白黒の正解配置（キーボード配列から逆算）
                 const solutionCells = [
                     'W','W','B','B','B','W',
                     'B','W','W','W','B','B',
@@ -1436,22 +1366,18 @@ function unlockAnalysis(step) {
                 }
                 
                 polyArea.insertBefore(solvedGrid, polyArea.firstChild);
-                
                 document.getElementById("s2-hint2-area").style.display = "flex";
-                
                 setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
 
             } else if (unlockedAnalysisCount[2] === 3) {
-                // 手がかり3: 完成形非表示、キーボード配列表示
                 const solvedGrid = document.getElementById("poly-solved-grid");
                 if (solvedGrid) solvedGrid.style.display = "none";
                 document.getElementById("s2-hint2-area").style.display = "none";
-                
                 document.getElementById("keyboard-area").style.display = "flex";
             }
         }
         
-        // 🌟 LAYER 03
+        // 🌟 LAYER 03 のイベント進行
         if (step === 3 && unlockedAnalysisCount[3] === 3) {
             document.getElementById("vol-0").style.display = "block";
             document.getElementById("vol-1").style.display = "block";
@@ -1459,75 +1385,6 @@ function unlockAnalysis(step) {
         }
     }
 }
-
-function updateAnalysisCarousel(step) {
-    const idx = analysisIdx[step];
-    const pName = puzzleFiles[step][idx];
-    const placeholder = document.getElementById(`analysisPlaceholder-s${step}`);
-    
-    placeholder.style.backgroundImage = "none";
-    
-    if (idx < unlockedAnalysisCount[step]) {
-        // 画像表示を廃止し、すべてテキスト（メインプロトコルへの作用）に変更
-        if (step === 1) {
-            if (idx === 0) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">接続するポイントを特定しました</span>`;
-            } else if (idx === 1) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">データのサイズを可視化しました</span>`;
-            } else if (idx === 2) {
-                placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">画面上の見えないロックを解除しました</span>`;
-            }
-        } else if (step === 2) {
-            if (idx === 0) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">セキュリティパターンの外枠を検出しました</span>`;
-            } else if (idx === 1) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">関連性フィルターのデータ構造を復元しました</span>`;
-            } else if (idx === 2) {
-                placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">すべての制限が解除されました</span>`;
-            }
-        } else if (step === 3) {
-            if (idx === 0) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">水差しの構造を解析しました</span>`;
-            } else if (idx === 1) {
-                placeholder.innerHTML = `【システム解析完了】<br><span style="font-size:14px;color:#c9d1d9;">フェイルセーフのパターンを特定しました</span>`;
-            } else if (idx === 2) {
-                placeholder.innerHTML = `【ALL DECODED】<br><span style="font-size:14px;color:#c9d1d9;">モニターの出力信号が判明しました</span>`;
-            }
-        }
-        placeholder.style.color = "#0f0";
-        placeholder.style.borderColor = "#0f0";
-        placeholder.style.cursor = "default";
-        placeholder.onclick = null;
-    } else {
-        if (idx === unlockedAnalysisCount[step] && availableAnalysisPoints[step] > 0) {
-            placeholder.innerHTML = `タップして手がかりを表示 🔓`;
-            placeholder.style.color = "#58a6ff";
-            placeholder.style.borderColor = "#58a6ff";
-            placeholder.style.cursor = "pointer";
-            placeholder.onclick = () => unlockAnalysis(step);
-        } else {
-            placeholder.innerHTML = `Locked 🔐`;
-            placeholder.style.color = "#555";
-            placeholder.style.borderColor = "#555";
-            placeholder.style.cursor = "default";
-            placeholder.onclick = null;
-        }
-    }
-    
-    let dots = "";
-    for(let i=0; i<maxPuzzles[step]; i++) {
-        if (i === idx) dots += "🟢";
-        else if (i < unlockedAnalysisCount[step]) dots += "⚪";
-        else dots += "⚫";
-    }
-    document.getElementById(`analysisIndicator-s${step}`).innerText = dots;
-    document.getElementById(`btn-prev-analysis-s${step}`).style.visibility = (idx === 0) ? 'hidden' : 'visible';
-    const maxIdx = Math.min(maxPuzzles[step] - 1, unlockedAnalysisCount[step]);
-    document.getElementById(`btn-next-analysis-s${step}`).style.visibility = (idx >= maxIdx) ? 'hidden' : 'visible';
-}
-
-function prevAnalysis(step) { if (analysisIdx[step] > 0) { analysisIdx[step]--; updateAnalysisCarousel(step); } }
-function nextAnalysis(step) { const maxIdx = Math.min(maxPuzzles[step] - 1, unlockedAnalysisCount[step]); if (analysisIdx[step] < maxIdx) { analysisIdx[step]++; updateAnalysisCarousel(step); } }
 
 // ==========================================
 // 🚫 リアルハッカー（ソースコード閲覧）対策システム
@@ -1580,7 +1437,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initGojuon();
     initPolyomino();
     initPolyGuide(); 
-    initKeyboardGrid(); // 🌟 キーボード配列の初期生成を追加
+    initKeyboardGrid();
     initPuzzles(); 
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
