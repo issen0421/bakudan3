@@ -1111,11 +1111,11 @@ function enablePolyDrag() {
     
     // 🌟 ピースを絶対に重ならないよう、手動で散らして配置する
     const fixedPositions = [
-        { x: 0,   y: 0 },
-        { x: 100, y: 30 },
-        { x: 0,   y: 80 },
-        { x: 100, y: 130 },
-        { x: 0,   y: 180 }
+        { x: 50,   y: 0 },
+        { x: 150, y: 30 },
+        { x: 50,   y: 80 },
+        { x: 150, y: 130 },
+        { x: 50,   y: 180 }
     ];
     
     pieces.forEach((piece, i) => {
