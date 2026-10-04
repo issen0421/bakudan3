@@ -931,6 +931,7 @@ function initPolyomino() {
                         div.className = "poly-cell black";
                     } else {
                         div.className = "poly-cell white";
+                        // 🌟 クリックイベントが死なないようにここで設定
                         div.onclick = () => clickPolyomino(char);
                     }
                 }
@@ -943,7 +944,6 @@ function initPolyomino() {
 
 let polyTimer;
 function clickPolyomino(char) {
-    if (isPolyDraggable) return; 
     let row = getRow(char);
     let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
     if (polyTimer) clearTimeout(polyTimer);
@@ -957,36 +957,41 @@ function clickPolyomino(char) {
     }, 2000);
 }
 
-// 🌟 LAYER 02 のガイド（26マス: 5x4 + 6）を生成する関数
+// 🌟 LAYER 02 のガイド（26マス: 5マスx4行 + 6マスの形）を生成する関数
+// CSSグリッドの6列設定に対し、0〜29のマスを作り、不要なマスを非表示にすることで 5x4+6 を実現
 function initPolyGuide() {
     const guide = document.getElementById("poly-guide");
     if(!guide) return;
     guide.innerHTML = "";
-    for(let r=0; r<5; r++) {
-        for(let c=0; c<6; c++) {
-            let cell = document.createElement("div");
-            cell.className = "poly-guide-cell";
-            if(r < 4 && c === 5) {
-                cell.classList.add("hidden");
-            }
-            guide.appendChild(cell);
+    for(let i=0; i<30; i++) {
+        let r = Math.floor(i / 6);
+        let c = i % 6;
+        let cell = document.createElement("div");
+        cell.className = "poly-guide-cell";
+        // 4行目(r=0,1,2,3)の6列目(c=5)は不可視にする
+        if(r < 4 && c === 5) {
+            cell.style.visibility = "hidden";
+            cell.style.border = "none";
         }
+        guide.appendChild(cell);
     }
 }
 
-// 🌟 A〜Z順のマス（手がかり2の完成形表示用）を生成する関数
-// CSSグリッドの6列設定に対し、0〜29のマスを作り、不要なマスを非表示にすることで完全に 5x4+6 を実現
+// 🌟 A〜Zの盤面（手がかり2の完成形表示用）を生成する関数
 function initAZGrid(container) {
     container.innerHTML = "";
     container.style.gridTemplateColumns = "repeat(6, 30px)"; 
     
+    // 🌟 黒と白の配置と、非表示（X）の配置を 5x4 + 6マスに合わせて再定義
     const solColors = [
-        'B','W','W','B','B', 'X', // A, B, C, D, E, (hidden)
-        'B','W','B','B','W', 'X', // F, G, H, I, J, (hidden)
-        'W','W','B','B','B', 'X', // K, L, M, N, O, (hidden)
-        'W','W','B','B','B', 'X', // P, Q, R, S, T, (hidden)
-        'B','W','B','W','W', 'W'  // U, V, W, X, Y, Z
+        'B','W','W','B','B', 'X', // 0-5 (A, B, C, D, E)
+        'B','W','B','B','W', 'X', // 6-11 (F, G, H, I, J)
+        'W','W','B','B','B', 'X', // 12-17 (K, L, M, N, O)
+        'W','W','B','B','B', 'X', // 18-23 (P, Q, R, S, T)
+        'B','W','B','W','W', 'W'  // 24-29 (U, V, W, X, Y, Z)
     ];
+    
+    // AZの順に割り当てる文字リスト（クリック判定用。画面上には表示しない）
     const azChars = [
         'A','B','C','D','E', '',
         'F','G','H','I','J', '',
@@ -1001,10 +1006,10 @@ function initAZGrid(container) {
         
         if(solColors[i] === 'B') {
             cell.classList.add("black");
-            // 🌟 文字表示設定を削除し、純粋な黒マスに
+            // 🌟 文字は入れない（白紙の黒マス）
         } else if(solColors[i] === 'W') {
             cell.classList.add("white");
-            // 🌟 文字表示設定を削除し、純粋な白マスに
+            // 🌟 文字は入れない（白紙の白マス）
             let char = azChars[i];
             cell.onclick = () => {
                 let row = getRow(char);
@@ -1044,8 +1049,8 @@ function initKeyboardGrid() {
         rowDiv.style.display = "flex";
         rowDiv.style.gap = "3px";
         
-        // 🌟 QWERTYキーの実際のズレ（A行は15px、Z行は45px右にずらす）
-        if(rIdx === 1) rowDiv.style.marginLeft = "15px";
+        // 🌟 QWERTYキーの実際のズレ（A行は約0.3マス=10px、Z行は約1.5マス=45px）
+        if(rIdx === 1) rowDiv.style.marginLeft = "10px";
         if(rIdx === 2) rowDiv.style.marginLeft = "45px";
         
         rowArr.forEach(char => {
@@ -1086,13 +1091,18 @@ function enablePolyDrag() {
     
     document.getElementById("poly-guide-area").style.display = "block";
     
-    // ガイドとピースが被らないように、ピース群を綺麗に左側に配置する
+    // 🌟 ピース群を綺麗に左側に並べる（重ならないように調整）
     pieces.forEach((piece, i) => {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
         
-        let scatterX = (i % 2 === 0) ? -40 : 40;
-        let scatterY = (i * 20);
+        // 左側の余白空間に2列で並べる
+        let col = i % 2;
+        let row = Math.floor(i / 2);
+        
+        let scatterX = (col === 0) ? -120 : -40; // X座標を左に逃がす
+        let scatterY = (row * 70); // Y座標を縦に並べる
+        
         piece.style.left = scatterX + 'px';
         piece.style.top = scatterY + 'px';
         
@@ -1111,6 +1121,7 @@ function makeDraggable(element) {
     element.ontouchstart = dragMouseDown;
 
     function dragMouseDown(e) {
+        // 🌟 preventDefault()を削除し、クリックイベントを殺さないように修正
         e = e || window.event;
         
         document.querySelectorAll('.poly-piece').forEach(p => p.style.zIndex = "10");
@@ -1158,11 +1169,14 @@ function makeDraggable(element) {
         document.ontouchmove = null;
         element.style.cursor = "grab";
 
-        const guideArea = document.getElementById("poly-guide-area");
-        if(guideArea) {
-            // ガイド盤面付近でドロップしたら、自動的にピタッとマス目（33px間隔）に吸着させる
-            const gLeft = guideArea.offsetLeft;
-            const gTop = guideArea.offsetTop;
+        const polyArea = document.getElementById("poly-area");
+        const guide = document.getElementById("poly-guide");
+        if(guide) {
+            const areaRect = polyArea.getBoundingClientRect();
+            const guideRect = guide.getBoundingClientRect();
+            
+            const gLeft = guideRect.left - areaRect.left;
+            const gTop = guideRect.top - areaRect.top;
             
             const pLeft = element.offsetLeft;
             const pTop = element.offsetTop;
@@ -1411,9 +1425,11 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 02 のイベント進行
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
+                // 手がかり1: ピースを左に寄せ、右にガイド表示
                 enablePolyDrag();
             } else if (unlockedAnalysisCount[2] === 2) {
-                // 🌟 ドラッグエリア全体を隠す
+                // 手がかり2: 盤面の表示
+                // ドラッグエリア全体を隠す
                 document.getElementById("poly-area").style.display = "none";
                 
                 const hint2Area = document.getElementById("s2-hint2-area");
@@ -1424,15 +1440,16 @@ function unlockAnalysis(step) {
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
-                // 🌟 A〜Zのマス（5x4+6マス）を生成
+                // 🌟 A〜Zの盤面（5x4+6マス）を生成（文字なし）
                 initAZGrid(solvedGrid);
                 
-                // 🌟 10,9,7のヒントがあるエリア（下段）の左側に盤面を挿入（これで高さが完璧に揃います！）
+                // 10,9,7のヒントがあるエリア（下段）の左側に盤面を挿入
                 hint2Area.insertBefore(solvedGrid, hint2Area.firstChild);
                 hint2Area.style.display = "flex";
                 setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
 
             } else if (unlockedAnalysisCount[2] === 3) {
+                // 手がかり3: キーボード配列の表示
                 const solvedGrid = document.getElementById("poly-solved-grid");
                 if (solvedGrid) solvedGrid.style.display = "none";
                 document.getElementById("s2-hint2-area").style.display = "none";
