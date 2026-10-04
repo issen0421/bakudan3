@@ -85,7 +85,8 @@
         <div class="login-box" onclick="event.stopPropagation()">
             <h3>行員システム・ログイン</h3>
             <div style="position: relative; margin-bottom: 20px;">
-                <input type="password" id="staff-pass" placeholder="Password" style="margin-bottom: 0; padding-right: 40px; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                <!-- 🌟 パスワード入力欄を type="text" にして日本語入力可能に -->
+                <input type="text" id="staff-pass" class="secure-input" placeholder="Password" style="margin-bottom: 0; padding-right: 40px; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
                 <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;" title="パスワードを表示">👁️</span>
             </div>
             <button onclick="checkBankLogin()" style="background: #004080; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
@@ -129,18 +130,15 @@
         </div>
     </div>
 
-
     <!-- ========================================== -->
     <!-- 💻 CHROMAKEY OS 本編 -->
     <!-- ========================================== -->
 
-    <!-- モバイルアクセス拒否画面 -->
     <div id="mobile-blocker">
         <h1>【ACCESS DENIED】</h1>
         <p>セキュリティプロトコル違反。<br>このシステムはモバイル端末からのアクセスを許可していません。<br>指定のPC端末から再接続してください。</p>
     </div>
 
-    <!-- 🌟 CHROMAKEY 起動ポップアップ -->
     <div id="intro-modal" onclick="nextIntro()">
         <div class="modal-content" onclick="event.stopPropagation(); nextIntro();">
             <div id="intro-text" class="intro-text"></div>
@@ -149,7 +147,6 @@
         </div>
     </div>
 
-    <!-- 🌟 トラップ発動ポップアップ (LAYER 03 クリア後) -->
     <div id="betrayal-modal" onclick="nextBetrayal()">
         <div class="modal-content" onclick="event.stopPropagation(); nextBetrayal();" style="border: 2px solid #ff7b72;">
             <div id="betrayal-text" class="intro-text" style="color: #ff7b72;"></div>
@@ -158,7 +155,6 @@
         </div>
     </div>
 
-    <!-- 🌟 AIチュートリアル専用ポップアップ -->
     <div id="ai-modal" onclick="nextAITutorial()">
         <div class="modal-content ai-mode" onclick="event.stopPropagation(); nextAITutorial();">
             <div id="ai-text" class="ai-text"></div>
@@ -166,7 +162,6 @@
         </div>
     </div>
 
-    <!-- エンディング画面 -->
     <div id="ending-screen" style="display:none;">
         <div id="ending-title" class="ending-title"></div>
         <div id="ending-msg" class="ending-msg"></div>
@@ -393,17 +388,43 @@
             </div>
 
             <!-- 🌟 ポリオミノとガイドのドラッグエリア -->
-            <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
+            <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; gap: 40px; margin-bottom: 30px;">
+                
+                <!-- ピースのコンテナ -->
                 <div id="pieces-container" class="pieces-container"></div>
+                
                 <!-- ガイド枠（手がかり1で表示） -->
-                <div id="poly-guide-area" style="display:none; margin-top: 30px; opacity: 0.5;">
+                <div id="poly-guide-area" style="display:none; opacity: 0.5;">
                     <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); grid-template-rows: repeat(5, 30px); gap: 3px;">
                         <!-- JSで26マスのガイドを生成 -->
                     </div>
                 </div>
+
+                <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア -->
+                <div id="s2-hint2-area" style="display:none; flex-direction: column; gap: 15px; justify-content: center; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
+                    <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
+                        <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
+                        <span style="color:#8b949e;">... 10</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
+                        <div class="seg-display"><span class="seg-top"></span><span class="seg-mid on"></span><span class="seg-bot"></span></div>
+                        <span style="color:#8b949e;">... 9</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
+                        <div class="seg-display"><span class="seg-top"></span><span class="seg-mid"></span><span class="seg-bot on"></span></div>
+                        <span style="color:#8b949e;">... 7</span>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="puzzle-layout">
+            <!-- 🌟 手がかり3：キーボード配列表示エリア -->
+            <div id="keyboard-area" style="display:none; flex-direction: column; gap: 3px; align-items: center; margin-bottom: 30px;">
+                <!-- JSでキーボードを生成 -->
+            </div>
+
+
+            <div class="puzzle-layout" id="s2-main-puzzle-ui">
                 <div class="s3-slots-container">
                     <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                     <div class="s3-not-equal-container"><span>≠</span><span>≠</span><span>≠</span></div>
