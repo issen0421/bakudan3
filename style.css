@@ -141,26 +141,21 @@ input, textarea {
 .instruction { font-size: 18px; color: #8b949e; margin-bottom: 20px; line-height: 1.6; }
 
 /* --- 📱 ダッシュボード分割レイアウト --- */
+/* 🌟 手がかりパネルを消したため、中央揃えに */
 .split-layout { display: flex; justify-content: center; gap: 40px; margin-top: 40px; padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; background: rgba(13, 17, 23, 0.85); box-shadow: 0 0 20px rgba(0,0,0,0.5); } 
-.split-layout > div { flex: 1; min-width: 340px; max-width: 480px; margin: 0; display: flex; flex-direction: column; }
+.split-layout > div { flex: 1; min-width: 340px; max-width: 600px; margin: 0; display: flex; flex-direction: column; }
 
-/* --- 🧩 左右パネル共通 --- */
+/* --- 🧩 小謎パネル --- */
 .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; transition: 0.3s; }
-.analysis-panel { background: #0d1117; border: 2px solid #30363d; border-radius: 8px; padding: 20px; justify-content: center; transition: 0.3s; }
 .panel-header { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin-bottom: 20px; }
 .status-badge { font-size: 14px; font-weight: bold; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid; transition: 0.3s; }
 
 .carousel-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
 .carousel-btn { background: none; border: none; color: #58a6ff; font-size: 30px; cursor: pointer; transition: 0.2s; padding: 0; width: 30px; }
-.analysis-panel .carousel-btn { color: #0f0; }
 
 .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
 .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column; gap: 10px; }
 
-.hint-border { border-color: #0f0 !important; }
-.hint-placeholder { color: #0f0 !important; border-color: #0f0 !important; }
-
-/* 💡 隙間を無くし太いボーダーでパネルを表現 */
 .grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 0; padding: 0; box-sizing: border-box; background: transparent; }
 .grid-panel { background: #161b22; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: #444; border: 2px solid #0d1117; box-sizing: border-box; }
 .grid-panel:hover { background: #21262d; border-color: #58a6ff; z-index: 1; }
@@ -197,40 +192,25 @@ input, textarea {
 .s1-items { display: inline-flex; justify-content: center; align-items: center; gap: 15px; margin: 15px 0; padding: 25px 50px; background: #f2f2f2; min-height: 80px; clip-path: polygon(15px 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 15px 100%, 0 50%); transition: 0.3s; box-sizing: border-box; } 
 .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; transition: 0.3s; border-radius: 50%; box-sizing: border-box; }
 
-/* 🌟 ドラッグ用の共通設定と、形（丸と四角）の個別設定 */
 .item { 
     cursor: grab; transition: transform 0.1s; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); flex-shrink: 0; box-sizing: border-box; 
     user-select: auto; -webkit-user-select: auto; -webkit-user-drag: element;
 }
 .item:active { cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
 
-/* 💡 LAYER 01 のアイテムは丸（円） */
 .s1-item { width: 100%; height: 100%; border-radius: 50%; transition: width 0.3s, height 0.3s; }
 .s1-item:active { width: 50px !important; height: 50px !important; }
 .s1-slot .s1-item { width: 100%; height: 100%; }
 
-/* 💡 LAYER 02 のアイテムは四角（長方形） */
 .s3-item { width: 180px; height: 60px; background: #30363d; display: flex; align-items: center; justify-content: center; font-size: 30px; color: white; border: 1px solid #555; border-radius: 4px; }
 .s3-item:active { border-color: #58a6ff; }
 
-
-#A.s1-item { background-color: #ec3321; } 
-#pool-A { background-color: rgba(236, 51, 33, 0.4); }
-
-#B.s1-item { background-color: #ff8b00; } 
-#pool-B { background-color: rgba(255, 139, 0, 0.4); }
-
-#C.s1-item { background-color: #fdd900; } 
-#pool-C { background-color: rgba(253, 217, 0, 0.4); }
-
-#D.s1-item { background-color: #00b18e; } 
-#pool-D { background-color: rgba(0, 177, 142, 0.4); }
-
-#E.s1-item { background-color: #0081ce; } 
-#pool-E { background-color: rgba(0, 129, 206, 0.4); }
-
-#F.s1-item { background-color: #58278c; } 
-#pool-F { background-color: rgba(88, 39, 140, 0.4); }
+#A.s1-item { background-color: #ec3321; } #pool-A { background-color: rgba(236, 51, 33, 0.4); }
+#B.s1-item { background-color: #ff8b00; } #pool-B { background-color: rgba(255, 139, 0, 0.4); }
+#C.s1-item { background-color: #fdd900; } #pool-C { background-color: rgba(253, 217, 0, 0.4); }
+#D.s1-item { background-color: #00b18e; } #pool-D { background-color: rgba(0, 177, 142, 0.4); }
+#E.s1-item { background-color: #0081ce; } #pool-E { background-color: rgba(0, 129, 206, 0.4); }
+#F.s1-item { background-color: #58278c; } #pool-F { background-color: rgba(88, 39, 140, 0.4); }
 
 
 /* --- STEP 2 UI --- */
@@ -253,29 +233,22 @@ input, textarea {
 .piece-3 { grid-template-columns: repeat(3, 30px); }
 .piece-4 { grid-template-columns: repeat(3, 30px); }
 .piece-5 { grid-template-columns: repeat(2, 30px); }
-.poly-cell { display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; aspect-ratio: 1 / 1; color: transparent; user-select: none; }
+
+/* 🌟 キーボードマスを完全な正方形（30x30）に固定 */
+.poly-cell { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; color: transparent; user-select: none; box-sizing: border-box; }
 .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
 .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
 .poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
 .poly-cell.empty { background: transparent; pointer-events: none; border: none; }
 
-/* 🌟 LAYER 02 ガイド表示用の26マスのCSS */
 .poly-guide-cell { width: 30px; height: 30px; border: 2px dashed #58a6ff; box-sizing: border-box; }
 .poly-guide-cell.hidden { border: none; }
 
 .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; margin: 0 auto; max-width: 900px; }
 
-.s3-slots-container { 
-    display: flex; flex-direction: column; gap: 15px; 
-    width: 180px; position: relative; padding: 0; 
-}
+.s3-slots-container { display: flex; flex-direction: column; gap: 15px; width: 180px; position: relative; padding: 0; }
 .s3-not-equal-container { position: relative; height: 30px; width: 100%; }
-
-/* 🌟 「≠」を縦向き（90度回転）に変更 */
-.s3-not-equal-container span {
-    position: absolute; top: 50%; transform: translate(-50%, -50%) rotate(90deg);
-    color: #58a6ff; font-size: 28px; font-weight: bold; pointer-events: none; user-select: none;
-}
+.s3-not-equal-container span { position: absolute; top: 50%; transform: translate(-50%, -50%) rotate(90deg); color: #58a6ff; font-size: 28px; font-weight: bold; pointer-events: none; user-select: none; }
 .s3-not-equal-container span:nth-child(1) { left: 16.6%; }
 .s3-not-equal-container span:nth-child(2) { left: 50%; }
 .s3-not-equal-container span:nth-child(3) { left: 83.3%; }
@@ -286,7 +259,6 @@ input, textarea {
 .s3-items { display: grid; grid-template-columns: 180px 180px; gap: 20px; padding: 20px; border: 2px dashed #444; border-radius: 10px; background: #161b22; }
 .s3-item-slot { width: 180px; height: 60px; background: transparent; display: flex; align-items: center; justify-content: center;}
 
-/* 🌟 セグメント（手がかり2）の表示用CSS */
 .seg-display { display: flex; flex-direction: column; align-items: center; gap: 3px; font-family: sans-serif; }
 .seg-top, .seg-mid, .seg-bot { width: 30px; height: 6px; background: #30363d; border-radius: 3px; }
 .seg-display span.on { background: #ff7b72; box-shadow: 0 0 8px rgba(255,123,114,0.6); }
