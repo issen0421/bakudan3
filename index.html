@@ -9,7 +9,7 @@
 <body>
 
     <!-- 🌟 バージョン確認用（本番環境ではこの1行を削除してください） -->
-    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.7</div>
+    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.8</div>
 
     <!-- 🌟 音声アンロック用の初回クリック画面 -->
     <div id="start-screen" onclick="startMission()">
@@ -191,7 +191,6 @@
         </div>
     </div>
 
-    <!-- 🔧 デバッグパネル -->
     <div class="debug-panel">
         <span>🔧 テスト:</span>
         <button class="debug-btn" onclick="testLight()">💡 ライト</button>
@@ -272,11 +271,11 @@
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                            <div class="s1-arrow">▶︎</div>
-                            <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                            <div class="s1-arrow">▶︎</div>
-                            <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎︎</div>
+                            <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                            <div class="s1-arrow">▶︎</div>
+                            <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                            <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -377,9 +376,11 @@
                     </div>
 
                     <!-- 🌟 手がかり1：ピースとガイドのドラッグエリア -->
-                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; gap: 20px; margin-bottom: 0;">
+                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; gap: 40px; margin-bottom: 10px;">
+                        
                         <!-- ピース置き場（左側） -->
-                        <div id="pieces-container" class="pieces-container"></div>
+                        <!-- 🌟 FlexboxやGridは使わず、JSでabsolute配置します -->
+                        <div id="pieces-container" style="position: relative; width: 200px;"></div>
                         
                         <!-- ガイド枠（右側） -->
                         <div id="poly-guide-area" style="display:none; opacity: 0.5;">
@@ -387,6 +388,7 @@
                                 <!-- JSで26マスのガイドを生成 -->
                             </div>
                         </div>
+
                     </div>
                     
                     <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア（横並びで高さを揃える） -->
@@ -411,7 +413,7 @@
                     </div>
 
                     <!-- 🌟 手がかり3：キーボード配列表示エリア -->
-                    <div id="keyboard-area" style="display:none; margin-bottom: 20px;">
+                    <div id="keyboard-area" style="display:none; flex-direction: column; align-items: center; margin-bottom: 20px;">
                         <!-- JSでキーボードを生成 -->
                     </div>
 
