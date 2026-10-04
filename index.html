@@ -85,7 +85,7 @@
         <div class="login-box" onclick="event.stopPropagation()">
             <h3>行員システム・ログイン</h3>
             <div style="position: relative; margin-bottom: 20px;">
-                <!-- 🌟 パスワード入力欄を type="text" にして日本語入力可能に -->
+                <!-- 🌟 日本語入力可能にするため type="text" -->
                 <input type="text" id="staff-pass" class="secure-input" placeholder="Password" style="margin-bottom: 0; padding-right: 40px; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
                 <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;" title="パスワードを表示">👁️</span>
             </div>
@@ -305,7 +305,6 @@
             <div class="puzzle-panel" id="puzzle-panel-area">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                    <div class="status-badge" id="puzzle-points-area" style="color:#f85149; border-color:#f85149;">パネル解除可能: <span id="puzzlePoints-s1">0</span> 枚</div>
                 </div>
                 <div class="carousel-container">
                     <button class="carousel-btn" id="btn-prev-puzzle-s1" onclick="prevPuzzle(1)">◀</button>
@@ -318,26 +317,10 @@
                 </div>
                 <div class="carousel-indicator" id="puzzleIndicator-s1">DATA A</div>
                 <div class="answer-section">
+                    <!-- 🌟 小謎の入力欄も日本語OKに -->
                     <input type="text" id="answerInput-s1" placeholder="ANSWER">
                     <button onclick="submitAnswer(1)">送信</button>
                     <div class="feedback" id="terminalFeedback-s1"></div>
-                </div>
-            </div>
-            
-            <div class="analysis-panel" id="analysis-panel-area">
-                <div class="panel-header">
-                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s1">0</span></div>
-                </div>
-                <div id="hintArea-s1" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-                    <div class="carousel-container">
-                        <button class="carousel-btn" id="btn-prev-analysis-s1" onclick="prevAnalysis(1)">◀</button>
-                        <div class="image-wrapper hint-border">
-                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s1">Locked 🔐</div>
-                        </div>
-                        <button class="carousel-btn" id="btn-next-analysis-s1" onclick="nextAnalysis(1)">▶</button>
-                    </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s1">⚫⚫⚫</div>
                 </div>
             </div>
         </div>
@@ -388,20 +371,24 @@
             </div>
 
             <!-- 🌟 ポリオミノとガイドのドラッグエリア -->
-            <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; gap: 40px; margin-bottom: 30px;">
+            <!-- flex-direction を column に戻し、余白を調整 -->
+            <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
                 
-                <!-- ピースのコンテナ -->
                 <div id="pieces-container" class="pieces-container"></div>
                 
-                <!-- ガイド枠（手がかり1で表示） -->
-                <div id="poly-guide-area" style="display:none; opacity: 0.5;">
+                <div id="poly-guide-area" style="display:none; margin-top: 20px; opacity: 0.5;">
                     <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); grid-template-rows: repeat(5, 30px); gap: 3px;">
                         <!-- JSで26マスのガイドを生成 -->
                     </div>
                 </div>
 
-                <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア -->
-                <div id="s2-hint2-area" style="display:none; flex-direction: column; gap: 15px; justify-content: center; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
+            </div>
+            
+            <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア（最初は非表示） -->
+            <div id="s2-hint2-area" style="display:none; justify-content: center; gap: 40px; align-items: center; margin-bottom: 30px;">
+                <!-- 左側に完成形グリッドが入る -->
+                <!-- 右側にセグメント情報 -->
+                <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                     <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                         <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
                         <span style="color:#8b949e;">... 10</span>
@@ -415,7 +402,6 @@
                         <span style="color:#8b949e;">... 7</span>
                     </div>
                 </div>
-
             </div>
 
             <!-- 🌟 手がかり3：キーボード配列表示エリア -->
@@ -458,7 +444,6 @@
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                    <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル解除可能: <span id="puzzlePoints-s2">0</span> 枚</div>
                 </div>
                 <div class="carousel-container">
                     <button class="carousel-btn" id="btn-prev-puzzle-s2" onclick="prevPuzzle(2)">◀</button>
@@ -474,23 +459,6 @@
                     <input type="text" id="answerInput-s2" placeholder="ANSWER">
                     <button onclick="submitAnswer(2)">送信</button>
                     <div class="feedback" id="terminalFeedback-s2"></div>
-                </div>
-            </div>
-
-            <div class="analysis-panel">
-                <div class="panel-header">
-                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s2">0</span></div>
-                </div>
-                <div id="hintArea-s2" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-                    <div class="carousel-container">
-                        <button class="carousel-btn" id="btn-prev-analysis-s2" onclick="prevAnalysis(2)">◀</button>
-                        <div class="image-wrapper hint-border">
-                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s2">Locked 🔐</div>
-                        </div>
-                        <button class="carousel-btn" id="btn-next-analysis-s2" onclick="nextAnalysis(2)">▶</button>
-                    </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s2">⚫⚫⚫</div>
                 </div>
             </div>
         </div>
@@ -563,7 +531,6 @@
             <div class="puzzle-panel">
                 <div class="panel-header">
                     <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                    <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル解除可能: <span id="puzzlePoints-s3">0</span> 枚</div>
                 </div>
                 <div class="carousel-container">
                     <button class="carousel-btn" id="btn-prev-puzzle-s3" onclick="prevPuzzle(3)">◀</button>
@@ -579,23 +546,6 @@
                     <input type="text" id="answerInput-s3" placeholder="ANSWER">
                     <button onclick="submitAnswer(3)">送信</button>
                     <div class="feedback" id="terminalFeedback-s3"></div>
-                </div>
-            </div>
-            
-            <div class="analysis-panel">
-                <div class="panel-header">
-                    <h3 style="color:#0f0; margin:0 0 10px 0;">【手がかりデータ】</h3>
-                    <div class="status-badge" style="color:#0f0; border-color:#0f0;">開放権: <span id="analysisPoints-s3">0</span></div>
-                </div>
-                <div id="hintArea-s3" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-                    <div class="carousel-container">
-                        <button class="carousel-btn" id="btn-prev-analysis-s3" onclick="prevAnalysis(3)">◀</button>
-                        <div class="image-wrapper hint-border">
-                            <div class="img-placeholder hint-placeholder" id="analysisPlaceholder-s3">Locked 🔐</div>
-                        </div>
-                        <button class="carousel-btn" id="btn-next-analysis-s3" onclick="nextAnalysis(3)">▶</button>
-                    </div>
-                    <div class="carousel-indicator hint-text" id="analysisIndicator-s3">⚫⚫⚫</div>
                 </div>
             </div>
         </div>
