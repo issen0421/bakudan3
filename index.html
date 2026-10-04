@@ -8,6 +8,9 @@
 </head>
 <body>
 
+    <!-- 🌟 バージョン確認用（本番環境ではこの1行を削除してください） -->
+    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.6</div>
+
     <!-- 🌟 音声アンロック用の初回クリック画面 -->
     <div id="start-screen" onclick="startMission()">
         <div class="tap-indicator" style="font-size: 18px;">▼ 画面をタップしてシステムにアクセス ▼</div>
@@ -70,7 +73,7 @@
         </div>
     </div>
 
-    <!-- 🕵‍♂️ ボスからの警告モーダル (アニメーション対応版) -->
+    <!-- 🕵‍♂️ ボスからの警告モーダル -->
     <div id="boss-alert" onclick="closeBossAlert()">
         <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信着信：ボス 】</h3>
@@ -270,7 +273,7 @@
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                            <div class="s1-arrow">▶︎</div>
+                            <div class="s1-arrow">▶︎︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -380,14 +383,14 @@
                         <!-- ガイド枠（右側） -->
                         <div id="poly-guide-area" style="display:none; opacity: 0.5;">
                             <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;">
-                                <!-- JSで26マス(5x5+1)のガイドを生成 -->
+                                <!-- JSで26マスのガイドを生成 -->
                             </div>
                         </div>
                     </div>
                     
-                    <!-- 🌟 手がかり2：盤面完成＆セグメント情報 -->
-                    <div id="s2-hint2-area" style="display:none; justify-content: center; gap: 40px; align-items: center; margin-bottom: 10px;">
-                        <!-- JSでここに完成形の盤面が挿入されます -->
+                    <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア（横並びで高さを揃える） -->
+                    <div id="s2-hint2-area" style="display:none; flex-direction: row; justify-content: center; gap: 40px; align-items: center; margin-bottom: 20px;">
+                        <!-- JSでここに完成形の盤面（id="poly-solved-grid"）が挿入されます -->
                         
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
@@ -406,7 +409,7 @@
                     </div>
 
                     <!-- 🌟 手がかり3：キーボード配列表示エリア -->
-                    <div id="keyboard-area" style="display:none; flex-direction: column; gap: 3px; align-items: center; margin-bottom: 10px;">
+                    <div id="keyboard-area" style="display:none; flex-direction: column; gap: 3px; align-items: center; margin-bottom: 20px;">
                         <!-- JSでキーボードを生成 -->
                     </div>
 
