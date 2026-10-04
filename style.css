@@ -18,11 +18,6 @@ input, textarea {
     -webkit-user-select: auto;
 }
 
-/* 🌟 パスワード入力欄を黒丸（ディスク）で隠す設定 */
-.secure-input {
-    -webkit-text-security: disc;
-}
-
 /* 🌟 スタート画面（初回クリック要求） */
 #start-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -140,12 +135,29 @@ input, textarea {
 
 .instruction { font-size: 18px; color: #8b949e; margin-bottom: 20px; line-height: 1.6; }
 
-/* --- 📱 ダッシュボード分割レイアウト --- */
-/* 🌟 手がかりパネルを消したため、中央揃えに */
-.split-layout { display: flex; justify-content: center; gap: 40px; margin-top: 40px; padding-top: 40px; border-top: 2px dashed #30363d; align-items: stretch; flex-wrap: wrap; background: rgba(13, 17, 23, 0.85); box-shadow: 0 0 20px rgba(0,0,0,0.5); } 
-.split-layout > div { flex: 1; min-width: 340px; max-width: 600px; margin: 0; display: flex; flex-direction: column; }
+/* --- 🌟 新レイアウト：横並び（左：プロトコル、右：小謎） --- */
+.layer-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1300px;
+    margin: 40px auto 0 auto;
+    flex-wrap: wrap;
+}
 
-/* --- 🧩 小謎パネル --- */
+.left-protocol {
+    flex: 2;
+    min-width: 600px;
+}
+
+.right-puzzle {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+/* --- 🧩 パズル用パネル共通 --- */
 .puzzle-panel { background: #161b22; border: 2px solid #444; border-radius: 8px; padding: 20px; transition: 0.3s; }
 .panel-header { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin-bottom: 20px; }
 .status-badge { font-size: 14px; font-weight: bold; background: #0d1117; display: inline-block; padding: 5px 15px; border-radius: 5px; border: 1px solid; transition: 0.3s; }
@@ -156,9 +168,10 @@ input, textarea {
 .image-wrapper { width: 240px; height: 240px; position: relative; background: #222; border-radius: 5px; overflow: hidden; border: 2px solid #444; display: flex; align-items: center; justify-content: center; margin: 0 auto;}
 .img-placeholder { color: #888; font-size: 16px; border: 2px dashed #555; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column; gap: 10px; }
 
+/* 🌟 パネル（9枚）のグリッド設定 */
 .grid-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 0; padding: 0; box-sizing: border-box; background: transparent; }
-.grid-panel { background: #161b22; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: #444; border: 2px solid #0d1117; box-sizing: border-box; }
-.grid-panel:hover { background: #21262d; border-color: #58a6ff; z-index: 1; }
+.grid-panel { background: #161b22; transition: 0.2s; display: flex; align-items: center; justify-content: center; border: 2px solid #0d1117; box-sizing: border-box; }
+.grid-panel:hover { background: #21262d; border-color: #58a6ff; z-index: 1; cursor: pointer; }
 .grid-panel.open { opacity: 0; pointer-events: none; }
 .solved-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(35, 134, 54, 0.8); color: white; display: none; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; letter-spacing: 2px; }
 .carousel-indicator { color: #8b949e; font-size: 14px; margin-top: 15px; letter-spacing: 2px;}
@@ -168,6 +181,26 @@ input, textarea {
 .answer-section button { background: #58a6ff; color: #000; border: none; padding: 9px 20px; font-size: 16px; cursor: pointer; font-weight: bold; border-radius: 4px; margin-left: 5px; transition: 0.2s; }
 .answer-section button:hover { background: #1f6feb; color: #fff;}
 .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
+
+
+/* --- 💡 メインプロトコル枠 --- */
+#main-protocol-wrapper-s1 {
+    background-color: transparent;
+    background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
+    background-size: 40px 40px; 
+    transition: background-position 0.1s;
+}
+
+.main-protocol-wrapper {
+    background: transparent;
+    border: 2px solid #58a6ff;
+    border-radius: 8px;
+    padding: 20px 20px 30px 20px;
+    margin: 0 auto;
+    position: relative;
+    transition: 0.3s;
+    box-shadow: 0 0 15px rgba(88, 166, 255, 0.2);
+}
 
 /* --- STEP 1 UI --- */
 .gojuon-container { margin: 0 auto; padding: 0; width: 440px; height: 200px; } 
@@ -337,23 +370,3 @@ input, textarea {
 .login-box h3 { margin-top: 0; color: #004080; margin-bottom: 20px; }
 
 #glitch-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; z-index: 99999; justify-content: center; align-items: center; text-align: center; font-family: monospace; font-size: 24px; transition: opacity 0.5s; }
-
-/* --- 💡 メインプロトコル枠 --- */
-#main-protocol-wrapper-s1 {
-    background-color: transparent;
-    background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
-    background-size: 40px 40px; 
-    transition: background-position 0.1s;
-}
-
-.main-protocol-wrapper {
-    background: transparent;
-    border: 2px solid #58a6ff;
-    border-radius: 8px;
-    padding: 20px 20px 30px 20px;
-    margin: 0 auto 30px auto;
-    max-width: 900px;
-    position: relative;
-    transition: 0.3s;
-    box-shadow: 0 0 15px rgba(88, 166, 255, 0.2);
-}
