@@ -93,7 +93,7 @@ function closeLogin() {
 
 function checkBankLogin() {
     const pass = document.getElementById('staff-pass').value;
-    // 🌟 パスワードは「てすと」で固定
+    // 🌟 パスワードは「てすと」で通るように設定
     if (pass === "てすと") {
         document.getElementById('login-err').style.display = 'none';
         document.getElementById('login-modal').style.display = 'none';
@@ -321,7 +321,7 @@ function closeBetrayalModal(e) {
     switchApp('last');
 }
 
-// AIチュートリアル（セリフを「右側」に修正）
+// AIチュートリアル
 const aiSequence = [
     { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内のデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nあなたの最終目標は、左側の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-wrapper-s1', aiPosition: 'bottom' },
@@ -964,11 +964,12 @@ function initPolyGuide() {
     const guide = document.getElementById("poly-guide");
     if(!guide) return;
     guide.innerHTML = "";
+    // 5行×6列で生成し、5行目(r=4)は1マスだけにする
     for(let r=0; r<5; r++) {
         for(let c=0; c<6; c++) {
             let cell = document.createElement("div");
             cell.className = "poly-guide-cell";
-            if(r < 4 && c === 5) {
+            if(r === 4 && c > 0) {
                 cell.classList.add("hidden");
             }
             guide.appendChild(cell);
@@ -992,8 +993,10 @@ function initKeyboardGrid() {
         let rowDiv = document.createElement("div");
         rowDiv.style.display = "flex";
         rowDiv.style.gap = "3px";
-        if(rIdx === 1) rowDiv.style.marginLeft = "15px";
-        if(rIdx === 2) rowDiv.style.marginLeft = "30px";
+        
+        // 🌟 QWERTYキーの実際のズレ（インデント）を調整
+        if(rIdx === 1) rowDiv.style.marginLeft = "12px";
+        if(rIdx === 2) rowDiv.style.marginLeft = "36px";
         
         rowArr.forEach(char => {
             let cell = document.createElement("div");
@@ -1048,8 +1051,13 @@ function enablePolyDrag() {
     pieces.forEach((piece, i) => {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
-        piece.style.left = rects[i].left + 'px';
-        piece.style.top = rects[i].top + 'px';
+        
+        // 🌟 ピースを少し左上に散らしてガイドと被らないように調整
+        let scatterX = (i % 2 === 0) ? -40 : -80;
+        let scatterY = (i * 10) - 20;
+        piece.style.left = (rects[i].left + scatterX) + 'px';
+        piece.style.top = (rects[i].top + scatterY) + 'px';
+        
         piece.style.margin = "0";
         piece.style.cursor = "grab";
         piece.style.zIndex = "10";
@@ -1223,7 +1231,7 @@ const puzzleFiles = {
 };
 
 let openPoints = { 1: 0, 2: 0, 3: 0 }; 
-let panelsState = { 1: [], 2: [], 3: [] }; // 🌟復活: パネル開閉状態
+let panelsState = { 1: [], 2: [], 3: [] }; 
 let unlockedAnalysisCount = { 1: 0, 2: 0, 3: 0 }; 
 let currentPuzzleIdx = { 1: 0, 2: 0, 3: 0 }; 
 let isSolved = { 1: [], 2: [], 3: [] };
@@ -1240,7 +1248,7 @@ function getRow(char) { return QWERTY_TOP.includes(char) ? 1 : QWERTY_MID.includ
 function initPuzzles() {
     for(let s=1; s<=3; s++) {
         for(let p=0; p<maxPuzzles[s]; p++) {
-            panelsState[s].push(new Array(9).fill(false)); // 🌟復活: 9枚のパネル状態を初期化
+            panelsState[s].push(new Array(9).fill(false)); 
             isSolved[s].push(false);
         }
         renderPuzzleGrid(s);
@@ -1288,7 +1296,6 @@ function renderPuzzleGrid(step) {
         overlay.style.display = "none";
         grid.innerHTML = "";
         
-        // 🌟復活: パネルの描画とクリックイベント
         for(let i=0; i<9; i++) {
             let div = document.createElement("div");
             div.className = "grid-panel";
@@ -1338,7 +1345,7 @@ function submitAnswer(step) {
     if (isCorrect) {
         if (!isSolved[step][pIdx]) {
             isSolved[step][pIdx] = true;
-            unlockAnalysis(step); // 🌟 解けたら自動で作用を適用
+            unlockAnalysis(step); 
         }
         feedback.style.color = "#0f0";
         feedback.innerText = "DATA DECODED";
@@ -1388,6 +1395,7 @@ function unlockAnalysis(step) {
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
+                // 🌟 完成形を 5x4 + 6マス（最後の行が6マス）に変更
                 const solutionCells = [
                     'W','W','B','B','B','W',
                     'B','W','W','W','B','B',
@@ -1399,9 +1407,28 @@ function unlockAnalysis(step) {
                 for(let i=0; i<30; i++) {
                     let cell = document.createElement("div");
                     cell.className = "poly-cell";
-                    if(solutionCells[i] === 'B') cell.classList.add("black");
-                    else if(solutionCells[i] === 'W') cell.classList.add("white");
-                    else cell.style.border = "none";
+                    
+                    // 🌟 白いマスにはクリックイベントを追加してモニター表示を機能させる
+                    if(solutionCells[i] === 'B') {
+                        cell.classList.add("black");
+                    } else if(solutionCells[i] === 'W') {
+                        cell.classList.add("white");
+                        let char = (i<10) ? kbLayout[0][i] : (i<19) ? kbLayout[1][i-10] : (i<26) ? kbLayout[2][i-19] : '';
+                        cell.onclick = () => {
+                            let row = getRow(char);
+                            let val = (row === 1) ? '1' : (row === 2) ? '2' : (row === 3) ? '3' : '0';
+                            if (polyTimer) clearTimeout(polyTimer);
+                            sendCommand("S" + val + val + val + val);
+                            document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
+                            cell.classList.add("active");
+                            polyTimer = setTimeout(() => {
+                                sendCommand("S0000");
+                                cell.classList.remove("active");
+                            }, 2000);
+                        };
+                    } else {
+                        cell.style.border = "none";
+                    }
                     solvedGrid.appendChild(cell);
                 }
                 
