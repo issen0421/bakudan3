@@ -9,7 +9,7 @@
 <body>
 
     <!-- 🌟 バージョン確認用（本番環境ではこの1行を削除してください） -->
-    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.6</div>
+    <div style="position: fixed; bottom: 5px; left: 5px; color: rgba(255,255,255,0.3); font-size: 12px; font-family: monospace; z-index: 9999999; pointer-events: none;">Ver. 1.0.7</div>
 
     <!-- 🌟 音声アンロック用の初回クリック画面 -->
     <div id="start-screen" onclick="startMission()">
@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <!-- 🕵‍♂️ ボスからの警告モーダル -->
+    <!-- 🕵‍♂️ ボスからの警告モーダル (アニメーション対応版) -->
     <div id="boss-alert" onclick="closeBossAlert()">
         <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信着信：ボス 】</h3>
@@ -191,6 +191,7 @@
         </div>
     </div>
 
+    <!-- 🔧 デバッグパネル -->
     <div class="debug-panel">
         <span>🔧 テスト:</span>
         <button class="debug-btn" onclick="testLight()">💡 ライト</button>
@@ -273,9 +274,9 @@
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
-                            <div class="s1-arrow">▶︎︎</div>
-                            <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
+                            <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
+                            <div class="s1-arrow">▶︎︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -376,7 +377,7 @@
                     </div>
 
                     <!-- 🌟 手がかり1：ピースとガイドのドラッグエリア -->
-                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; margin-bottom: 0;">
+                    <div id="poly-area" style="position: relative; width: 100%; min-height: 120px; display: flex; flex-direction: row; justify-content: center; gap: 20px; margin-bottom: 0;">
                         <!-- ピース置き場（左側） -->
                         <div id="pieces-container" class="pieces-container"></div>
                         
@@ -392,6 +393,7 @@
                     <div id="s2-hint2-area" style="display:none; flex-direction: row; justify-content: center; gap: 40px; align-items: center; margin-bottom: 20px;">
                         <!-- JSでここに完成形の盤面（id="poly-solved-grid"）が挿入されます -->
                         
+                        <!-- 右側にセグメント情報 -->
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
@@ -409,7 +411,7 @@
                     </div>
 
                     <!-- 🌟 手がかり3：キーボード配列表示エリア -->
-                    <div id="keyboard-area" style="display:none; flex-direction: column; gap: 3px; align-items: center; margin-bottom: 20px;">
+                    <div id="keyboard-area" style="display:none; margin-bottom: 20px;">
                         <!-- JSでキーボードを生成 -->
                     </div>
 
