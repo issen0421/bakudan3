@@ -903,6 +903,30 @@ setInterval(() => {
 
 
 // ==========================================
+// 💡 どのアルファベットが何行目かを判定するルール
+// ==========================================
+function getRow(char) {
+    const row1 = "QWERTYUIOP";
+    const row2 = "ASDFGHJKL";
+    const row3 = "ZXCVBNM";
+
+    let upperChar = char.toUpperCase();
+
+    if (row1.includes(upperChar)) {
+        return 1;  
+    } 
+    else if (row2.includes(upperChar)) {
+        return 2;  
+    } 
+    else if (row3.includes(upperChar)) {
+        return 3;  
+    } 
+    else {
+        return 0;  
+    }
+}
+
+// ==========================================
 // 💡 ポリオミノ・マス目 クリック共通処理（ここで確実化）
 // ==========================================
 let polyTimer;
@@ -910,7 +934,9 @@ function sendSegmentCommand(char, cellElement) {
     let r = getRow(char);
     let val = (r === 1) ? '1' : (r === 2) ? '2' : (r === 3) ? '3' : '0';
     if (polyTimer) clearTimeout(polyTimer);
-    sendCommand("S" + val + val + val + val);
+    
+    // 💡 1桁目だけが val になり、残りの3桁は 0 になるように修正！ (例: S1000, S2000, S3000)
+    sendCommand("S" + val + "000"); 
     
     document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
     if (cellElement) cellElement.classList.add("active");
@@ -1251,7 +1277,7 @@ const puzzleFiles = {
     1: ["A", "B", "C"],
     2: ["A", "B", "C"],
     3: ["A", "B", "C"]
-};
+}
 
 let openPoints = { 1: 0, 2: 0, 3: 0 }; 
 let panelsState = { 1: [], 2: [], 3: [] }; 
