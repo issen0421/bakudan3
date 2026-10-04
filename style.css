@@ -263,7 +263,8 @@ input, textarea {
     display: flex; justify-content: center; align-items: flex-start; 
     gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10; 
 }
-.poly-piece { display: grid; gap: 3px; }
+/* 🌟 ピースの形が崩れないように width: max-content を追加 */
+.poly-piece { display: grid; gap: 3px; width: max-content; }
 .piece-1 { grid-template-columns: repeat(4, 30px); }
 .piece-2 { grid-template-columns: repeat(3, 30px); }
 .piece-3 { grid-template-columns: repeat(3, 30px); }
