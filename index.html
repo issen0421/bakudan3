@@ -16,9 +16,6 @@
         <div class="tap-indicator" style="font-size: 18px;">▼ 画面をタップしてシステムにアクセス ▼</div>
     </div>
 
-    <!-- 🔌 常設デバイス接続ボタン -->
-    <button class="fixed-connect-btn" onclick="connectSerial()" title="デバイス再接続">🔌 デバイス再接続</button>
-
     <!-- ========================================== -->
     <!-- 🏦 銀行HP（トップページ） -->
     <!-- ========================================== -->
@@ -118,7 +115,7 @@
         </div>
     </div>
 
-    <!-- 🕵️️‍♂ ボス通信モーダル -->
+    <!-- 🕵️‍♂ ボス通信モーダル -->
     <div id="boss-modal" onclick="nextBossMsg()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100000;">
         <div class="boss-box" onclick="event.stopPropagation(); nextBossMsg();" style="background: #161b22; padding: 30px; border-radius: 8px; width: 450px; border: 1px solid #30363d; color: #c9d1d9; text-align: left;">
             <h3 style="margin-top: 0; color: #58a6ff; font-size: 16px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信：ボス 】</h3>
@@ -201,7 +198,6 @@
         
         <div style="display: flex; gap: 15px; align-items: center;">
             <button id="header-connect-btn" class="debug-btn" onclick="connectSerial()" style="display:none; background:#2ea043; border-color:#2ea043; color:white; font-weight:bold; padding: 6px 15px; border-radius: 20px;">🔌 デバイス再接続</button>
-            <!-- 💡 ❓ボタンをここから削除し、右側のパネルの中に移動させました -->
             <button class="tab-icon" onclick="openSettings()" title="設定" style="margin: 0;">⚙️</button>
         </div>
     </div>
@@ -223,7 +219,7 @@
         <div class="instruction">指示書に従ってデバイスに「ライト」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
+            <h3 style="color:#58a6ff; margin:top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
             
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 0: 基板をPCに接続する</p>
             <p style="color:#c9d1d9;">
@@ -274,7 +270,6 @@
     <!-- APP 1: LAYER 01 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step1">
-        <!-- 💡 ここのh2見出しを削除し、右側のパネルに移動させました -->
         
         <div class="layer-layout">
             <div class="left-protocol">
@@ -328,7 +323,6 @@
             </div>
 
             <div class="right-puzzle">
-                <!-- 💡 追加：現在の目標パネル（❓ボタンもここにあります） -->
                 <div class="objective-panel">
                     <div class="objective-header">
                         <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
@@ -340,7 +334,14 @@
                 <div class="puzzle-panel" id="puzzle-panel-area">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                        <div class="status-badge" id="puzzle-points-area" style="color:#f85149; border-color:#f85149;">パネル解除可能: <span id="puzzlePoints-s1">0</span> 枚</div>
+                        <!-- 💡 追加：解析中プログレスバー -->
+                        <div style="width: 100%; text-align: center;">
+                            <div class="status-badge" style="color:#f85149; border-color:#f85149; margin-bottom: 10px;">パネル解除可能: <span id="puzzlePoints-s1">0</span> 枚</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" id="progress-s1"></div>
+                                <div class="progress-bar-text">解析中...</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="carousel-container">
                         <button class="carousel-btn" id="btn-prev-puzzle-s1" onclick="prevPuzzle(1)">◀</button>
@@ -370,7 +371,7 @@
         <div class="instruction">指示書に従ってデバイスに「モニター」と「バイパスコード」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
+            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: モニターを接続する</p>
             <p style="color:#c9d1d9;">モニターの裏側から出ている4本の線を、それぞれ直接Arduinoとブレッドボードに接続せよ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -399,7 +400,6 @@
     <!-- APP 2: LAYER 02 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <!-- 💡 ここのh2見出しを削除し、右側のパネルに移動させました -->
         
         <div class="layer-layout">
             <div class="left-protocol">
@@ -408,20 +408,17 @@
                         <h3 style="color:#58a6ff; margin:0;">【メインプロトコル】</h3>
                     </div>
 
-                    <!-- 🌟 手がかり1：ピースとガイドのドラッグエリア -->
                     <div id="poly-area" style="position: relative; width: 100%; min-height: 150px; display: flex; flex-direction: row; justify-content: center; gap: 40px; margin-bottom: 0;">
-                        <!-- ピース置き場 -->
                         <div id="pieces-container" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;"></div>
                         
-                        <!-- ガイド枠 -->
                         <div id="poly-guide-area" style="display:none; opacity: 0.5;">
-                            <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;"></div>
+                            <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;">
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア -->
                     <div id="s2-hint2-area" style="display:none; flex-direction: row; justify-content: center; gap: 40px; align-items: center; margin-bottom: 20px;">
-                        <!-- JSでここに完成形の盤面が挿入されます -->
+                        
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
@@ -438,10 +435,9 @@
                         </div>
                     </div>
 
-                    <!-- 🌟 手がかり3：キーボード配列表示エリア -->
-                    <div id="keyboard-area" style="display:none; flex-direction: column; align-items: center; margin-bottom: 20px;"></div>
+                    <div id="keyboard-area" style="display:none; flex-direction: column; align-items: center; margin-bottom: 20px;">
+                    </div>
 
-                    <!-- 🌟 下部のスロットエリア -->
                     <div class="puzzle-layout" id="s2-main-puzzle-ui">
                         <div class="s3-slots-container">
                             <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -474,7 +470,6 @@
             </div>
             
             <div class="right-puzzle">
-                <!-- 💡 追加：現在の目標パネル -->
                 <div class="objective-panel">
                     <div class="objective-header">
                         <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
@@ -486,7 +481,14 @@
                 <div class="puzzle-panel">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                        <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル解除可能: <span id="puzzlePoints-s2">0</span> 枚</div>
+                        <!-- 💡 追加：解析中プログレスバー -->
+                        <div style="width: 100%; text-align: center;">
+                            <div class="status-badge" style="color:#f85149; border-color:#f85149; margin-bottom: 10px;">パネル解除可能: <span id="puzzlePoints-s2">0</span> 枚</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" id="progress-s2"></div>
+                                <div class="progress-bar-text">解析中...</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="carousel-container">
                         <button class="carousel-btn" id="btn-prev-puzzle-s2" onclick="prevPuzzle(2)">◀</button>
@@ -543,7 +545,6 @@
     <!-- APP 3: LAYER 03 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <!-- 💡 ここのh2見出しを削除し、右側のパネルに移動させました -->
         
         <div class="layer-layout">
             <div class="left-protocol">
@@ -577,7 +578,6 @@
             </div>
 
             <div class="right-puzzle">
-                <!-- 💡 追加：現在の目標パネル -->
                 <div class="objective-panel">
                     <div class="objective-header">
                         <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
@@ -589,7 +589,14 @@
                 <div class="puzzle-panel">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                        <div class="status-badge" style="color:#f85149; border-color:#f85149;">パネル解除可能: <span id="puzzlePoints-s3">0</span> 枚</div>
+                        <!-- 💡 追加：解析中プログレスバー -->
+                        <div style="width: 100%; text-align: center;">
+                            <div class="status-badge" style="color:#f85149; border-color:#f85149; margin-bottom: 10px;">パネル解除可能: <span id="puzzlePoints-s3">0</span> 枚</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" id="progress-s3"></div>
+                                <div class="progress-bar-text">解析中...</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="carousel-container">
                         <button class="carousel-btn" id="btn-prev-puzzle-s3" onclick="prevPuzzle(3)">◀</button>
