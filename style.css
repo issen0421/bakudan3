@@ -395,3 +395,8 @@ input, textarea {
     transition: 0.3s;
     box-shadow: 0 0 15px rgba(88, 166, 255, 0.2);
 }
+
+/* 🌟 LAYER 02: 点線のガイド盤面を右にずらす */
+#poly-guide {
+    margin-left: 60px; 
+}
