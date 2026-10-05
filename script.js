@@ -3,6 +3,15 @@
 // ==========================================
 let isAudioUnlocked = false;
 
+// 🌟 BGMの拡張子を .mp3 に修正
+const bgmNormal = new Audio('normal.mp3');
+bgmNormal.loop = true;  
+bgmNormal.volume = 0.4; 
+
+const bgm10Min = new Audio('10minutes.mp3');
+bgm10Min.loop = true;
+bgm10Min.volume = 0.4;
+
 function startMission() {
     const screen = document.getElementById('start-screen');
     if (!screen) return;
@@ -15,6 +24,13 @@ function startMission() {
             msgAudio.currentTime = 0;
             msgAudio.muted = false;
         }).catch(e => console.log("Audio unlock failed", e));
+
+        bgmNormal.muted = true;
+        bgmNormal.play().then(() => { bgmNormal.pause(); bgmNormal.currentTime = 0; bgmNormal.muted = false; }).catch(e => console.log(e));
+        
+        bgm10Min.muted = true;
+        bgm10Min.play().then(() => { bgm10Min.pause(); bgm10Min.currentTime = 0; bgm10Min.muted = false; }).catch(e => console.log(e));
+
         isAudioUnlocked = true;
     }
 
@@ -243,8 +259,6 @@ function initIntro() {
     document.getElementById('intro-indicator').innerText = "▼ タップして再生";
     document.getElementById('intro-indicator').style.display = 'block';
     document.getElementById('intro-btn').style.display = 'none';
-
-    // 💡 ここにあったデバイスボタンの表示処理をcompleteWireへ移動させました
 }
 
 function nextIntro() {
@@ -325,7 +339,7 @@ const aiSequence = [
     { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内のデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nあなたの最終目標は、左側の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-wrapper-s1', aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nすぐに内部構造に気づいて突破できれば問題ありませんが、もし行き詰まった場合は、右側の『暗号化データ』を解読してください。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "【CHROMAKEY】\nあなたが暗号を解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかり』をプロトコル上に反映します。", highlight: null, aiPosition: 'top' },
+    { text: "【CHROMAKEY】\nあなたが暗号解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかり』をプロトコル上に反映します。", highlight: null, aiPosition: 'top' },
     { text: "【CHROMAKEY】\nただし、右側の暗号化データは強固なプロテクトにより、最初は9枚のパネルで隠されています。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "【CHROMAKEY】\n私は裏でこのプロテクトの解除を進めており、約2分に1枚のペースでパネルをめくる権限をお渡しできます。少しずつパネルをめくって暗号の全貌を推測し、答えを導き出してください。", highlight: 'puzzle-points-area', aiPosition: 'bottom' }
 ];
@@ -381,6 +395,9 @@ function closeAITutorial() {
 // ==========================================
 function showEnding(isSuccess) {
     if(lastTimerInterval) clearInterval(lastTimerInterval); 
+    
+    bgmNormal.pause();
+    bgm10Min.pause();
 
     document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
     
@@ -870,8 +887,9 @@ function completeWire(num) {
         document.getElementById('line-1').classList.add('active');
         document.getElementById('tab-step1').style.display = 'block';
         
-        // 💡 最初のライト配線が終わったタイミングで右上ボタンを表示
         document.querySelector('.fixed-connect-btn').style.display = 'block';
+
+        bgmNormal.play().catch(e => console.log("BGM Error:", e));
 
         switchApp('step1');
     } else if(num === 2) {
@@ -1543,6 +1561,11 @@ function startLastStep() {
     document.getElementById('last-start-screen').style.display = 'none';
     document.getElementById('last-active-screen').style.display = 'block';
     
+    // 🌟 追加：通常BGMを止めて、10分カウントダウン用BGMに切り替える
+    bgmNormal.pause();
+    bgmNormal.currentTime = 0;
+    bgm10Min.play().catch(e => console.log("BGM Error:", e));
+
     ['btn-test-light', 'btn-test-buzzer', 'btn-test-monitor'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
