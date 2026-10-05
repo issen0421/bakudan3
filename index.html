@@ -197,7 +197,8 @@
         </div>
         
         <div style="display: flex; gap: 15px; align-items: center;">
-            <button id="header-connect-btn" class="debug-btn" onclick="connectSerial()" style="display:none; background:#2ea043; border-color:#2ea043; color:white; font-weight:bold; padding: 6px 15px; border-radius: 20px;">🔌 デバイス再接続</button>
+            <!-- 💡 最初から表示させるために display:none; を削除しました -->
+            <button id="header-connect-btn" class="debug-btn" onclick="connectSerial()" style="background:#2ea043; border-color:#2ea043; color:white; font-weight:bold; padding: 6px 15px; border-radius: 20px;">🔌 デバイス再接続</button>
             <button class="tab-icon" onclick="openSettings()" title="設定" style="margin: 0;">⚙️</button>
         </div>
     </div>
@@ -219,7 +220,7 @@
         <div class="instruction">指示書に従ってデバイスに「ライト」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin:top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
+            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
             
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 0: 基板をPCに接続する</p>
             <p style="color:#c9d1d9;">
@@ -328,13 +329,13 @@
                         <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
                         <button class="tab-icon hint-btn" onclick="initAITutorial()" title="AIナビゲーション">❓</button>
                     </div>
-                    <p>【CHROMAKEY】<br><strong>6つの円を正しい順番で並べ替え</strong>、システムの第一防壁を突破すること。</p>
+                    <!-- 💡 統一した「メインプロトコルを解読し」に変更 -->
+                    <p>【CHROMAKEY】<br><strong>メインプロトコルを解読し、</strong>システムの第一防壁を突破すること。</p>
                 </div>
 
                 <div class="puzzle-panel" id="puzzle-panel-area">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                        <!-- 💡 追加：解析中プログレスバー -->
                         <div style="width: 100%; text-align: center;">
                             <div class="status-badge" style="color:#f85149; border-color:#f85149; margin-bottom: 10px;">パネル解除可能: <span id="puzzlePoints-s1">0</span> 枚</div>
                             <div class="progress-bar-container">
@@ -475,13 +476,13 @@
                         <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
                         <button class="tab-icon hint-btn" onclick="initAITutorial()" title="AIナビゲーション">❓</button>
                     </div>
-                    <p>【CHROMAKEY】<br><strong>5つのピースを正しい順番で配置し</strong>、銀行のスケジュール監視を無効化すること。</p>
+                    <!-- 💡 統一した「メインプロトコルを解読し」に変更 -->
+                    <p>【CHROMAKEY】<br><strong>メインプロトコルを解読し、</strong>銀行のスケジュール監視を無効化すること。</p>
                 </div>
 
                 <div class="puzzle-panel">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                        <!-- 💡 追加：解析中プログレスバー -->
                         <div style="width: 100%; text-align: center;">
                             <div class="status-badge" style="color:#f85149; border-color:#f85149; margin-bottom: 10px;">パネル解除可能: <span id="puzzlePoints-s2">0</span> 枚</div>
                             <div class="progress-bar-container">
@@ -583,13 +584,13 @@
                         <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
                         <button class="tab-icon hint-btn" onclick="initAITutorial()" title="AIナビゲーション">❓</button>
                     </div>
-                    <p>【CHROMAKEY】<br><strong>緊急信号を7セグモニターに出力し</strong>、金庫の『緊急開錠システム』を作動させること。</p>
+                    <!-- 💡 統一した「メインプロトコルを解読し」に変更 -->
+                    <p>【CHROMAKEY】<br><strong>メインプロトコルを解読し、</strong>金庫の『緊急開錠システム』を作動させること。</p>
                 </div>
 
                 <div class="puzzle-panel">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
-                        <!-- 💡 追加：解析中プログレスバー -->
                         <div style="width: 100%; text-align: center;">
                             <div class="status-badge" style="color:#f85149; border-color:#f85149; margin-bottom: 10px;">パネル解除可能: <span id="puzzlePoints-s3">0</span> 枚</div>
                             <div class="progress-bar-container">
