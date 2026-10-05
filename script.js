@@ -114,7 +114,6 @@ function checkBankLogin() {
     }
 }
 
-// 💡 潜入後のボスのセリフを変更しました
 const bossStory = [
     "「よし、行員用ページに潜入できたな。これで金庫の開閉システムへ繋がる通信経路は確保できた。」",
     "「だが、ここから先のセキュリティは普通の操作じゃ突破できない。専用のハッキングAI『CHROMAKEY』の力が必要だ。」",
@@ -245,7 +244,7 @@ function initIntro() {
     document.getElementById('intro-indicator').style.display = 'block';
     document.getElementById('intro-btn').style.display = 'none';
 
-    document.querySelector('.fixed-connect-btn').style.display = 'block';
+    // 💡 ここにあったデバイスボタンの表示処理をcompleteWireへ移動させました
 }
 
 function nextIntro() {
@@ -870,6 +869,10 @@ function completeWire(num) {
         document.getElementById('line-1').style.display = 'block';
         document.getElementById('line-1').classList.add('active');
         document.getElementById('tab-step1').style.display = 'block';
+        
+        // 💡 最初のライト配線が終わったタイミングで右上ボタンを表示
+        document.querySelector('.fixed-connect-btn').style.display = 'block';
+
         switchApp('step1');
     } else if(num === 2) {
         document.getElementById('line-3').style.display = 'block';
@@ -1119,6 +1122,9 @@ function enablePolyDrag() {
     const polyArea = document.getElementById("poly-area");
     const pieces = document.querySelectorAll('.poly-piece');
     
+    polyArea.style.opacity = "0";
+    polyArea.style.transition = "opacity 1s";
+    
     document.getElementById("poly-guide-area").style.display = "block";
     polyArea.style.minHeight = "250px"; 
     
@@ -1144,6 +1150,10 @@ function enablePolyDrag() {
     });
     
     document.getElementById("pieces-container").style.display = "none";
+    
+    setTimeout(() => {
+        polyArea.style.opacity = "1";
+    }, 100);
 }
 
 // 🌟 スナップ付きのドラッグ処理
@@ -1438,7 +1448,6 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 02 のイベント進行
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
-                // ホワンと解禁
                 const polyArea = document.getElementById("poly-area");
                 polyArea.style.opacity = "0";
                 polyArea.style.transition = "opacity 1s";
@@ -1460,7 +1469,6 @@ function unlockAnalysis(step) {
                 solvedGrid.style.gridTemplateColumns = "repeat(6, 30px)";
                 solvedGrid.style.gap = "3px";
                 
-                // 💡 ホワンと出す準備
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
@@ -1469,7 +1477,6 @@ function unlockAnalysis(step) {
                 hint2Area.insertBefore(solvedGrid, hint2Area.firstChild);
                 hint2Area.style.display = "flex";
                 
-                // 💡 少し待ってからフワッと表示
                 setTimeout(() => { 
                     solvedGrid.style.opacity = "1"; 
                 }, 100);
@@ -1480,14 +1487,12 @@ function unlockAnalysis(step) {
                 document.getElementById("s2-hint2-area").style.display = "none";
                 
                 const kArea = document.getElementById("keyboard-area");
-                // 💡 ホワンと出す準備
                 kArea.style.opacity = "0";
                 kArea.style.transition = "opacity 1s";
                 kArea.style.display = "flex";
                 
                 initKeyboardGrid();
 
-                // 💡 少し待ってからフワッと表示
                 setTimeout(() => {
                     kArea.style.opacity = "1";
                 }, 100);
