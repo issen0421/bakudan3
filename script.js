@@ -886,6 +886,7 @@ function completeWire(num) {
         document.getElementById('line-1').classList.add('active');
         document.getElementById('tab-step1').style.display = 'block';
         
+        // 💡 最初のライト配線が終わったタイミングで右上ボタンを表示
         document.getElementById('header-connect-btn').style.display = 'block';
 
         bgmNormal.play().catch(e => console.log("BGM Error:", e));
@@ -934,16 +935,14 @@ setInterval(() => {
     if (currentActiveStep !== null) {
         stepTimeCounter[currentActiveStep]++;
         
-        // 🌟 追加：プログレスバーの幅（％）を計算
         let percent = (stepTimeCounter[currentActiveStep] / 120) * 100;
         
         if (stepTimeCounter[currentActiveStep] >= 120) {
             addPoint(currentActiveStep);
             stepTimeCounter[currentActiveStep] = 0; 
-            percent = 0; // 0に戻す
+            percent = 0; 
         }
 
-        // 🌟 追加：プログレスバーの幅を更新
         const progressBar = document.getElementById(`progress-s${currentActiveStep}`);
         if (progressBar) {
             progressBar.style.width = percent + "%";
