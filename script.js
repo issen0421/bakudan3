@@ -525,7 +525,6 @@ function drawGojuonShape(id, mode) {
     }
 }
 
-// 💡 重複エラーを修正し、ドラッグ中の通信パンクを防ぐメモを追加
 let currentDragId = null;
 let lastSentLightCmd = null;
 
@@ -544,41 +543,33 @@ function dragLeave(e) {
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
-    lastSentLightCmd = null; // メモをリセット
-    
-    // 💡 ここでは光らせる命令は送りません。dragover（移動中）に任せます。
+    lastSentLightCmd = null;
     drawGojuonShape(null, 0); 
 }
 
 document.addEventListener('dragover', (e) => {
     if (!currentDragId) return;
     
-    // 💡 今マウス（指）が「下の枠」か「上の枠」のどちらにいるかを毎瞬チェックする
     const isOverPool = e.target.closest && (e.target.closest('#s1-item-pool') !== null);
     const isOverTopSlots = e.target.closest && (e.target.closest('#s1-slots-container') !== null);
 
-    // 🌟 ① 図形の描画コントロール（元の仕組み）
     if (isOverPool) {
         drawGojuonShape(currentDragId, 4);
     } else {
         drawGojuonShape(null, 0);
     }
 
-    // 🌟 ② ライトのコントロール（新しい仕組み）
-    let nextCmd = "P0000"; // 基本は「全部消す」
+    let nextCmd = "P0000"; 
     
     if (isOverPool) {
-        // 下の枠（プール）の中にいる時は4つ光る
         nextCmd = "P1111";
     } else if (isOverTopSlots) {
-        // 上の枠（スロット）の中にいる時は、そのピース固有の2つが光る
         const ledPatterns = { 'A': 'P1100', 'B': 'P1010', 'C': 'P0011', 'D': 'P0110', 'E': 'P0101', 'F': 'P1010' };
         if (ledPatterns[currentDragId]) {
             nextCmd = ledPatterns[currentDragId];
         }
     }
 
-    // 💡 前回送った命令と違う時だけハードウェアに送る（PCがフリーズしないための工夫）
     if (nextCmd !== lastSentLightCmd) {
         sendCommand(nextCmd);
         lastSentLightCmd = nextCmd;
@@ -586,7 +577,7 @@ document.addEventListener('dragover', (e) => {
 });
 
 function dragEndItem(e) {
-    sendCommand('P0000'); // 手を離したら消灯
+    sendCommand('P0000');
     lastSentLightCmd = null;
     currentDragId = null;
     drawGojuonShape(null, 0);
@@ -764,7 +755,6 @@ function updateS3NodeColors() {
         const node = document.getElementById(`node-${i}`);
         const vol = document.getElementById(`vol-${i}`);
         
-        // 💡 修正ポイント：正解数に応じて表示するテキストを変える
         if (vol) {
             if (unlockedAnalysisCount[3] >= 3) {
                 vol.innerText = s3_volumes[i] + "/" + S3_CAPACITIES[i];
@@ -929,7 +919,6 @@ setInterval(() => {
     }
 }, 1000); 
 
-
 // ==========================================
 // 💡 どのアルファベットが何行目かを判定するルール
 // ==========================================
@@ -973,7 +962,6 @@ function sendSegmentCommand(char, cellElement) {
         if (cellElement) cellElement.classList.remove("active");
     }, 2000);
 }
-
 
 // ==========================================
 // 💡 ポリオミノ盤面生成ロジック
@@ -1035,47 +1023,6 @@ function initPolyGuide() {
     }
 }
 
-// 🌟 A〜Zの盤面（手がかり2の完成形表示用）を生成する関数
-function initAZGrid(container) {
-    container.innerHTML = "";
-    container.style.gridTemplateColumns = "repeat(6, 30px)"; 
-    
-    const solColors = [
-        'B','W','W','B','B', 'X', // 0-5
-        'B','W','B','B','W', 'X', // 6-11
-        'W','W','B','B','B', 'X', // 12-17
-        'W','W','B','B','B', 'X', // 18-23
-        'B','W','B','W','W', 'W'  // 24-29
-    ];
-    
-    const azChars = [
-        'A','B','C','D','E', '',
-        'F','G','H','I','J', '',
-        'K','L','M','N','O', '',
-        'P','Q','R','S','T', '',
-        'U','V','W','X','Y', 'Z'
-    ];
-    
-    for(let i=0; i<30; i++) {
-        let cell = document.createElement("div");
-        cell.className = "poly-cell";
-        
-        if(solColors[i] === 'B') {
-            cell.classList.add("black");
-        } else if(solColors[i] === 'W') {
-            cell.classList.add("white");
-            let char = azChars[i];
-            cell.onmousedown = function() {
-                sendSegmentCommand(char, this);
-            };
-        } else {
-            cell.style.visibility = "hidden";
-            cell.style.border = "none";
-        }
-        container.appendChild(cell);
-    }
-}
-
 // 🌟 キーボード配列（手がかり3）を生成する関数
 const kbLayout = [
     ['Q','W','E','R','T','Y','U','I','O','P'],
@@ -1121,7 +1068,7 @@ function initKeyboardGrid() {
     kArea.appendChild(wrapper);
 }
 
-// 🌟 ポリオミノを自由にドラッグできるようにする関数（手がかり1）
+// 🌟 ポリオミノをアニメーション付きで解禁する関数（手がかり1）
 let isPolyDraggable = false;
 function enablePolyDrag() {
     if(isPolyDraggable) return;
@@ -1129,6 +1076,7 @@ function enablePolyDrag() {
     
     const polyArea = document.getElementById("poly-area");
     const pieces = document.querySelectorAll('.poly-piece');
+    const piecesContainer = document.getElementById("pieces-container");
     
     document.getElementById("poly-guide-area").style.display = "block";
     polyArea.style.minHeight = "250px"; 
@@ -1141,20 +1089,40 @@ function enablePolyDrag() {
         { x: 50,   y: 80 }
     ];
     
+    // 💡 アニメーション準備：現在の位置を記憶しておく
+    const areaRect = polyArea.getBoundingClientRect();
+    pieces.forEach((piece) => {
+        const rect = piece.getBoundingClientRect();
+        piece.dataset.initLeft = rect.left - areaRect.left;
+        piece.dataset.initTop = rect.top - areaRect.top;
+    });
+    
+    piecesContainer.style.display = "none"; // 元のコンテナを消す
+    
     pieces.forEach((piece, i) => {
         polyArea.appendChild(piece); 
         piece.style.position = 'absolute';
         
-        piece.style.left = fixedPositions[i].x + 'px';
-        piece.style.top  = fixedPositions[i].y + 'px';
-        
+        // 記憶した初期位置にセット（ここからアニメーションスタート）
+        piece.style.left = piece.dataset.initLeft + 'px';
+        piece.style.top  = piece.dataset.initTop + 'px';
         piece.style.margin = "0";
         piece.style.cursor = "grab";
         piece.style.zIndex = "10";
         makeDraggable(piece);
     });
     
-    document.getElementById("pieces-container").style.display = "none";
+    // 少しだけ待ってから目標位置へアニメーションでスーッと移動
+    setTimeout(() => {
+        pieces.forEach((piece, i) => {
+            piece.style.transition = 'all 1s ease-out';
+            piece.style.left = fixedPositions[i].x + 'px';
+            piece.style.top  = fixedPositions[i].y + 'px';
+            
+            // 移動が終わったらtransitionを外す（ドラッグの邪魔にならないように）
+            setTimeout(() => { piece.style.transition = ''; }, 1000);
+        });
+    }, 50);
 }
 
 // 🌟 スナップ付きのドラッグ処理
@@ -1438,7 +1406,6 @@ function unlockAnalysis(step) {
         sendCommand("P1111"); 
         setTimeout(() => sendCommand("P0000"), 500); 
         
-        // 🌟 LAYER 01 のイベント進行
         if (step === 1 && unlockedAnalysisCount[1] >= 2) {
             document.getElementById("s1-slots-container").classList.add("size-hint-active");
         }
@@ -1446,40 +1413,99 @@ function unlockAnalysis(step) {
             document.getElementById("gojuon-table").classList.add("revealed");
         }
         
-        // 🌟 LAYER 02 のイベント進行
+        // 🌟 LAYER 02 のシームレスアニメーション処理
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
+                // 手がかり1：初期位置からドラッグ用の位置へアニメーション移動
                 enablePolyDrag();
             } else if (unlockedAnalysisCount[2] === 2) {
-                document.getElementById("poly-area").style.display = "none";
+                // 手がかり2：今あるピースをそのまま自動で正解の位置（完成形）に移動させる
+                document.onmouseup = null; // ドラッグ中なら強制解除
+                document.onmousemove = null;
                 
-                const hint2Area = document.getElementById("s2-hint2-area");
-                let solvedGrid = document.createElement("div");
-                solvedGrid.id = "poly-solved-grid";
-                solvedGrid.className = "poly-solved-grid";
-                solvedGrid.style.display = "grid";
-                solvedGrid.style.gridTemplateColumns = "repeat(6, 30px)";
-                solvedGrid.style.gap = "3px";
-                solvedGrid.style.opacity = "0";
-                solvedGrid.style.transition = "opacity 1s";
+                const pieces = document.querySelectorAll('.poly-piece');
+                const guide = document.getElementById("poly-guide");
+                const polyArea = document.getElementById("poly-area");
                 
-                initAZGrid(solvedGrid);
+                const areaRect = polyArea.getBoundingClientRect();
+                const guideRect = guide.getBoundingClientRect();
+                const gLeft = guideRect.left - areaRect.left;
+                const gTop = guideRect.top - areaRect.top;
                 
-                hint2Area.insertBefore(solvedGrid, hint2Area.firstChild);
-                hint2Area.style.display = "flex";
-                setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
+                // 完成形のピースの配置座標（ガイド枠を基準に計算）
+                const solvedPositions = [
+                    { x: 0,  y: 99 },  
+                    { x: 66, y: 0 },   
+                    { x: 99, y: 33 },  
+                    { x: 0,  y: 0 },   
+                    { x: 0,  y: 33 }   
+                ];
+                
+                pieces.forEach((piece, i) => {
+                    piece.style.transition = 'all 1.5s ease-in-out';
+                    piece.style.left = (gLeft + solvedPositions[i].x) + "px";
+                    piece.style.top = (gTop + solvedPositions[i].y) + "px";
+                    piece.style.pointerEvents = "none"; // 移動完了後はドラッグ禁止
+                });
+                
+                // ガイド枠自体を少し見やすくして、右側のヒントも表示
+                guide.style.opacity = "1";
+                document.getElementById("s2-hint2-area").style.display = "flex";
 
             } else if (unlockedAnalysisCount[2] === 3) {
-                const solvedGrid = document.getElementById("poly-solved-grid");
-                if (solvedGrid) solvedGrid.style.display = "none";
-                document.getElementById("s2-hint2-area").style.display = "none";
-                document.getElementById("keyboard-area").style.display = "flex";
+                // 手がかり3：完成したピースがバラバラになってQWERTYキーボードになるアニメーション
+                const kArea = document.getElementById("keyboard-area");
+                initKeyboardGrid(); // キーボードを生成しておく
+                kArea.style.display = "flex";
+                kArea.style.visibility = "hidden"; // まだ隠す
                 
-                initKeyboardGrid();
+                // 画面レイアウトを確定させるためのわずかな待機
+                setTimeout(() => {
+                    const clones = [];
+                    const azChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                    
+                    // 今のA〜Zの位置と、キーボードのA〜Zの目標位置を計算してクローンを作る
+                    azChars.forEach(char => {
+                        const orig = document.getElementById('poly-' + char);
+                        const target = document.getElementById('kb-' + char);
+                        if (orig && target) {
+                            const origRect = orig.getBoundingClientRect();
+                            const targetRect = target.getBoundingClientRect();
+                            
+                            const clone = orig.cloneNode(true);
+                            clone.style.position = 'fixed';
+                            clone.style.left = origRect.left + 'px';
+                            clone.style.top = origRect.top + 'px';
+                            clone.style.margin = "0";
+                            clone.style.transition = 'all 1.5s ease-in-out';
+                            clone.style.zIndex = "3000";
+                            document.body.appendChild(clone);
+                            
+                            clones.push({ element: clone, targetLeft: targetRect.left, targetTop: targetRect.top });
+                        }
+                    });
+                    
+                    // 元のエリアを隠す
+                    document.getElementById("poly-area").style.display = "none";
+                    document.getElementById("s2-hint2-area").style.display = "none";
+                    
+                    document.body.offsetHeight; // アニメーションを強制発動
+                    
+                    // バラバラに飛んでいく！
+                    clones.forEach(c => {
+                        c.element.style.left = c.targetLeft + 'px';
+                        c.element.style.top = c.targetTop + 'px';
+                    });
+                    
+                    // アニメーション完了後に本物のキーボードを表示してクローンを消す
+                    setTimeout(() => {
+                        clones.forEach(c => c.element.remove());
+                        kArea.style.visibility = "visible";
+                    }, 1500);
+                }, 50);
             }
         }
         
-        // 🌟 LAYER 03 のイベント進行
         if (step === 3) {
             if (unlockedAnalysisCount[3] === 1) {
                 const hint1 = document.getElementById("s3-hint1-text");
