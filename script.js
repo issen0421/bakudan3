@@ -114,10 +114,11 @@ function checkBankLogin() {
     }
 }
 
+// 💡 潜入後のボスのセリフを変更しました
 const bossStory = [
     "「よし、行員用ページに潜入できたな。これで金庫の開閉システムへ繋がる通信経路は確保できた。」",
     "「だが、ここから先のセキュリティは普通の操作じゃ突破できない。専用のハッキングAI『CHROMAKEY』の力が必要だ。」",
-    "「箱に入っている基板をPCに接続しろ。そこからAIを起動して、内部ネットワークに侵入させる。」"
+    "「まずはCHROMAKEY AIを起動しよう。起動したらAIが金庫の開閉システムに接続するための流れを説明してくれるはずだ。」"
 ];
 
 let bossIdx = -1;
@@ -1118,10 +1119,6 @@ function enablePolyDrag() {
     const polyArea = document.getElementById("poly-area");
     const pieces = document.querySelectorAll('.poly-piece');
     
-    // 💡 ホワンと出す準備（透明にしておく）
-    polyArea.style.opacity = "0";
-    polyArea.style.transition = "opacity 1s";
-    
     document.getElementById("poly-guide-area").style.display = "block";
     polyArea.style.minHeight = "250px"; 
     
@@ -1147,11 +1144,6 @@ function enablePolyDrag() {
     });
     
     document.getElementById("pieces-container").style.display = "none";
-    
-    // 💡 ちょっと待ってからフワッと表示
-    setTimeout(() => {
-        polyArea.style.opacity = "1";
-    }, 100);
 }
 
 // 🌟 スナップ付きのドラッグ処理
@@ -1446,7 +1438,17 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 02 のイベント進行
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
+                // ホワンと解禁
+                const polyArea = document.getElementById("poly-area");
+                polyArea.style.opacity = "0";
+                polyArea.style.transition = "opacity 1s";
+                
                 enablePolyDrag();
+                
+                setTimeout(() => {
+                    polyArea.style.opacity = "1";
+                }, 100);
+
             } else if (unlockedAnalysisCount[2] === 2) {
                 document.getElementById("poly-area").style.display = "none";
                 
@@ -1457,6 +1459,8 @@ function unlockAnalysis(step) {
                 solvedGrid.style.display = "grid";
                 solvedGrid.style.gridTemplateColumns = "repeat(6, 30px)";
                 solvedGrid.style.gap = "3px";
+                
+                // 💡 ホワンと出す準備
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
@@ -1464,7 +1468,11 @@ function unlockAnalysis(step) {
                 
                 hint2Area.insertBefore(solvedGrid, hint2Area.firstChild);
                 hint2Area.style.display = "flex";
-                setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
+                
+                // 💡 少し待ってからフワッと表示
+                setTimeout(() => { 
+                    solvedGrid.style.opacity = "1"; 
+                }, 100);
 
             } else if (unlockedAnalysisCount[2] === 3) {
                 const solvedGrid = document.getElementById("poly-solved-grid");
@@ -1472,14 +1480,14 @@ function unlockAnalysis(step) {
                 document.getElementById("s2-hint2-area").style.display = "none";
                 
                 const kArea = document.getElementById("keyboard-area");
-                // 💡 追加：ホワンと出す準備
+                // 💡 ホワンと出す準備
                 kArea.style.opacity = "0";
                 kArea.style.transition = "opacity 1s";
                 kArea.style.display = "flex";
                 
                 initKeyboardGrid();
 
-                // 💡 追加：少し待ってからフワッと表示
+                // 💡 少し待ってからフワッと表示
                 setTimeout(() => {
                     kArea.style.opacity = "1";
                 }, 100);
