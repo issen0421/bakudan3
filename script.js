@@ -540,37 +540,56 @@ function dragLeave(e) {
     }
 }
 
+let currentDragId = null;
+let lastSentLightCmd = null; // 💡 通信のパンクを防ぐためのメモ帳
+
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
     currentDragId = e.target.id;
+    lastSentLightCmd = null; // メモをリセット
     
-    dragSourceIsPool = e.target.closest('#s1-item-pool') !== null;
-    
-    if (dragSourceIsPool) {
-        drawGojuonShape(currentDragId, 4); 
-        sendCommand('P1111'); 
-    } else {
-        drawGojuonShape(null, 0); 
-        const ledPatterns = { 'A': 'P1100', 'B': 'P1010', 'C': 'P0011', 'D': 'P0110', 'E': 'P0101', 'F': 'P1010' };
-        if (ledPatterns[currentDragId]) sendCommand(ledPatterns[currentDragId]); 
-    }
+    // 💡 ここでは光らせる命令は送りません。dragover（移動中）に任せます。
+    drawGojuonShape(null, 0); 
 }
 
 document.addEventListener('dragover', (e) => {
     if (!currentDragId) return;
     
-    if (dragSourceIsPool) {
-        const isOverPool = e.target.closest && (e.target.closest('#s1-item-pool') !== null);
-        if (isOverPool) {
-            drawGojuonShape(currentDragId, 4);
-        } else {
-            drawGojuonShape(null, 0);
+    // 💡 今マウス（指）が「下の枠」か「上の枠」のどちらにいるかを毎瞬チェックする
+    const isOverPool = e.target.closest && (e.target.closest('#s1-item-pool') !== null);
+    const isOverTopSlots = e.target.closest && (e.target.closest('#s1-slots-container') !== null);
+
+    // 🌟 ① 図形の描画コントロール（元の仕組み）
+    if (isOverPool) {
+        drawGojuonShape(currentDragId, 4);
+    } else {
+        drawGojuonShape(null, 0);
+    }
+
+    // 🌟 ② ライトのコントロール（新しい仕組み）
+    let nextCmd = "P0000"; // 基本は「全部消す」
+    
+    if (isOverPool) {
+        // 下の枠（プール）の中にいる時は4つ光る
+        nextCmd = "P1111";
+    } else if (isOverTopSlots) {
+        // 上の枠（スロット）の中にいる時は、そのピース固有の2つが光る
+        const ledPatterns = { 'A': 'P1100', 'B': 'P1010', 'C': 'P0011', 'D': 'P0110', 'E': 'P0101', 'F': 'P1010' };
+        if (ledPatterns[currentDragId]) {
+            nextCmd = ledPatterns[currentDragId];
         }
+    }
+
+    // 💡 前回送った命令と違う時だけハードウェアに送る（PCがフリーズしないための工夫）
+    if (nextCmd !== lastSentLightCmd) {
+        sendCommand(nextCmd);
+        lastSentLightCmd = nextCmd;
     }
 });
 
 function dragEndItem(e) {
-    sendCommand('P0000');
+    sendCommand('P0000'); // 手を離したら消灯
+    lastSentLightCmd = null;
     currentDragId = null;
     drawGojuonShape(null, 0);
 }
