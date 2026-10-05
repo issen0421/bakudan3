@@ -16,6 +16,9 @@
         <div class="tap-indicator" style="font-size: 18px;">▼ 画面をタップしてシステムにアクセス ▼</div>
     </div>
 
+    <!-- 🔌 常設デバイス接続ボタン -->
+    <button class="fixed-connect-btn" onclick="connectSerial()" title="デバイス再接続">🔌 デバイス再接続</button>
+
     <!-- ========================================== -->
     <!-- 🏦 銀行HP（トップページ） -->
     <!-- ========================================== -->
@@ -70,7 +73,7 @@
         </div>
     </div>
 
-    <!-- 🕵‍♂️️ ボスからの警告モーダル -->
+    <!-- 🕵‍♂ ボスからの警告モーダル -->
     <div id="boss-alert" onclick="closeBossAlert()">
         <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信：ボス 】</h3>
@@ -115,7 +118,7 @@
         </div>
     </div>
 
-    <!-- 🕵️‍♂ ボス通信モーダル -->
+    <!-- 🕵️️‍♂ ボス通信モーダル -->
     <div id="boss-modal" onclick="nextBossMsg()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100000;">
         <div class="boss-box" onclick="event.stopPropagation(); nextBossMsg();" style="background: #161b22; padding: 30px; border-radius: 8px; width: 450px; border: 1px solid #30363d; color: #c9d1d9; text-align: left;">
             <h3 style="margin-top: 0; color: #58a6ff; font-size: 16px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信：ボス 】</h3>
@@ -164,7 +167,7 @@
         <div id="ending-msg" class="ending-msg"></div>
     </div>
 
-    <!-- 💡 復活：設定（音量）モーダル -->
+    <!-- 設定（音量）モーダル -->
     <div id="settings-modal" onclick="closeSettings()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100001;">
         <div style="background: #161b22; color: #c9d1d9; border: 2px solid #30363d; border-radius: 8px; width: 320px; padding: 30px; text-align: center;" onclick="event.stopPropagation()">
             <h3 style="margin-top: 0; color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 20px;">【 システム設定 】</h3>
@@ -195,10 +198,10 @@
             <div style="width: 40px;"></div>
             <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">[ ! ] WARNING</button>
         </div>
-        <!-- 💡 デバイス再接続ボタンをヘッダーのここにお引っ越し！ -->
+        
         <div style="display: flex; gap: 15px; align-items: center;">
             <button id="header-connect-btn" class="debug-btn" onclick="connectSerial()" style="display:none; background:#2ea043; border-color:#2ea043; color:white; font-weight:bold; padding: 6px 15px; border-radius: 20px;">🔌 デバイス再接続</button>
-            <button class="tab-icon" onclick="initAITutorial()" title="AIナビゲーション" style="margin: 0;">❓</button>
+            <!-- 💡 ❓ボタンをここから削除し、右側のパネルの中に移動させました -->
             <button class="tab-icon" onclick="openSettings()" title="設定" style="margin: 0;">⚙️</button>
         </div>
     </div>
@@ -271,7 +274,7 @@
     <!-- APP 1: LAYER 01 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step1">
-        <h2>【CHROMAKEY】<strong>6つの円を正しい順番で並べ替え</strong>、システムの第一防壁を突破してください。</h2>
+        <!-- 💡 ここのh2見出しを削除し、右側のパネルに移動させました -->
         
         <div class="layer-layout">
             <div class="left-protocol">
@@ -325,6 +328,15 @@
             </div>
 
             <div class="right-puzzle">
+                <!-- 💡 追加：現在の目標パネル（❓ボタンもここにあります） -->
+                <div class="objective-panel">
+                    <div class="objective-header">
+                        <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
+                        <button class="tab-icon hint-btn" onclick="initAITutorial()" title="AIナビゲーション">❓</button>
+                    </div>
+                    <p>【CHROMAKEY】<br><strong>6つの円を正しい順番で並べ替え</strong>、システムの第一防壁を突破すること。</p>
+                </div>
+
                 <div class="puzzle-panel" id="puzzle-panel-area">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
@@ -358,7 +370,7 @@
         <div class="instruction">指示書に従ってデバイスに「モニター」と「バイパスコード」を配線してください。<br>配線テストに成功すると次へ進めます。</div>
         
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
-            <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
+            <h3 style="color:#58a6ff; margin:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: モニターを接続する</p>
             <p style="color:#c9d1d9;">モニターの裏側から出ている4本の線を、それぞれ直接Arduinoとブレッドボードに接続せよ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
@@ -387,7 +399,7 @@
     <!-- APP 2: LAYER 02 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step2">
-        <h2>【CHROMAKEY】<strong>5つのピースを正しい順番で配置し</strong>、銀行のスケジュール監視を無効化してください。</h2>
+        <!-- 💡 ここのh2見出しを削除し、右側のパネルに移動させました -->
         
         <div class="layer-layout">
             <div class="left-protocol">
@@ -398,22 +410,18 @@
 
                     <!-- 🌟 手がかり1：ピースとガイドのドラッグエリア -->
                     <div id="poly-area" style="position: relative; width: 100%; min-height: 150px; display: flex; flex-direction: row; justify-content: center; gap: 40px; margin-bottom: 0;">
-                        <!-- ピース置き場（初期はFlexbox、ドラッグ解禁で絶対配置に切り替わる） -->
+                        <!-- ピース置き場 -->
                         <div id="pieces-container" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;"></div>
                         
-                        <!-- ガイド枠（右側に絶対配置） -->
+                        <!-- ガイド枠 -->
                         <div id="poly-guide-area" style="display:none; opacity: 0.5;">
-                            <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;">
-                                <!-- JSで26マスのガイドを生成 -->
-                            </div>
+                            <div id="poly-guide" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 3px;"></div>
                         </div>
                     </div>
                     
-                    <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア（横並びで高さを揃える） -->
+                    <!-- 🌟 手がかり2：セグメント情報のヒント表示エリア -->
                     <div id="s2-hint2-area" style="display:none; flex-direction: row; justify-content: center; gap: 40px; align-items: center; margin-bottom: 20px;">
-                        <!-- JSでここに完成形の盤面（id="poly-solved-grid"）が挿入されます -->
-                        
-                        <!-- 右側にセグメント情報 -->
+                        <!-- JSでここに完成形の盤面が挿入されます -->
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
@@ -431,11 +439,9 @@
                     </div>
 
                     <!-- 🌟 手がかり3：キーボード配列表示エリア -->
-                    <div id="keyboard-area" style="display:none; flex-direction: column; align-items: center; margin-bottom: 20px;">
-                        <!-- JSでキーボードを生成 -->
-                    </div>
+                    <div id="keyboard-area" style="display:none; flex-direction: column; align-items: center; margin-bottom: 20px;"></div>
 
-                    <!-- 🌟 下部のスロットエリア（常に表示） -->
+                    <!-- 🌟 下部のスロットエリア -->
                     <div class="puzzle-layout" id="s2-main-puzzle-ui">
                         <div class="s3-slots-container">
                             <div class="s3-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -468,6 +474,15 @@
             </div>
             
             <div class="right-puzzle">
+                <!-- 💡 追加：現在の目標パネル -->
+                <div class="objective-panel">
+                    <div class="objective-header">
+                        <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
+                        <button class="tab-icon hint-btn" onclick="initAITutorial()" title="AIナビゲーション">❓</button>
+                    </div>
+                    <p>【CHROMAKEY】<br><strong>5つのピースを正しい順番で配置し</strong>、銀行のスケジュール監視を無効化すること。</p>
+                </div>
+
                 <div class="puzzle-panel">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
@@ -528,7 +543,7 @@
     <!-- APP 3: LAYER 03 -->
     <!-- ========================================== -->
     <div class="app-container" id="app-step3">
-        <h2>【CHROMAKEY】<strong>緊急信号を7セグモニターに出力し</strong>、金庫の『緊急開錠システム』を作動させてください。</h2>
+        <!-- 💡 ここのh2見出しを削除し、右側のパネルに移動させました -->
         
         <div class="layer-layout">
             <div class="left-protocol">
@@ -562,6 +577,15 @@
             </div>
 
             <div class="right-puzzle">
+                <!-- 💡 追加：現在の目標パネル -->
+                <div class="objective-panel">
+                    <div class="objective-header">
+                        <h3 style="color:#58a6ff; margin:0;">【 現在の目標 】</h3>
+                        <button class="tab-icon hint-btn" onclick="initAITutorial()" title="AIナビゲーション">❓</button>
+                    </div>
+                    <p>【CHROMAKEY】<br><strong>緊急信号を7セグモニターに出力し</strong>、金庫の『緊急開錠システム』を作動させること。</p>
+                </div>
+
                 <div class="puzzle-panel">
                     <div class="panel-header">
                         <h3 style="color:#58a6ff; margin:0 0 10px 0;">【暗号化データ】</h3>
