@@ -115,7 +115,6 @@ input, textarea {
 .debug-btn:hover { background: #58a6ff; border-color: #58a6ff; color: #000; font-weight: bold; }
 
 /* --- アプリコンテナ --- */
-/* 💡 余白(padding)を減らして画面に収まりやすくしました */
 .app-container { display: none; padding: 15px 30px; position: relative; z-index: 10; }
 .app-container.active { display: block; }
 .app-container h2 { margin-top: 0; margin-bottom: 10px; } 
@@ -127,7 +126,6 @@ input, textarea {
 .instruction { font-size: 18px; color: #8b949e; margin-bottom: 20px; line-height: 1.6; }
 
 /* --- 🌟 新レイアウト：横並び（左：プロトコル、右：小謎） --- */
-/* 💡 gap と margin を減らしてキュッと縮めました */
 .layer-layout {
     display: flex;
     justify-content: center;
@@ -147,6 +145,35 @@ input, textarea {
     flex: 1;
     min-width: 300px;
     max-width: 400px;
+}
+
+/* --- 🎯 現在の目標パネル（追加） --- */
+.objective-panel {
+    background: #161b22;
+    border: 2px solid #58a6ff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+.objective-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #30363d;
+    padding-bottom: 10px;
+}
+.objective-panel p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #c9d1d9;
+}
+.hint-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
 }
 
 /* --- 🧩 パズル用パネル共通 --- */
@@ -183,7 +210,6 @@ input, textarea {
     transition: background-position 0.1s;
 }
 
-/* 💡 上下の余白(padding)を減らしました */
 .main-protocol-wrapper {
     background: transparent;
     border: 2px solid #58a6ff;
@@ -202,7 +228,6 @@ input, textarea {
 .gojuon-cell.empty { pointer-events: none; }
 .gojuon-table.revealed .gojuon-cell:not(.empty) { border-color: rgba(88, 166, 255, 0.6); box-shadow: inset 0 0 10px rgba(88, 166, 255, 0.2); }
 
-/* 💡 このあたりの余白も全体的に削っています */
 #main-protocol-area { display: flex; flex-direction: column; align-items: center; gap: 10px !important; padding: 5px !important; border-radius: 15px; margin-top: 10px; } 
 
 .s1-slots { display: inline-flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; background: #f2f2f2; border-radius: 40px; padding: 10px 20px; min-height: 50px; }
@@ -258,7 +283,6 @@ input, textarea {
     display: flex; justify-content: center; align-items: flex-start; 
     gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10; 
 }
-/* 🌟 縦の隙間を消し、形が絶対に崩れないように完全固定 */
 .poly-piece { display: grid; gap: 3px; width: max-content; height: max-content; grid-auto-rows: 30px; align-content: start; }
 .piece-1 { grid-template-columns: repeat(4, 30px); }
 .piece-2 { grid-template-columns: repeat(3, 30px); }
@@ -266,19 +290,16 @@ input, textarea {
 .piece-4 { grid-template-columns: repeat(3, 30px); }
 .piece-5 { grid-template-columns: repeat(2, 30px); }
 
-/* 🌟 キーボードマス（及びA〜Zマス）を完全な正方形（30x30）に固定 */
 .poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; user-select: none; box-sizing: border-box; color: transparent !important; }
 .poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
 .poly-cell.white:active, .poly-cell.white.active { background: #58a6ff; border-color: #fff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.9); }
 .poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
 
-/* 🌟 emptyマスにも幅・高さを強制して潰れないようにする */
 .poly-cell.empty { background: transparent; pointer-events: none; border: none; min-width: 30px; min-height: 30px; }
 
 .poly-guide-cell { width: 30px; height: 30px; border: 2px dashed #58a6ff; box-sizing: border-box; }
 .poly-guide-cell.hidden { border: none; }
 
-/* 💡 ここの隙間(gap)も削っています */
 .puzzle-layout { display: flex; justify-content: center; align-items: flex-start; gap: 30px; margin: 0 auto; max-width: 900px; }
 
 .s3-slots-container { display: flex; flex-direction: column; gap: 15px; width: 180px; position: relative; padding: 0; }
