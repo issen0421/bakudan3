@@ -1113,8 +1113,8 @@ function enablePolyDrag() {
     const fixedPositions = [
         { x: 50,   y: 0 },
         { x: 210, y: 0 },
-        { x: 210,   y: 50 },
-        { x: 150, y: 130 },
+        { x: 270,   y: 50 },
+        { x: 150, y: 100 },
         { x: 50,   y: 80 }
     ];
     
