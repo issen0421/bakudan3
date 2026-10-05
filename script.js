@@ -3,7 +3,6 @@
 // ==========================================
 let isAudioUnlocked = false;
 
-// 🌟 BGMの拡張子を .mp3 に修正
 const bgmNormal = new Audio('normal.mp3');
 bgmNormal.loop = true;  
 bgmNormal.volume = 0.4; 
@@ -339,7 +338,7 @@ const aiSequence = [
     { text: "【CHROMAKEY】\nハッキング支援ナビゲーションを起動します。画面内のデータの関係性をご説明します。", highlight: null, aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nあなたの最終目標は、左側の『メインプロトコル』を解除することです。まずはこれを直接操作して突破方法を考えてください。", highlight: 'main-protocol-wrapper-s1', aiPosition: 'bottom' },
     { text: "【CHROMAKEY】\nすぐに内部構造に気づいて突破できれば問題ありませんが、もし行き詰まった場合は、右側の『暗号化データ』を解読してください。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
-    { text: "【CHROMAKEY】\nあなたが暗号解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかり』をプロトコル上に反映します。", highlight: null, aiPosition: 'top' },
+    { text: "【CHROMAKEY】\nあなたが暗号を解けば、私がそれを鍵にしてメインプロトコルを解析し、法則を見抜くための『手がかり』をプロトコル上に反映します。", highlight: null, aiPosition: 'top' },
     { text: "【CHROMAKEY】\nただし、右側の暗号化データは強固なプロテクトにより、最初は9枚のパネルで隠されています。", highlight: 'puzzle-panel-area', aiPosition: 'top' },
     { text: "【CHROMAKEY】\n私は裏でこのプロテクトの解除を進めており、約2分に1枚のペースでパネルをめくる権限をお渡しできます。少しずつパネルをめくって暗号の全貌を推測し、答えを導き出してください。", highlight: 'puzzle-points-area', aiPosition: 'bottom' }
 ];
@@ -887,7 +886,8 @@ function completeWire(num) {
         document.getElementById('line-1').classList.add('active');
         document.getElementById('tab-step1').style.display = 'block';
         
-        document.querySelector('.fixed-connect-btn').style.display = 'block';
+        // 💡 LAYER 01 に進んだタイミングでヘッダーのボタンを表示させる
+        document.getElementById('header-connect-btn').style.display = 'block';
 
         bgmNormal.play().catch(e => console.log("BGM Error:", e));
 
@@ -1561,7 +1561,6 @@ function startLastStep() {
     document.getElementById('last-start-screen').style.display = 'none';
     document.getElementById('last-active-screen').style.display = 'block';
     
-    // 🌟 追加：通常BGMを止めて、10分カウントダウン用BGMに切り替える
     bgmNormal.pause();
     bgmNormal.currentTime = 0;
     bgm10Min.play().catch(e => console.log("BGM Error:", e));
@@ -1596,3 +1595,21 @@ window.addEventListener('DOMContentLoaded', () => {
     updateS3NodeColors(); 
     alignBackgroundGrid(); 
 });
+
+// ==========================================
+// 💡 設定（音量）コントロール追加
+// ==========================================
+function openSettings() {
+    document.getElementById('settings-modal').style.display = 'flex';
+}
+
+function closeSettings() {
+    document.getElementById('settings-modal').style.display = 'none';
+}
+
+function changeVolume(val) {
+    let vol = parseFloat(val);
+    bgmNormal.volume = vol;
+    bgm10Min.volume = vol;
+    msgAudio.volume = vol;
+}
