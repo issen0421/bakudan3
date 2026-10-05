@@ -1118,6 +1118,10 @@ function enablePolyDrag() {
     const polyArea = document.getElementById("poly-area");
     const pieces = document.querySelectorAll('.poly-piece');
     
+    // 💡 ホワンと出す準備（透明にしておく）
+    polyArea.style.opacity = "0";
+    polyArea.style.transition = "opacity 1s";
+    
     document.getElementById("poly-guide-area").style.display = "block";
     polyArea.style.minHeight = "250px"; 
     
@@ -1143,6 +1147,11 @@ function enablePolyDrag() {
     });
     
     document.getElementById("pieces-container").style.display = "none";
+    
+    // 💡 ちょっと待ってからフワッと表示
+    setTimeout(() => {
+        polyArea.style.opacity = "1";
+    }, 100);
 }
 
 // 🌟 スナップ付きのドラッグ処理
@@ -1461,9 +1470,19 @@ function unlockAnalysis(step) {
                 const solvedGrid = document.getElementById("poly-solved-grid");
                 if (solvedGrid) solvedGrid.style.display = "none";
                 document.getElementById("s2-hint2-area").style.display = "none";
-                document.getElementById("keyboard-area").style.display = "flex";
+                
+                const kArea = document.getElementById("keyboard-area");
+                // 💡 追加：ホワンと出す準備
+                kArea.style.opacity = "0";
+                kArea.style.transition = "opacity 1s";
+                kArea.style.display = "flex";
                 
                 initKeyboardGrid();
+
+                // 💡 追加：少し待ってからフワッと表示
+                setTimeout(() => {
+                    kArea.style.opacity = "1";
+                }, 100);
             }
         }
         
