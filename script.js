@@ -525,8 +525,9 @@ function drawGojuonShape(id, mode) {
     }
 }
 
+// 💡 重複エラーを修正し、ドラッグ中の通信パンクを防ぐメモを追加
 let currentDragId = null;
-let dragSourceIsPool = false; 
+let lastSentLightCmd = null;
 
 function allowDrop(e) { 
     e.preventDefault(); 
@@ -539,9 +540,6 @@ function dragLeave(e) {
         e.target.classList.remove('drag-over'); 
     }
 }
-
-let currentDragId = null;
-let lastSentLightCmd = null; // 💡 通信のパンクを防ぐためのメモ帳
 
 function dragItem(e) { 
     e.dataTransfer.setData("text", e.target.id); 
@@ -769,10 +767,8 @@ function updateS3NodeColors() {
         // 💡 修正ポイント：正解数に応じて表示するテキストを変える
         if (vol) {
             if (unlockedAnalysisCount[3] >= 3) {
-                // 3つ目正解：現在の量 / 最大量 （例：10/10）
                 vol.innerText = s3_volumes[i] + "/" + S3_CAPACITIES[i];
             } else if (unlockedAnalysisCount[3] >= 2) {
-                // 2つ目正解：? / 最大量 （例：?/10）
                 vol.innerText = "?/" + S3_CAPACITIES[i];
             }
         }
@@ -808,10 +804,8 @@ function handleS3NodeClick(index) {
         let from = s3_selectedNode; let to = index;
         s3_selectedNode = null;
 
-let transferAmount = Math.min(s3_volumes[from], S3_CAPACITIES[to] - s3_volumes[to]);
+        let transferAmount = Math.min(s3_volumes[from], S3_CAPACITIES[to] - s3_volumes[to]);
         if (transferAmount > 0) {
-            // 💡 ここにあった「一気に計算する」部分を消しました
-            
             s3_moves--;
             let moveStr = ("0" + s3_moves).slice(-2);
             
@@ -819,15 +813,13 @@ let transferAmount = Math.min(s3_volumes[from], S3_CAPACITIES[to] - s3_volumes[t
             
             let beeps = 0; s3_isTransferring = true; updateS3NodeColors();
             
-            // 💡 0.4秒ごとのループ処理（タイマー）
             const interval = setInterval(() => {
                 sendCommand("B");
                 beeps++;
                 
-                // 🌟 追加：1回の「ピッ」ごとに、1ずつ減らして1ずつ増やす！
                 s3_volumes[from] -= 1;
                 s3_volumes[to] += 1;
-                updateS3NodeColors(); // 画面の数字を更新する
+                updateS3NodeColors(); 
                 
                 if (beeps >= transferAmount) {
                     clearInterval(interval);
@@ -1141,7 +1133,6 @@ function enablePolyDrag() {
     document.getElementById("poly-guide-area").style.display = "block";
     polyArea.style.minHeight = "250px"; 
     
-    // 🌟 ピースを絶対に重ならないよう、手動で散らして配置する (更新済み)
     const fixedPositions = [
         { x: 50,   y: 0 },
         { x: 210,  y: 0 },
@@ -1491,19 +1482,16 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 03 のイベント進行
         if (step === 3) {
             if (unlockedAnalysisCount[3] === 1) {
-                // 1つ目正解：「MAKE SOS」の文字を表示する
                 const hint1 = document.getElementById("s3-hint1-text");
                 if(hint1) hint1.style.display = "block";
             }
             if (unlockedAnalysisCount[3] === 2) {
-                // 2つ目正解：容量テキスト(?/10)を表示して、画面を更新
                 document.getElementById("vol-0").style.display = "block";
                 document.getElementById("vol-1").style.display = "block";
                 document.getElementById("vol-2").style.display = "block";
                 updateS3NodeColors(); 
             }
             if (unlockedAnalysisCount[3] === 3) {
-                // 3つ目正解：容量テキスト(10/10)に切り替えるため、画面を更新
                 updateS3NodeColors();
             }
         }
