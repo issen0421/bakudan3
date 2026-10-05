@@ -746,7 +746,17 @@ function updateS3NodeColors() {
     for (let i = 0; i < 3; i++) {
         const node = document.getElementById(`node-${i}`);
         const vol = document.getElementById(`vol-${i}`);
-        if(vol) vol.innerText = s3_volumes[i];
+        
+        // 💡 修正ポイント：正解数に応じて表示するテキストを変える
+        if (vol) {
+            if (unlockedAnalysisCount[3] >= 3) {
+                // 3つ目正解：現在の量 / 最大量 （例：10/10）
+                vol.innerText = s3_volumes[i] + "/" + S3_CAPACITIES[i];
+            } else if (unlockedAnalysisCount[3] >= 2) {
+                // 2つ目正解：? / 最大量 （例：?/10）
+                vol.innerText = "?/" + S3_CAPACITIES[i];
+            }
+        }
         
         if (s3_isTransferring) {
             node.className = "s2-node";
@@ -935,7 +945,6 @@ function sendSegmentCommand(char, cellElement) {
     let val = (r === 1) ? '1' : (r === 2) ? '2' : (r === 3) ? '3' : '0';
     if (polyTimer) clearTimeout(polyTimer);
     
-    // 💡 1桁目だけが val になり、残りの3桁は 0 になるように修正！ (例: S1000, S2000, S3000)
     sendCommand("S" + val + "000"); 
     
     document.querySelectorAll(".poly-cell.active").forEach(el => el.classList.remove("active"));
@@ -978,7 +987,6 @@ function initPolyomino() {
                         div.className = "poly-cell black";
                     } else {
                         div.className = "poly-cell white";
-                        // 🌟 クリックイベントとドラッグが共存できるように mousedown に設定！
                         div.onmousedown = function() {
                             sendSegmentCommand(char, this);
                         };
@@ -1014,7 +1022,6 @@ function initAZGrid(container) {
     container.innerHTML = "";
     container.style.gridTemplateColumns = "repeat(6, 30px)"; 
     
-    // 🌟 黒と白の配置（5x4 + 6マスに合わせて再定義）
     const solColors = [
         'B','W','W','B','B', 'X', // 0-5
         'B','W','B','B','W', 'X', // 6-11
@@ -1066,7 +1073,7 @@ function initKeyboardGrid() {
     const wrapper = document.createElement("div");
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
-    wrapper.style.alignItems = "flex-start"; // 左揃えにしてマージンを正しく効かせる
+    wrapper.style.alignItems = "flex-start"; 
     wrapper.style.gap = "3px";
     
     kbLayout.forEach((rowArr, rIdx) => {
@@ -1074,7 +1081,6 @@ function initKeyboardGrid() {
         rowDiv.style.display = "flex";
         rowDiv.style.gap = "3px";
         
-        // 🌟 QWERTYキーの正確なズレ（画像に合わせて、A行は10px、Z行は20px右にずらす）
         if(rIdx === 1) rowDiv.style.marginLeft = "10px";
         if(rIdx === 2) rowDiv.style.marginLeft = "20px";
         
@@ -1109,12 +1115,12 @@ function enablePolyDrag() {
     document.getElementById("poly-guide-area").style.display = "block";
     polyArea.style.minHeight = "250px"; 
     
-    // 🌟 ピースを絶対に重ならないよう、手動で散らして配置する
+    // 🌟 ピースを絶対に重ならないよう、手動で散らして配置する (更新済み)
     const fixedPositions = [
         { x: 50,   y: 0 },
-        { x: 210, y: 0 },
-        { x: 270,   y: 50 },
-        { x: 150, y: 110 },
+        { x: 210,  y: 0 },
+        { x: 270,  y: 50 },
+        { x: 150,  y: 110 },
         { x: 50,   y: 80 }
     ];
     
@@ -1426,11 +1432,8 @@ function unlockAnalysis(step) {
         // 🌟 LAYER 02 のイベント進行
         if (step === 2) {
             if (unlockedAnalysisCount[2] === 1) {
-                // 手がかり1: ガイド表示＆ドラッグ解禁
                 enablePolyDrag();
             } else if (unlockedAnalysisCount[2] === 2) {
-                // 手がかり2: 盤面の表示
-                // 上段のドラッグエリアを完全に隠す
                 document.getElementById("poly-area").style.display = "none";
                 
                 const hint2Area = document.getElementById("s2-hint2-area");
@@ -1443,31 +1446,40 @@ function unlockAnalysis(step) {
                 solvedGrid.style.opacity = "0";
                 solvedGrid.style.transition = "opacity 1s";
                 
-                // A〜Zの盤面（5x4+6マス）を生成（文字なし）
                 initAZGrid(solvedGrid);
                 
-                // 下段のエリア（10,9,7のヒント表示の横）に盤面を挿入
                 hint2Area.insertBefore(solvedGrid, hint2Area.firstChild);
                 hint2Area.style.display = "flex";
                 setTimeout(() => { solvedGrid.style.opacity = "1"; }, 100);
 
             } else if (unlockedAnalysisCount[2] === 3) {
-                // 手がかり3: キーボード配列の表示
                 const solvedGrid = document.getElementById("poly-solved-grid");
                 if (solvedGrid) solvedGrid.style.display = "none";
                 document.getElementById("s2-hint2-area").style.display = "none";
                 document.getElementById("keyboard-area").style.display = "flex";
                 
-                // 初回構築
                 initKeyboardGrid();
             }
         }
         
         // 🌟 LAYER 03 のイベント進行
-        if (step === 3 && unlockedAnalysisCount[3] === 3) {
-            document.getElementById("vol-0").style.display = "block";
-            document.getElementById("vol-1").style.display = "block";
-            document.getElementById("vol-2").style.display = "block";
+        if (step === 3) {
+            if (unlockedAnalysisCount[3] === 1) {
+                // 1つ目正解：「MAKE SOS」の文字を表示する
+                const hint1 = document.getElementById("s3-hint1-text");
+                if(hint1) hint1.style.display = "block";
+            }
+            if (unlockedAnalysisCount[3] === 2) {
+                // 2つ目正解：容量テキスト(?/10)を表示して、画面を更新
+                document.getElementById("vol-0").style.display = "block";
+                document.getElementById("vol-1").style.display = "block";
+                document.getElementById("vol-2").style.display = "block";
+                updateS3NodeColors(); 
+            }
+            if (unlockedAnalysisCount[3] === 3) {
+                // 3つ目正解：容量テキスト(10/10)に切り替えるため、画面を更新
+                updateS3NodeColors();
+            }
         }
     }
 }
