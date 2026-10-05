@@ -789,10 +789,9 @@ function handleS3NodeClick(index) {
         let from = s3_selectedNode; let to = index;
         s3_selectedNode = null;
 
-        let transferAmount = Math.min(s3_volumes[from], S3_CAPACITIES[to] - s3_volumes[to]);
+let transferAmount = Math.min(s3_volumes[from], S3_CAPACITIES[to] - s3_volumes[to]);
         if (transferAmount > 0) {
-            s3_volumes[from] -= transferAmount;
-            s3_volumes[to] += transferAmount;
+            // 💡 ここにあった「一気に計算する」部分を消しました
             
             s3_moves--;
             let moveStr = ("0" + s3_moves).slice(-2);
@@ -800,9 +799,17 @@ function handleS3NodeClick(index) {
             sendCommand("N_" + moveStr);
             
             let beeps = 0; s3_isTransferring = true; updateS3NodeColors();
+            
+            // 💡 0.4秒ごとのループ処理（タイマー）
             const interval = setInterval(() => {
                 sendCommand("B");
                 beeps++;
+                
+                // 🌟 追加：1回の「ピッ」ごとに、1ずつ減らして1ずつ増やす！
+                s3_volumes[from] -= 1;
+                s3_volumes[to] += 1;
+                updateS3NodeColors(); // 画面の数字を更新する
+                
                 if (beeps >= transferAmount) {
                     clearInterval(interval);
                     s3_isTransferring = false;
