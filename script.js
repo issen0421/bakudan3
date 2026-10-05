@@ -1115,7 +1115,7 @@ function enablePolyDrag() {
         { x: 150, y: 30 },
         { x: 50,   y: 80 },
         { x: 150, y: 130 },
-        { x: 50,   y: 180 }
+        { x: 50,   y: 80 }
     ];
     
     pieces.forEach((piece, i) => {
