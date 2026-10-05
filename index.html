@@ -17,7 +17,8 @@
     </div>
 
     <!-- 🔌 常設デバイス接続ボタン -->
-    <button class="fixed-connect-btn" onclick="connectSerial()" title="デバイス再接続">🔌 デバイス接続</button>
+    <!-- 💡 ボタンのテキストを「デバイス再接続」に変更 -->
+    <button class="fixed-connect-btn" onclick="connectSerial()" title="デバイス再接続">🔌 デバイス再接続</button>
 
     <!-- ========================================== -->
     <!-- 🏦 銀行HP（トップページ） -->
@@ -77,7 +78,6 @@
     <div id="boss-alert" onclick="closeBossAlert()">
         <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信：ボス 】</h3>
-            <!-- 💡 font-sizeを16pxから18pxに拡大 -->
             <div id="boss-alert-text" style="line-height: 1.8; min-height: 80px; font-size: 18px; margin-bottom: 15px;"></div>
             <div id="boss-alert-indicator" class="tap-indicator" style="visibility: hidden; color: #ff7b72;">▼ タップしてスキップ</div>
             <button id="boss-alert-btn" style="display:none; margin-top: 20px; width: 100%; padding: 10px; background: #30363d; color: #fff; border: none; border-radius: 4px; cursor: pointer;" onclick="closeBossAlert()">閉じる</button>
@@ -123,11 +123,9 @@
     <div id="boss-modal" onclick="nextBossMsg()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 100000;">
         <div class="boss-box" onclick="event.stopPropagation(); nextBossMsg();" style="background: #161b22; padding: 30px; border-radius: 8px; width: 450px; border: 1px solid #30363d; color: #c9d1d9; text-align: left;">
             <h3 style="margin-top: 0; color: #58a6ff; font-size: 16px; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信：ボス 】</h3>
-            <!-- 💡 font-sizeを18pxに拡大 -->
             <div id="boss-text" style="line-height: 1.8; min-height: 100px; font-size: 18px;"></div>
             <div id="boss-indicator" class="tap-indicator" style="visibility: hidden;">▼ タップして次へ</div>
             <div id="boss-connect-area" style="display:none; text-align:center; margin-top:20px;">
-                <!-- 💡 AIを起動するボタンに変更し、動作もstartChromakey()に変更 -->
                 <button class="btn-connect" style="width:100%; padding:15px; font-size:16px; justify-content:center; background:#2ea043; border:none; color:white; border-radius:5px; cursor:pointer;" onclick="startChromakey()">💻 CHROMAKEY AIを起動する</button>
             </div>
         </div>
@@ -213,7 +211,6 @@
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
             <h3 style="color:#58a6ff; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：ライトの配線方法について 】</h3>
             
-            <!-- 💡 STEP 0を追加し、デバイス接続ボタンをここに配置 -->
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 0: 基板をPCに接続する</p>
             <p style="color:#c9d1d9;">
                 箱に入っている基板（デバイス）をUSBケーブルでPCに接続し、下のボタンを押して通信を確立せよ。
@@ -222,7 +219,6 @@
                 <button class="btn-connect" style="background:#2ea043; border:none; color:white; padding:10px 20px; border-radius:5px; font-size:16px; font-weight:bold; cursor:pointer;" onclick="connectSerial()">🔌 デバイス（USB）を接続する</button>
             </div>
 
-            <!-- 💡 以降の数字を1ずつずらす -->
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 1: 共通グラウンド(GND)の構築</p>
             <p style="color:#c9d1d9;">
                 ブレッドボード（白い基盤）の青い線の列（マイナス列）を使用する。<br>
@@ -530,7 +526,6 @@
                         <h3 style="color:#58a6ff; margin:0;">【メインプロトコル】</h3>
                     </div>
 
-                    <!-- 💡 追加：1つ目の謎を解いた時に表示される「MAKE SOS」 -->
                     <div id="s3-hint1-text" style="display: none; color: #58a6ff; font-weight: bold; font-size: 24px; margin-bottom: 20px; letter-spacing: 3px;">MAKE SOS</div>
 
                     <div class="s2-ui-wrapper">
