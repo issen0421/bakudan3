@@ -16,9 +16,6 @@
         <div class="tap-indicator" style="font-size: 18px;">▼ 画面をタップしてシステムにアクセス ▼</div>
     </div>
 
-    <!-- 🔌 常設デバイス接続ボタン -->
-    <button class="fixed-connect-btn" onclick="connectSerial()" title="デバイス再接続">🔌 デバイス再接続</button>
-
     <!-- ========================================== -->
     <!-- 🏦 銀行HP（トップページ） -->
     <!-- ========================================== -->
@@ -73,7 +70,7 @@
         </div>
     </div>
 
-    <!-- 🕵‍♂️ ボスからの警告モーダル (アニメーション対応版) -->
+    <!-- 🕵‍♂️️ ボスからの警告モーダル -->
     <div id="boss-alert" onclick="closeBossAlert()">
         <div class="boss-alert-box" onclick="event.stopPropagation(); closeBossAlert();">
             <h3 style="margin-top: 0; color: #ff7b72; border-bottom: 1px solid #30363d; padding-bottom: 10px;">【 通信：ボス 】</h3>
@@ -167,13 +164,12 @@
         <div id="ending-msg" class="ending-msg"></div>
     </div>
 
-    <!-- 💡 追加：設定（音量）モーダル -->
+    <!-- 💡 復活：設定（音量）モーダル -->
     <div id="settings-modal" onclick="closeSettings()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 100001;">
         <div style="background: #161b22; color: #c9d1d9; border: 2px solid #30363d; border-radius: 8px; width: 320px; padding: 30px; text-align: center;" onclick="event.stopPropagation()">
             <h3 style="margin-top: 0; color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 20px;">【 システム設定 】</h3>
             <div style="margin-bottom: 25px; text-align: left;">
                 <label for="volume-slider" style="font-weight: bold; display: block; margin-bottom: 10px;">マスターボリューム (BGM / 音声)</label>
-                <!-- スライダーを動かすと、スクリプト側の changeVolume() が呼ばれます -->
                 <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.4" oninput="changeVolume(this.value)" style="width: 100%; cursor: pointer;">
             </div>
             <button onclick="closeSettings()" style="background: #30363d; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold;">閉じる</button>
@@ -199,9 +195,10 @@
             <div style="width: 40px;"></div>
             <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">[ ! ] WARNING</button>
         </div>
+        <!-- 💡 デバイス再接続ボタンをヘッダーのここにお引っ越し！ -->
         <div style="display: flex; gap: 15px; align-items: center;">
+            <button id="header-connect-btn" class="debug-btn" onclick="connectSerial()" style="display:none; background:#2ea043; border-color:#2ea043; color:white; font-weight:bold; padding: 6px 15px; border-radius: 20px;">🔌 デバイス再接続</button>
             <button class="tab-icon" onclick="initAITutorial()" title="AIナビゲーション" style="margin: 0;">❓</button>
-            <!-- 💡 追加：設定モーダルを開く歯車ボタン -->
             <button class="tab-icon" onclick="openSettings()" title="設定" style="margin: 0;">⚙️</button>
         </div>
     </div>
@@ -290,8 +287,8 @@
                         </div>
                     </div>
 
-                    <div id="main-protocol-area" style="display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 15px; border-radius: 15px; margin-top: 10px;">
-                        <div class="s1-slots" id="s1-slots-container" style="margin: 0; padding: 10px; min-height: 70px;">
+                    <div id="main-protocol-area">
+                        <div class="s1-slots" id="s1-slots-container">
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
@@ -305,7 +302,7 @@
                             <div class="s1-slot slot" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)"></div>
                         </div>
                         
-                        <div class="s1-items" id="s1-item-pool" style="margin: 0; padding: 10px; min-height: 70px;" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
+                        <div class="s1-items" id="s1-item-pool" ondragover="allowDrop(event)" ondrop="drop(event)" ondragleave="dragLeave(event)">
                             <div class="s1-item-slot item-slot" id="pool-A"><div class="s1-item item" draggable="true" id="A" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
                             <div class="s1-arrow">▶︎</div>
                             <div class="s1-item-slot item-slot" id="pool-B"><div class="s1-item item" draggable="true" id="B" ondragstart="dragItem(event)" ondragend="dragEndItem(event)"></div></div>
