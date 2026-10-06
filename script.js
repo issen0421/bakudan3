@@ -172,7 +172,7 @@ function startChromakey() {
     const portalPage = document.getElementById('dummy-portal-page');
     
     portalPage.style.backgroundColor = "#000";
-    portalPage.style.color = "#0f0";
+    portalPage.style.color = "#fdd900"; // 💡 色をテーマカラーに統一
     portalPage.innerHTML = "<h1 style='margin-top:20vh; font-family:monospace;'>DEVICE CONNECTED.<br>CHROMAKEY OS BOOTING...</h1>";
     
     setTimeout(() => { portalPage.style.opacity = "0"; }, 1500);
@@ -418,7 +418,7 @@ function showEnding(isSuccess) {
 
     if (isSuccess) {
         endingTitle.innerText = "SYSTEM SHUTDOWN";
-        endingTitle.style.color = "#2ea043";
+        endingTitle.style.color = "#fdd900"; // 💡 色をテーマカラーに変更
         endingTitle.style.fontSize = "50px";
         endingTitle.style.marginBottom = "20px";
         endingMsg.innerHTML = "防衛プログラムの停止に成功しました。<br>金庫のロックを解除します。";
@@ -676,7 +676,7 @@ function checkClearStep1() {
     const res = document.getElementById("result-step1");
     if (isCorrect) {
         res.innerText = "🎉 CLEAR!";
-        res.style.color = "#2ea043";
+        res.style.color = "#fdd900"; // 💡 色をテーマカラーに統一
         document.getElementById('line-2').style.display = 'block';
         document.getElementById('line-2').classList.add('active');
         document.getElementById('tab-wire2').style.display = 'block';
@@ -713,7 +713,7 @@ function executeStep2Puzzle() {
     const res = document.getElementById("result-step2");
     if (validJoints === 4) {
         res.innerText = "🎉 CLEAR!";
-        res.style.color = "#0f0";
+        res.style.color = "#fdd900"; // 💡 色をテーマカラーに統一
         document.getElementById('line-4').style.display = 'block';
         document.getElementById('line-4').classList.add('active');
         document.getElementById('tab-wire3').style.display = 'block';
@@ -847,7 +847,7 @@ function checkS3Clear() {
     if (s3_volumes[0] === 5 && s3_volumes[1] === 0 && s3_volumes[2] === 5) {
         sendCommand("N_505"); 
         document.getElementById("result-step3").innerText = "🎉 CLEAR!";
-        document.getElementById("result-step3").style.color = "#2ea043";
+        document.getElementById("result-step3").style.color = "#fdd900"; // 💡 色をテーマカラーに統一
         setTimeout(() => {
             initBetrayal();
         }, 4000); 
@@ -886,9 +886,8 @@ function completeWire(num) {
         document.getElementById('line-1').classList.add('active');
         document.getElementById('tab-step1').style.display = 'block';
         
-        // 💡 最初のライト配線が終わったタイミングで右上ボタンを表示
-        document.getElementById('header-connect-btn').style.display = 'block';
-
+        // 💡 削除：ここで「デバイス再接続」ボタンを表示させるコードはもう不要です
+        
         bgmNormal.play().catch(e => console.log("BGM Error:", e));
 
         switchApp('step1');
@@ -1442,7 +1441,7 @@ function submitAnswer(step) {
             isSolved[step][pIdx] = true;
             unlockAnalysis(step); 
         }
-        feedback.style.color = "#0f0";
+        feedback.style.color = "#fdd900"; // 💡 色をテーマカラーに統一
         feedback.innerText = "DATA DECODED";
         
         renderPuzzleGrid(step); 
