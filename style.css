@@ -1,29 +1,29 @@
 /* 💡 画面全体は無地のサイバー背景に */
-body { 
-    font-family: monospace; 
-    background-color: #0d1117; 
-    color: #c9d1d9; text-align: center; padding: 0; margin: 0; 
-    transition: background-position 0.1s;
+body {
+font-family: monospace;
+background-color: #0d1117;
+color: #c9d1d9; text-align: center; padding: 0; margin: 0;
+transition: background-position 0.1s;
 }
 
 /* 🌟 ボスやAIの「通信テキスト」だけ全選択（青くなる現象）を防止 */
 #boss-alert-text, #boss-text, .intro-text, .ai-text {
-    user-select: none;
-    -webkit-user-select: none;
+user-select: none;
+-webkit-user-select: none;
 }
 
 /* 🌟 入力欄だけは選択可能にする */
 input, textarea {
-    user-select: auto;
-    -webkit-user-select: auto;
+user-select: auto;
+-webkit-user-select: auto;
 }
 
 /* 🌟 スタート画面（初回クリック要求） */
 #start-screen {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; color: #fdd900; z-index: 9999999;
-    display: flex; align-items: center; justify-content: center;
-    font-family: monospace; cursor: pointer;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: #000; color: #fdd900; z-index: 9999999;
+display: flex; align-items: center; justify-content: center;
+font-family: monospace; cursor: pointer;
 }
 
 /* --- グローバルヘッダー & タブ --- */
@@ -32,18 +32,18 @@ input, textarea {
 
 /* 💡 アイコンやタブのデザインを黄色系に変更 */
 .tab-icon {
-    background: #21262d; color: #8b949e; border: 2px solid #30363d; 
-    width: 45px; height: 45px; border-radius: 50%; font-size: 20px; 
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: 0.2s; padding: 0; margin: 0;
+background: #21262d; color: #8b949e; border: 2px solid #30363d;
+width: 45px; height: 45px; border-radius: 50%; font-size: 20px;
+cursor: pointer; display: flex; align-items: center; justify-content: center;
+transition: 0.2s; padding: 0; margin: 0;
 }
 .tab-icon:hover { background: #30363d; color: #c9d1d9; border-color: #8b949e; }
 .tab-icon.active { background: #fdd900; color: #000; border-color: #fdd900; box-shadow: 0 0 15px rgba(253, 217, 0, 0.6); }
 
-.tab-btn { 
-    background: #21262d; color: #8b949e; border: 2px solid #30363d; 
-    padding: 10px 24px; font-size: 16px; cursor: pointer; border-radius: 25px; 
-    font-family: monospace; font-weight: bold; transition: 0.2s; margin: 0;
+.tab-btn {
+background: #21262d; color: #8b949e; border: 2px solid #30363d;
+padding: 10px 24px; font-size: 16px; cursor: pointer; border-radius: 25px;
+font-family: monospace; font-weight: bold; transition: 0.2s; margin: 0;
 }
 .tab-btn:hover { background: #30363d; color: #c9d1d9; border-color: #8b949e; }
 .tab-btn.active { background: #fdd900; color: #000; border-color: #fdd900; box-shadow: 0 0 15px rgba(253, 217, 0, 0.6); }
@@ -56,53 +56,53 @@ input, textarea {
 
 /* --- オープニング (ボス) --- */
 #intro-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center; 
-    z-index: 2000; cursor: pointer; transition: background-color 0.5s ease;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; justify-content: center;
+z-index: 2000; cursor: pointer; transition: background-color 0.5s ease;
 }
 .modal-content {
-    background: #0d1117; border: 2px solid #fdd900; border-radius: 8px;
-    padding: 40px; max-width: 650px; width: 90%; text-align: left; box-shadow: 0 0 30px rgba(253, 217, 0, 0.2);
-    min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;
+background: #0d1117; border: 2px solid #fdd900; border-radius: 8px;
+padding: 40px; max-width: 650px; width: 90%; text-align: left; box-shadow: 0 0 30px rgba(253, 217, 0, 0.2);
+min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;
 }
 .intro-text { font-size: 18px; color: #c9d1d9; line-height: 1.8; margin-bottom: 20px; white-space: pre-wrap; transition: color 0.3s; }
 .tap-indicator { text-align: right; color: #fdd900; font-size: 14px; animation: blink 1.5s infinite; }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
 .modal-btn {
-    display: none; width: 100%; background: #333; color: #fdd900; border: 1px solid #fdd900;
-    padding: 15px; font-size: 18px; cursor: pointer; border-radius: 5px;
-    font-weight: bold; margin-top: 10px; transition: 0.2s; letter-spacing: 2px;
+display: none; width: 100%; background: #333; color: #fdd900; border: 1px solid #fdd900;
+padding: 15px; font-size: 18px; cursor: pointer; border-radius: 5px;
+font-weight: bold; margin-top: 10px; transition: 0.2s; letter-spacing: 2px;
 }
 .modal-btn:hover { background: #fdd900; color: #000; }
 
 /* --- AI チュートリアル --- */
 #ai-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.1); display: none; align-items: center; justify-content: center; 
-    z-index: 2000; cursor: pointer; transition: background-color 0.5s ease, padding 0.3s ease;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0, 0, 0, 0.1); display: none; align-items: center; justify-content: center;
+z-index: 2000; cursor: pointer; transition: background-color 0.5s ease, padding 0.3s ease;
 }
 #ai-modal.ai-mode-bottom { align-items: flex-end; padding-bottom: 40px; padding-top: 0; }
 #ai-modal.ai-mode-top { align-items: flex-start; padding-top: 40px; padding-bottom: 0; }
 
 #ai-modal .modal-content {
-    max-width: 900px; min-height: 120px; padding: 25px 40px;
-    background: rgba(13, 17, 23, 0.95); border: 2px solid #fdd900; border-radius: 8px;
-    box-shadow: 0 0 30px rgba(253, 217, 0, 0.2); text-align: left;
+max-width: 900px; min-height: 120px; padding: 25px 40px;
+background: rgba(13, 17, 23, 0.95); border: 2px solid #fdd900; border-radius: 8px;
+box-shadow: 0 0 30px rgba(253, 217, 0, 0.2); text-align: left;
 }
 .ai-text { font-size: 18px; color: #fdd900; font-family: monospace; line-height: 1.8; margin-bottom: 20px; white-space: pre-wrap; }
 
 .tutorial-highlight {
-    position: relative !important; z-index: 2001 !important;
-    box-shadow: 0 0 0 3px #fdd900, 0 0 30px 10px rgba(253, 217, 0, 0.6) !important;
-    background-color: #161b22 !important; border-radius: 12px; pointer-events: none; transition: 0.3s;
+position: relative !important; z-index: 2001 !important;
+box-shadow: 0 0 0 3px #fdd900, 0 0 30px 10px rgba(253, 217, 0, 0.6) !important;
+background-color: #161b22 !important; border-radius: 12px; pointer-events: none; transition: 0.3s;
 }
 
 /* --- エンディング画面 --- */
 #ending-screen {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; display: none; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 3000; padding: 20px; box-sizing: border-box;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: #000; display: none; flex-direction: column; align-items: center; justify-content: center;
+z-index: 3000; padding: 20px; box-sizing: border-box;
 }
 .ending-title { font-size: 40px; margin-bottom: 30px; letter-spacing: 5px; }
 .ending-title.success { color: #fdd900; text-shadow: 0 0 15px rgba(253,217,0,0.5); }
@@ -118,7 +118,7 @@ input, textarea {
 /* --- アプリコンテナ --- */
 .app-container { display: none; padding: 15px 30px; position: relative; z-index: 10; }
 .app-container.active { display: block; }
-.app-container h2 { margin-top: 0; margin-bottom: 10px; } 
+.app-container h2 { margin-top: 0; margin-bottom: 10px; }
 
 .execute-btn { background: #333; color: #fdd900; border: 2px solid #fdd900; font-size: 20px; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; letter-spacing: 2px; }
 .execute-btn:hover { background: #fdd900; color: #000; }
@@ -128,53 +128,53 @@ input, textarea {
 
 /* --- 🌟 新レイアウト：横並び（左：プロトコル、右：小謎） --- */
 .layer-layout {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 20px;
-    max-width: 1300px;
-    margin: 15px auto 0 auto;
-    flex-wrap: wrap;
+display: flex;
+justify-content: center;
+align-items: flex-start;
+gap: 20px;
+max-width: 1300px;
+margin: 15px auto 0 auto;
+flex-wrap: wrap;
 }
 
 .left-protocol {
-    flex: 2;
-    min-width: 600px;
+flex: 2;
+min-width: 600px;
 }
 
 .right-puzzle {
-    flex: 1;
-    min-width: 300px;
-    max-width: 400px;
+flex: 1;
+min-width: 300px;
+max-width: 400px;
 }
 
 /* --- 🎯 現在の目標パネル --- */
 .objective-panel {
-    background: #161b22;
-    border: 2px solid #fdd900;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    text-align: left;
+background: #161b22;
+border: 2px solid #fdd900;
+border-radius: 8px;
+padding: 20px;
+margin-bottom: 20px;
+text-align: left;
 }
 .objective-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    border-bottom: 1px dashed #30363d;
-    padding-bottom: 10px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 15px;
+border-bottom: 1px dashed #30363d;
+padding-bottom: 10px;
 }
 .objective-panel p {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.6;
-    color: #c9d1d9;
+margin: 0;
+font-size: 16px;
+line-height: 1.6;
+color: #c9d1d9;
 }
 .hint-btn {
-    width: 35px;
-    height: 35px;
-    font-size: 16px;
+width: 35px;
+height: 35px;
+font-size: 16px;
 }
 
 /* --- 🧩 パズル用パネル共通 --- */
@@ -184,33 +184,33 @@ input, textarea {
 
 /* --- 🧩 解析中プログレスバー --- */
 .progress-bar-container {
-    width: 200px;
-    height: 18px;
-    background: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 10px;
-    margin: 0 auto;
-    position: relative;
-    overflow: hidden;
+width: 200px;
+height: 18px;
+background: #0d1117;
+border: 1px solid #30363d;
+border-radius: 10px;
+margin: 0 auto;
+position: relative;
+overflow: hidden;
 }
 .progress-bar-fill {
-    height: 100%;
-    width: 0%;
-    background: #fdd900; 
-    transition: width 1s linear;
+height: 100%;
+width: 0%;
+background: #fdd900;
+transition: width 1s linear;
 }
 .progress-bar-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    font-size: 12px;
-    line-height: 18px;
-    color: #c9d1d9;
-    text-align: center;
-    pointer-events: none;
-    letter-spacing: 2px;
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+font-size: 12px;
+line-height: 18px;
+color: #c9d1d9;
+text-align: center;
+pointer-events: none;
+letter-spacing: 2px;
 }
 
 .carousel-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
@@ -233,34 +233,33 @@ input, textarea {
 .answer-section button:hover { background: #fff; color: #000;}
 .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
-
 /* --- 💡 メインプロトコル枠 --- */
 #main-protocol-wrapper-s1 {
-    background-color: transparent;
-    background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
-    background-size: 40px 40px; 
-    transition: background-position 0.1s;
+background-color: transparent;
+background-image: radial-gradient(circle, rgba(139, 148, 158, 0.4) 1.5px, transparent 1.5px);
+background-size: 40px 40px;
+transition: background-position 0.1s;
 }
 
 .main-protocol-wrapper {
-    background: transparent;
-    border: 2px solid #fdd900;
-    border-radius: 8px;
-    padding: 10px 20px 15px 20px;
-    margin: 0 auto;
-    position: relative;
-    transition: 0.3s;
-    box-shadow: 0 0 15px rgba(253, 217, 0, 0.2);
+background: transparent;
+border: 2px solid #fdd900;
+border-radius: 8px;
+padding: 10px 20px 15px 20px;
+margin: 0 auto;
+position: relative;
+transition: 0.3s;
+box-shadow: 0 0 15px rgba(253, 217, 0, 0.2);
 }
 
 /* --- STEP 1 UI --- */
-.gojuon-container { margin: 0 auto; padding: 0; width: 440px; height: 200px; } 
+.gojuon-container { margin: 0 auto; padding: 0; width: 440px; height: 200px; }
 .gojuon-table { display: grid; grid-template-columns: repeat(11, 40px); grid-template-rows: repeat(5, 40px); gap: 0; width: 440px; height: 200px; margin: 0; user-select: none; }
 .gojuon-cell { position: relative; background: transparent; border: 1px solid transparent; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: border-color 2.5s ease-in-out, box-shadow 2.5s ease-in-out; aspect-ratio: 1 / 1; }
 .gojuon-cell.empty { pointer-events: none; }
 .gojuon-table.revealed .gojuon-cell:not(.empty) { border-color: rgba(253, 217, 0, 0.6); box-shadow: inset 0 0 10px rgba(253, 217, 0, 0.2); }
 
-#main-protocol-area { display: flex; flex-direction: column; align-items: center; gap: 10px !important; padding: 5px !important; border-radius: 15px; margin-top: 10px; } 
+#main-protocol-area { display: flex; flex-direction: column; align-items: center; gap: 10px !important; padding: 5px !important; border-radius: 15px; margin-top: 10px; }
 
 .s1-slots { display: inline-flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px; background: #f2f2f2; border-radius: 40px; padding: 10px 20px; min-height: 50px; }
 .s1-slot { width: 50px; height: 50px; border: 3px dashed #333; background: transparent; display: flex; align-items: center; justify-content: center; transition: 0.3s; border-radius: 50%; box-sizing: border-box; }
@@ -275,12 +274,12 @@ input, textarea {
 .s1-slots.size-hint-active .s1-slot:nth-child(9) { width: 70px; height: 70px; }
 .s1-slots.size-hint-active .s1-slot:nth-child(11) { width: 80px; height: 80px; }
 
-.s1-items { display: inline-flex; justify-content: center; align-items: center; gap: 10px; margin: 10px 0; padding: 15px 30px; background: #f2f2f2; min-height: 60px; clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%); transition: 0.3s; box-sizing: border-box; } 
+.s1-items { display: inline-flex; justify-content: center; align-items: center; gap: 10px; margin: 10px 0; padding: 15px 30px; background: #f2f2f2; min-height: 60px; clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%); transition: 0.3s; box-sizing: border-box; }
 .s1-item-slot { width: 50px; height: 50px; background: transparent; display: flex; align-items: center; justify-content: center; transition: 0.3s; border-radius: 50%; box-sizing: border-box; }
 
-.item { 
-    cursor: grab; transition: transform 0.1s; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); flex-shrink: 0; box-sizing: border-box; 
-    user-select: auto; -webkit-user-select: auto; -webkit-user-drag: element;
+.item {
+cursor: grab; transition: transform 0.1s; border: none; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); flex-shrink: 0; box-sizing: border-box;
+user-select: auto; -webkit-user-select: auto; -webkit-user-drag: element;
 }
 .item:active { cursor: grabbing; transform: scale(0.95) !important; box-shadow: 0 2px 3px rgba(0,0,0,0.5); }
 
@@ -311,11 +310,11 @@ input, textarea {
 .s2-vol { display: none; color: #fdd900; font-weight: bold; font-size: 20px; margin-top: -5px; }
 
 /* --- STEP 3 UI --- */
-.pieces-container { 
-    display: flex; justify-content: center; align-items: flex-start; 
-    gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10; 
+.pieces-container {
+display: flex; justify-content: center; align-items: flex-start;
+gap: 25px; flex-wrap: wrap; margin: 0 auto; max-width: 100%; z-index: 10;
 }
-.poly-piece { display: grid; gap: 3px; width: max-content; height: max-content; grid-auto-rows: 30px; align-content: start; }
+.poly-piece { display: grid; gap: 3px; width: max-content; height: max-content; grid-auto-rows: 30px; align-content: start; pointer-events: none; }
 .piece-1 { grid-template-columns: repeat(4, 30px); }
 .piece-2 { grid-template-columns: repeat(3, 30px); }
 .piece-3 { grid-template-columns: repeat(3, 30px); }
@@ -323,9 +322,9 @@ input, textarea {
 .piece-5 { grid-template-columns: repeat(2, 30px); }
 
 .poly-cell { width: 30px !important; height: 30px !important; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; user-select: none; box-sizing: border-box; color: transparent !important; }
-.poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; }
+.poly-cell.white { background: #e6edf3; cursor: pointer; border: 2px solid #8b949e; pointer-events: auto; }
 .poly-cell.white:active, .poly-cell.white.active { background: #fdd900; border-color: #fff; box-shadow: 0 0 15px rgba(253, 217, 0, 0.9); }
-.poly-cell.black { background: #000; pointer-events: none; border: 2px solid #222; }
+.poly-cell.black { background: #555555; pointer-events: none; border: 2px solid #333; }
 
 .poly-cell.empty { background: transparent; pointer-events: none; border: none; min-width: 30px; min-height: 30px; }
 
@@ -357,40 +356,40 @@ input, textarea {
 
 /* --- 📱 モバイルアクセス拒否画面 --- */
 #mobile-blocker {
-    display: none;
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #0d1117; color: #ff7b72;
-    z-index: 9999; flex-direction: column; align-items: center; justify-content: center;
-    font-family: monospace; letter-spacing: 2px; line-height: 2;
+display: none;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: #0d1117; color: #ff7b72;
+z-index: 9999; flex-direction: column; align-items: center; justify-content: center;
+font-family: monospace; letter-spacing: 2px; line-height: 2;
 }
 #mobile-blocker h1 { font-size: 30px; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255,123,114,0.5); }
 #mobile-blocker p { font-size: 16px; color: #c9d1d9; }
 
 @media screen and (max-width: 768px) {
-    #mobile-blocker { display: flex; }
-    .header, .app-container, .debug-panel, #intro-modal, #ai-modal { display: none !important; }
+#mobile-blocker { display: flex; }
+.header, .app-container, .debug-panel, #intro-modal, #ai-modal { display: none !important; }
 }
 
 /* --- 🌟 ボス裏切りポップアップ (FILE 03 クリア後) --- */
 #betrayal-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(20, 0, 0, 0.95); display: none; align-items: center; justify-content: center; 
-    z-index: 2500; cursor: pointer; transition: background-color 0.5s ease;
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(20, 0, 0, 0.95); display: none; align-items: center; justify-content: center;
+z-index: 2500; cursor: pointer; transition: background-color 0.5s ease;
 }
 #betrayal-modal .modal-content {
-    background: #0d1117; border: 2px solid #da3633; border-radius: 8px;
-    padding: 40px; max-width: 650px; width: 90%; text-align: left; 
-    box-shadow: 0 0 30px rgba(218, 54, 51, 0.4);
-    min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;
+background: #0d1117; border: 2px solid #da3633; border-radius: 8px;
+padding: 40px; max-width: 650px; width: 90%; text-align: left;
+box-shadow: 0 0 30px rgba(218, 54, 51, 0.4);
+min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;
 }
 #betrayal-modal .intro-text { color: #ff7b72; }
 #betrayal-modal .tap-indicator { color: #da3633; text-align: right; font-size: 14px; animation: blink 1.5s infinite; }
 #betrayal-modal .modal-btn { background: #da3633; color: white; display: none; width: 100%; border: none; padding: 15px; font-size: 18px; cursor: pointer; border-radius: 5px; font-weight: bold; margin-top: 10px; transition: 0.2s; letter-spacing: 2px; }
 #betrayal-modal .modal-btn:hover { background: #ff7b72; color: #000; }
 
-/* ========================================== */
-/* 🏦 銀行HP・ポータル用のスタイル追加分 */
-/* ========================================== */
+/* ========================================== /
+/ 🏦 銀行HP・ポータル用のスタイル追加分 /
+/ ========================================== */
 .bank-top-bar { background: #f0f0f0; padding: 5px 20px; text-align: right; font-size: 12px; color: #666; }
 .bank-top-bar span { margin-left: 15px; cursor: pointer; }
 .bank-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #fff; border-bottom: 1px solid #ddd; }
@@ -428,5 +427,5 @@ input, textarea {
 
 /* 🌟 LAYER 02: 点線のガイド盤面を右にずらす */
 #poly-guide {
-    margin-left: 300px; 
+margin-left: 300px;
 }
