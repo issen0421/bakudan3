@@ -233,6 +233,7 @@ input, textarea {
 .answer-section button:hover { background: #fff; color: #000;}
 .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 16px; }
 
+
 /* --- 💡 メインプロトコル枠 --- */
 #main-protocol-wrapper-s1 {
     background-color: transparent;
