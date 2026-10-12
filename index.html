@@ -83,7 +83,7 @@
         <div class="login-box" onclick="event.stopPropagation()">
             <h3>行員システム・ログイン</h3>
             <div style="position: relative; margin-bottom: 20px;">
-                <input type="text" id="staff-pass" placeholder="Password (「てすと」と入力)" style="margin-bottom: 0; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                <input type="text" id="staff-pass" placeholder="Password (「てすと」と入力)" onkeypress="if(event.key === 'Enter') checkBankLogin()" style="margin-bottom: 0; width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
             </div>
             <button onclick="checkBankLogin()" style="background: #004080; color: #fff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
             <p id="login-err" style="color:red; font-size:12px; display:none; margin-top:10px;">パスワードが間違っています。</p>
@@ -191,6 +191,7 @@
 
             <div style="width: 40px;"></div>
             <button class="tab-btn" id="tab-last" onclick="switchApp('last')" style="display:none; color: #ff7b72; border-color: #ff7b72;">[ ! ] WARNING</button>
+            <button class="tab-btn" id="tab-ex" onclick="switchApp('ex')" style="display:none; color: #00b18e; border-color: #00b18e; margin-left: 10px;">EX</button>
         </div>
         
         <div style="display: flex; gap: 15px; align-items: center;">
@@ -230,7 +231,7 @@
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 1: 共通グラウンド(GND)の構築</p>
             <p style="color:#c9d1d9;">
                 ブレッドボード（白い基盤）の青い線の列（マイナス列）を使用する。<br>
-                ワイヤーの片方をArduinoの <span style="color:#fdd900; font-weight:bold;">[GND]</span> ピンに挿し、反対側をブレッドボードの <span style="color:#fdd900; font-weight:bold;">マイナス列の一番上の穴</span> に挿せ。
+                ワイヤーの片方を基板の <span style="color:#fdd900; font-weight:bold;">[GND]</span> ピンに挿し、反対側をブレッドボードの <span style="color:#fdd900; font-weight:bold;">マイナス列の一番上の穴</span> に挿せ。
             </p>
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: ライトを配置する</p>
             <p style="color:#c9d1d9;">4つのライトをすべてブレッドボードに挿していく。</p>
@@ -249,12 +250,12 @@
                 【一番右用】 片方を <span style="color:#fff; font-weight:bold;">[c15]</span> に挿し、もう片方を最も近い <span style="color:#fdd900; font-weight:bold;">[マイナス列]</span> の穴に挿す
             </p>
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 4: コードを接続する</p>
-            <p style="color:#c9d1d9;">Arduinoの <span style="color:#fdd900; font-weight:bold;">[DIGITAL]</span> ピンと、ライトのプラス側をコードで繋ぐ。</p>
+            <p style="color:#c9d1d9;">基板の <span style="color:#fdd900; font-weight:bold;">[DIGITAL]</span> ピンと、ライトのプラス側をコードで繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                【一番左】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[2]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a29]</span><br>
-                【2番目】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[3]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a24]</span><br>
-                【3番目】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[4]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a19]</span><br>
-                【一番右】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[5]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a14]</span>
+                【一番左】 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[2]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a29]</span><br>
+                【2番目】 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[3]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a24]</span><br>
+                【3番目】 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[4]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a19]</span><br>
+                【一番右】 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[5]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a14]</span>
             </p>
         </div>
         <div style="text-align:center; margin-top:20px;">
@@ -352,7 +353,7 @@
                     </div>
                     <div class="carousel-indicator" id="puzzleIndicator-s1">DATA A</div>
                     <div class="answer-section">
-                        <input type="text" id="answerInput-s1" placeholder="ANSWER">
+                        <input type="text" id="answerInput-s1" placeholder="ANSWER" onkeypress="if(event.key === 'Enter') submitAnswer(1)">
                         <button onclick="submitAnswer(1)">送信</button>
                         <div class="feedback" id="terminalFeedback-s1"></div>
                     </div>
@@ -371,17 +372,17 @@
         <div style="width:100%; min-height:250px; max-height:450px; overflow-y:auto; border:2px dashed #444; border-radius:8px; padding:30px; margin-bottom:30px; background:rgba(0,0,0,0.4); text-align:left; line-height:1.8; box-sizing: border-box;">
             <h3 style="color:#fdd900; margin-top:0; border-bottom:1px solid #30363d; padding-bottom:10px;">【 指示書：モニターの配線方法について 】</h3>
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:20px;">◆ STEP 1: モニターを接続する</p>
-            <p style="color:#c9d1d9;">モニターの裏側から出ている4本の線を、それぞれ直接Arduinoとブレッドボードに接続せよ。</p>
+            <p style="color:#c9d1d9;">モニターの裏側から出ている4本の線を、それぞれ直接基板とブレッドボードに接続せよ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・<span style="color:#fff; font-weight:bold;">[CLK]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[7]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[DIO]</span> と書かれた線 ➔ Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[8]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[GND]</span> と書かれた線 ➔ Arduinoの <span style="color:#fdd900; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#fdd900; font-weight:bold;">[GND]</span> ピン<br>
-                ・<span style="color:#fff; font-weight:bold;">[5V]</span> と書かれた線 ➔ Arduinoの <span style="color:#ff7b72; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#ff7b72; font-weight:bold;">[5V]</span> ピン
+                ・<span style="color:#fff; font-weight:bold;">[CLK]</span> と書かれた線 ➔ 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[7]</span> ピン<br>
+                ・<span style="color:#fff; font-weight:bold;">[DIO]</span> と書かれた線 ➔ 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[8]</span> ピン<br>
+                ・<span style="color:#fff; font-weight:bold;">[GND]</span> と書かれた線 ➔ 基板の <span style="color:#fdd900; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#fdd900; font-weight:bold;">[GND]</span> ピン<br>
+                ・<span style="color:#fff; font-weight:bold;">[5V]</span> と書かれた線 ➔ 基板の <span style="color:#ff7b72; font-weight:bold;">[POWER]</span> エリアにある <span style="color:#ff7b72; font-weight:bold;">[5V]</span> ピン
             </p>
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: システム安定化用バイパスを構築する</p>
             <p style="color:#c9d1d9;">最後に、システムを安定させるための重要なバイパスコードを1本繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                ・ワイヤーの片方を Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[9]</span> ピンに挿す<br>
+                ・ワイヤーの片方を 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[9]</span> ピンに挿す<br>
                 ・もう片方をブレッドボードの <span style="color:#fdd900; font-weight:bold;">[マイナス列]</span> に挿す
             </p>
         </div>
@@ -420,15 +421,15 @@
                         <div style="display: flex; flex-direction: column; gap: 15px; align-items: flex-start; padding-left: 30px; border-left: 2px dashed #444;">
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top on"></span><span class="seg-mid"></span><span class="seg-bot"></span></div>
-                                <span style="color:#8b949e;">... 10</span>
+                                <span style="color:#8b949e;">... 10個</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top"></span><span class="seg-mid on"></span><span class="seg-bot"></span></div>
-                                <span style="color:#8b949e;">... 9</span>
+                                <span style="color:#8b949e;">... 9個</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:15px; font-size: 24px; font-weight:bold;">
                                 <div class="seg-display"><span class="seg-top"></span><span class="seg-mid"></span><span class="seg-bot on"></span></div>
-                                <span style="color:#8b949e;">... 7</span>
+                                <span style="color:#8b949e;">... 7個</span>
                             </div>
                         </div>
                     </div>
@@ -499,7 +500,7 @@
                     </div>
                     <div class="carousel-indicator" id="puzzleIndicator-s2">DATA A</div>
                     <div class="answer-section">
-                        <input type="text" id="answerInput-s2" placeholder="ANSWER">
+                        <input type="text" id="answerInput-s2" placeholder="ANSWER" onkeypress="if(event.key === 'Enter') submitAnswer(2)">
                         <button onclick="submitAnswer(2)">送信</button>
                         <div class="feedback" id="terminalFeedback-s2"></div>
                     </div>
@@ -524,9 +525,9 @@
                 ・<span style="color:#fdd900; font-weight:bold;">短い足（－）</span> を <span style="color:#fff; font-weight:bold;">[e10]</span> に挿す
             </p>
             <p style="color:#f85149; font-weight:bold; font-size:18px; margin-top:30px;">◆ STEP 2: コードを接続する</p>
-            <p style="color:#c9d1d9;">Arduinoとブレッドボードを2本のワイヤーで繋ぐ。</p>
+            <p style="color:#c9d1d9;">基板とブレッドボードを2本のワイヤーで繋ぐ。</p>
             <p style="color:#c9d1d9; background:#161b22; padding: 15px; border-radius: 5px;">
-                【プラス側】 Arduino DIGITAL <span style="color:#fdd900; font-weight:bold;">[6]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a7]</span> を繋ぐ<br>
+                【プラス側】 基板 DIGITAL <span style="color:#fdd900; font-weight:bold;">[6]</span> とブレッドボード <span style="color:#fff; font-weight:bold;">[a7]</span> を繋ぐ<br>
                 【マイナス側】 片方をブレッドボード <span style="color:#fff; font-weight:bold;">[a10]</span> に挿し、もう片方を最も近い <span style="color:#fdd900; font-weight:bold;">[マイナス列]</span> の穴に繋ぐ
             </p>
         </div>
@@ -607,7 +608,7 @@
                     </div>
                     <div class="carousel-indicator" id="puzzleIndicator-s3">DATA A</div>
                     <div class="answer-section">
-                        <input type="text" id="answerInput-s3" placeholder="ANSWER">
+                        <input type="text" id="answerInput-s3" placeholder="ANSWER" onkeypress="if(event.key === 'Enter') submitAnswer(3)">
                         <button onclick="submitAnswer(3)">送信</button>
                         <div class="feedback" id="terminalFeedback-s3"></div>
                     </div>
@@ -653,6 +654,34 @@
                 <div class="last-hint-text">【システム】復元完了（残り4分）：マニュアル画像 3</div>
                 <img src="FILE4_hint3.jpg" style="width:100%; border-radius:5px; margin-top:10px;">
             </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- APP EX: エクストラ謎 (CASH) -->
+    <!-- ========================================== -->
+    <div class="app-container" id="app-ex">
+        <h2 style="color: #00b18e;">[ EX ] EXTRA MISSION</h2>
+        <div class="instruction">
+            目的：CASHを出せ。<br>
+            ・タイマーは00から49まで自動で進みます。<br>
+            ・ボタンを押すと、その時の「1の位の数字」が、光っているライトの場所にスタンプされます。<br>
+            ・同じ場所にスタンプが重なると「線が消える（反転する）」特殊なシステムです。
+        </div>
+
+        <div style="text-align:center; margin: 30px 0;">
+            <!-- タイマー表示（Web上でも確認できるようにします） -->
+            <div id="ex-timer-display" style="font-size: 60px; font-weight: bold; color: #fdd900; font-family: monospace; letter-spacing: 5px;">00</div>
+            
+            <!-- プッシュボタン -->
+            <button class="execute-btn" id="btn-ex-push" style="background:#00b18e; border-color:#00b18e; color:#fff; width: 200px; height: 200px; border-radius: 50%; font-size: 30px; margin-top: 20px;" onclick="pushExButton()">PUSH</button>
+        </div>
+
+        <!-- 最終結果表示エリア -->
+        <div id="ex-result-area" style="display:none; text-align:center;">
+            <h3 style="color:#fdd900;">【 STAMP RESULT 】</h3>
+            <div id="ex-result-text" style="font-size: 50px; font-weight: bold; color: #fff; font-family: monospace; letter-spacing: 10px;"></div>
+            <button class="execute-btn" style="background:#444; max-width: 200px; margin-top: 20px;" onclick="startExPuzzle()">🔄 リトライ</button>
         </div>
     </div>
 
