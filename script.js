@@ -848,9 +848,12 @@ function checkS3Clear() {
         sendCommand("N_505"); 
         document.getElementById("result-step3").innerText = "🎉 CLEAR!";
         document.getElementById("result-step3").style.color = "#fdd900"; // 💡 色をテーマカラーに統一
+        
+        // 5秒後（5000ミリ秒）にモニターを消し、次のイベントへ
         setTimeout(() => {
+            sendCommand("N____");
             initBetrayal();
-        }, 4000); 
+        }, 5000); 
     } else {
         let resStr = s3_volumes[0].toString() + s3_volumes[1].toString() + s3_volumes[2].toString();
         if (resStr.length === 3) resStr = "_" + resStr;
@@ -860,8 +863,10 @@ function checkS3Clear() {
         document.getElementById("result-step3").innerText = "❌ ERROR (フェイルセーフ発動失敗)";
         document.getElementById("result-step3").style.color = "#ff7b72";
         
+        // 5秒後（5000ミリ秒）にモニターと画面の文字を消す（自動リセットはせずプレイヤーのボタン操作を待つ）
         setTimeout(() => { 
-            resetStep3Puzzle(); 
+            sendCommand("N____");
+            document.getElementById("result-step3").innerText = ""; 
         }, 5000); 
     }
 }
@@ -926,6 +931,11 @@ function switchApp(appId) {
     
     if (appId === 'step3') {
         setTimeout(() => sendCommand("N_09"), 500); 
+    }
+    
+    // EXタブを開いた時に自動でタイマーを開始
+    if (appId === 'ex') {
+        startExPuzzle();
     }
 }
 
@@ -1312,7 +1322,7 @@ function devUnlockTabs() {
         document.getElementById(id).style.display = 'block';
         document.getElementById(id).classList.add('active');
     });
-    ['tab-step1','tab-wire2','tab-step2','tab-wire3','tab-step3','tab-last'].forEach(id => {
+    ['tab-step1','tab-wire2','tab-step2','tab-wire3','tab-step3','tab-last','tab-ex'].forEach(id => {
         document.getElementById(id).style.display = 'block';
     });
 }
@@ -1620,4 +1630,118 @@ function changeVolume(val) {
     bgmNormal.volume = vol;
     bgm10Min.volume = vol;
     msgAudio.volume = vol;
+}
+
+// ==========================================
+// 💡 EXTRA MISSION (XOR CASH)
+// ==========================================
+let exTime = 0;
+let exInterval = null;
+let exSegments = [0, 0, 0, 0]; // 4桁のセグメント状態（初期は真っ暗）
+
+// 0〜9の7セグメントの形（ビットマスク）
+const segMasks = {
+    0: 0x3F, 1: 0x06, 2: 0x5B, 3: 0x4F, 4: 0x66, 
+    5: 0x6D, 6: 0x7D, 7: 0x07, 8: 0x7F, 9: 0x6F
+};
+
+// セグメントの形からアルファベットを判定する辞書（正解判定用）
+const segChars = {
+    0x39: "C", 0x77: "A", 0x6D: "S", 0x76: "H"
+};
+
+// 指定された秒数のときのライトのパターン（0:消灯, 1:点灯）
+function getExLedPattern(time) {
+    if (time >= 0 && time < 10) return [0, 1, 0, 1]; // 暗明暗明
+    if (time >= 10 && time < 20) return [1, 1, 0, 1]; // 明明暗明
+    if (time >= 20 && time < 30) return [0, 0, 1, 0]; // 暗暗明暗
+    if (time >= 30 && time < 40) return [1, 0, 0, 1]; // 明暗暗明
+    if (time >= 40 && time < 50) return [0, 1, 0, 0]; // 暗明暗暗
+    return [0, 0, 0, 0];
+}
+
+// EXパズル開始（タブを開いた時やリトライ時に呼ぶ）
+function startExPuzzle() {
+    if (exInterval) clearInterval(exInterval);
+    exTime = 0;
+    exSegments = [0, 0, 0, 0]; // スタンプリセット
+    document.getElementById('ex-result-area').style.display = 'none';
+    document.getElementById('btn-ex-push').disabled = false;
+    document.getElementById('btn-ex-push').style.opacity = "1";
+    
+    // 1秒ごとにカウントアップ
+    exInterval = setInterval(() => {
+        if (exTime >= 50) {
+            finishExPuzzle();
+            return;
+        }
+
+        // Web上のタイマー表示更新
+        let timeStr = ("0" + exTime).slice(-2);
+        document.getElementById('ex-timer-display').innerText = timeStr;
+        
+        // ハードウェアへの送信（音・ディスプレイ・ライト）
+        sendCommand("B"); // 1秒ごとにピッ
+        sendCommand("N__" + timeStr); // ディスプレイに時間を表示
+        
+        // ライトの点灯パターンを送信 (例: "P0101")
+        let leds = getExLedPattern(exTime);
+        sendCommand("P" + leds.join(""));
+
+        exTime++;
+    }, 1000);
+}
+
+// ボタンを押した時の処理
+function pushExButton() {
+    if (exTime >= 50) return;
+    
+    // 現在の秒数の「1の位」を取得
+    let currentDigit = exTime % 10;
+    let leds = getExLedPattern(exTime);
+    let mask = segMasks[currentDigit];
+
+    // 光っている場所（leds[i] == 1）のセグメントに、1の位の形をXOR（^）で重ねる
+    for (let i = 0; i < 4; i++) {
+        if (leds[i] === 1) {
+            exSegments[i] = exSegments[i] ^ mask; // 重ね押し魔法！
+        }
+    }
+
+    // 次の10の位へ時間を飛ばす
+    exTime = Math.floor(exTime / 10) * 10 + 10;
+    
+    // 50秒に到達したら終了
+    if (exTime >= 50) {
+        finishExPuzzle();
+    }
+}
+
+// 終了時の処理（結果表示）
+function finishExPuzzle() {
+    if (exInterval) clearInterval(exInterval);
+    document.getElementById('btn-ex-push').disabled = true;
+    document.getElementById('btn-ex-push').style.opacity = "0.5";
+    sendCommand("P0000"); // ライト全消灯
+
+    // 出来上がったスタンプの形から文字を判定
+    let resultString = "";
+    for (let i = 0; i < 4; i++) {
+        let char = segChars[exSegments[i]];
+        resultString += char ? char : "?"; // 綺麗な文字にならなかったら「?」
+    }
+
+    // 結果の表示
+    const resArea = document.getElementById('ex-result-area');
+    const resText = document.getElementById('ex-result-text');
+    resArea.style.display = 'block';
+    resText.innerText = resultString;
+
+    if (resultString === "CASH") {
+        resText.style.color = "#fdd900";
+        sendCommand("N_CASH"); // もしハードが文字表示に対応していれば
+    } else {
+        resText.style.color = "#ff7b72";
+        sendCommand("N____");
+    }
 }
